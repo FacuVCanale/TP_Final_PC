@@ -1,0 +1,31 @@
+Podemos enviar o recibir información del servidor
+Del cliente al servidor, sólo le podemos enviar una información por minuto, pero recibimos en cualquier momento
+No podemos tocar los scripts que hicieron ellos
+Las direcciones de los personajes se miden en radianes, que sería el ángulo al que tiene que ir.
+Tiene que llegar UN ESCALADOR NADA MÁS.
+LO MEJOR ES QUE CADA ESCALADOR TENGA UNA ESTRATEGIA DISTINTA
+
+
+
+
+                                            ####   IDEAS   ####
+
+Hay que ver la inclinación. si no hay inclinación, estamos en un valle, o en una montaña. La inclinación va a ser 0, y ahí estamos en el máximo global.
+
+tal vez un escalador podría ser semi bogo sort
+
+Reconstruir la montaña según las ubicaciones de los demás
+
+Hacer nuestro servidor para ir entrenando el modelo
+
+Inventar algún dashboard (preguntarle a guille)
+
+Usar TKinter (tenemos un esqueleto)
+
+SI EN EL CUADRILATERO NO HAY NADIE QUE ESTE MAS ALTO QUE NUESTRO ESCALADOR, QUE SIGA SUBIENDO. 
+
+SI EN EL CUADRIALTERO HAY OTROS ESCALADORES MAS ALTOS, SEGUIRLO. SI HAY 2 DE NUESTROS ESCALADORES EN EL MISMO CUADRILATERA (POR X MOTIVO) QUE UNO SIGA AL MAS ALTO Y QUE EL OTRO BUSQUE OTRA UBICACION PARA SUBIR
+
+SI SOMOS EL MAS ALTO, SEGUIR SUBIENDO
+
+asdasd
