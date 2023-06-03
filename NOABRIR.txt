@@ -1,0 +1,11 @@
+1. Random Exploration: Each team member can randomly select a direction and start moving, periodically checking the inclinometer readings to ensure they are moving uphill. This approach relies on the assumption that eventually, someone will find the path leading to the top.
+
+2. Gradient Ascent: Each team member can move in the direction of the steepest incline indicated by their inclinometer readings. By continuously moving in the direction of the highest gradient, the team hopes to find a path leading to the top.
+
+3. Systematic Grid Search: Divide the mountain into a grid system and assign different sections to each team member. Start from the bottom left corner of the grid and systematically search each section, climbing higher until the top is reached.
+
+4. Gradient Descent-Ascent: Each team member initially moves in a random direction and periodically checks the inclinometer readings. If they notice a decrease in the incline, they turn around and move in the opposite direction, hoping to find a path with a consistent ascent.
+
+5. Monte Carlo Tree Search: Simulate multiple random paths for each team member using the available equipment. Assign a score to each path based on inclinometer readings and GPS data. Repeat this process iteratively, favoring paths that have shown promise in previous iterations.
+
+6. Reinforcement Learning: Utilize machine learning techniques to train an agent to navigate the mountain using the inclinometer, compass, and GPS data. This approach involves modeling the problem as a reinforcement learning task, where the agent learns to take actions that maximize the chance of reaching the top.
