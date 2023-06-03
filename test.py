@@ -1,44 +1,57 @@
-import random
 import math
+import random
 import matplotlib.pyplot as plt
+import os
 
 
-class RandomMountain:
+class RandomizedMishraBirdMountain:
     def __init__(self, visual_radius, base_radius):
         self.visual_radius = visual_radius
         self.base_radius = base_radius
-        self.functions = [
-            lambda x, y: x**2 + y**2,
-            lambda x, y: x**3 + y**3,
-            lambda x, y: math.sin(x) + math.cos(y),
-            lambda x, y: math.exp(x) - math.exp(y)
-        ]
+        self.random_factors = self.generate_random_factors()
 
-    def random_mountain_function(self):
-        num_functions = random.randint(1, len(self.functions))
-        selected_functions = random.sample(self.functions, num_functions)
-        scalars = [random.uniform(0.5, 2.0) for _ in range(num_functions)]
+    def generate_random_factors(self):
+        random_factors = {
+            "sin_a": random.uniform(0.5, 2),
+            "cos_a": random.uniform(0.5, 2),
+            "exp_a": random.uniform(0.5, 2),
+            "exp_b": random.uniform(0.5, 2),
+            "exp_c": random.uniform(0.5, 2)
+        }
+        return random_factors
 
-        def mountain_function(x, y):
-            result = 0
-            for func, scalar in zip(selected_functions, scalars):
-                result += scalar * func(x, y)
-            return result
+    def mishra_bird_function(self, x: float, y: float) -> float:
+        x = x / self.base_radius * 5
+        y = y / self.base_radius * 5
+        x = x - 5
+        y = y - 5
 
-        return mountain_function
+        sin_a = self.random_factors["sin_a"]
+        cos_a = self.random_factors["cos_a"]
+        exp_a = self.random_factors["exp_a"]
+        exp_b = self.random_factors["exp_b"]
+        exp_c = self.random_factors["exp_c"]
+
+        f = - (math.sin(sin_a * y) * math.exp((1 - math.cos(cos_a * x)) ** exp_a)
+               + math.cos(cos_a * x) *
+               math.exp((1 - math.sin(sin_a * y)) ** exp_b)
+               + (x - y) ** exp_c - 100)
+
+        return f
 
     def plot_mountain(self):
         x = []
         y = []
         z = []
 
-        mountain_function = self.random_mountain_function()
-
         for i in range(-self.visual_radius, self.visual_radius + 1):
             for j in range(-self.visual_radius, self.visual_radius + 1):
+                z_val = self.mishra_bird_function(i, j)
+                if isinstance(z_val, complex):
+                    continue
                 x.append(i)
                 y.append(j)
-                z.append(mountain_function(i, j))
+                z.append(z_val)
 
         fig = plt.figure()
         ax = fig.add_subplot(111, projection='3d')
@@ -47,5 +60,6 @@ class RandomMountain:
 
 
 if __name__ == "__main__":
-    mountain = RandomMountain(10, 10)
+    os.system("clear")
+    mountain = RandomizedMishraBirdMountain(10, 10)
     mountain.plot_mountain()
