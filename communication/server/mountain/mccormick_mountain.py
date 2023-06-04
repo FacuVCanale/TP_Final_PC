@@ -32,3 +32,4 @@ def mccormick_gradient_function_creator(base_radius):
         dfdy = math.cos(x+y) - 2*(x-y) + 2.5
         return -dfdx, -dfdy
     return mccormick_function_gradient
+

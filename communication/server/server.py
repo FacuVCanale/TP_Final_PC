@@ -3,10 +3,10 @@
 from typing import Tuple, List
 from socketserver import BaseRequestHandler, TCPServer
 
-from communication.server.handler import TCPHandler
-from communication.server.mountain.mountain import Mountain
-from communication.server.base_station import BaseStationw
-from communication.util.logger import logger
+from server.handler import TCPHandler
+from server.mountain.mountain import Mountain
+from server.base_station import BaseStation
+from util.logger import logger
 
 class CustomTCPServer(TCPServer):
     def __init__(self, host_port: Tuple[str, int], handler: BaseRequestHandler, mountain: Mountain, base_position: Tuple[float, float], max_speed: float):
