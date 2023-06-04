@@ -9,6 +9,14 @@ class Dog:
     def update_position(self, new_position):
         self.position = new_position
 
+def log_timestamp_decorator(func):
+    def wrapper(*args, **kwargs):
+        timestamp = datetime.datetime.now().strftime("%H:%M:%S")
+        print(f"[{timestamp}] - Function {func.__name__} was called.")
+        return func(*args, **kwargs)
+    return wrapper
+
+@log_timestamp_decorator
 def update_object_position(obj):
     new_position = entry_position.get() 
     with open('collect_data.txt', 'a') as f:
@@ -28,7 +36,7 @@ objects = [
 ]
 
 window = tk.Tk()
-window.title("Interfaz de Facebook")
+window.title("Interfaz de La concha de tu madre")
 
 # Estilos
 bg_color = "#3b5998"  # Color de fondo
@@ -67,10 +75,12 @@ display_text = tk.Text(main_frame, font=(font_style, 12), width=40, height=10)
 display_text.pack(pady=10)
 display_text.configure(state="disabled")
 
+@log_timestamp_decorator
 def update_label_values(obj):
     label_name.configure(text="Nombre: " + obj.name)
     label_position.configure(text="Posición: " + obj.position)
 
+@log_timestamp_decorator
 def select_object(index):
     if index < len(objects):
         selected_object = objects[index]
