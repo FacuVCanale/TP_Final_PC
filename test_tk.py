@@ -36,7 +36,7 @@ objects = [
 ]
 
 window = tk.Tk()
-window.title("Interfaz de La concha de tu madre")
+window.title("Interfaz de la concha de tu madre")
 
 # Estilos
 bg_color = "#3b5998"  # Color de fondo
@@ -50,7 +50,7 @@ main_frame = tk.Frame(window, bg=bg_color)
 main_frame.pack(padx=20, pady=20)
 
 # Etiqueta de título
-title_label = tk.Label(main_frame, text="Interfaz de FaceUdesa", font=(font_style, 16, "bold"), fg=text_color, bg=bg_color)
+title_label = tk.Label(main_frame, text="Interfaz", font=(font_style, 16, "bold"), fg=text_color, bg=bg_color)
 title_label.pack(pady=10)
 
 # Contenedor para la información del objeto seleccionado
@@ -67,7 +67,7 @@ label_position.pack(side="left")
 entry_position = tk.Entry(main_frame, font=(font_style, 12))
 entry_position.pack(pady=10)
 
-button_update = tk.Button(main_frame, text="Actualizar posición", font=(font_style, 12, "bold"), fg=text_color, bg="#1877f2", command=lambda: update_object_position(objects[0]))
+button_update = tk.Button(main_frame, text="Actualizar posición", font=(font_style, 12, "bold"), fg='red', bg="#1877f2", command=lambda: update_object_position(objects[0]))
 button_update.pack()
 
 # Área de texto
@@ -92,7 +92,7 @@ button_frame = tk.Frame(main_frame, bg=bg_color) # botones de selección de obje
 button_frame.pack(pady=10)
 
 for i, obj in enumerate(objects):
-    button_select = tk.Button(button_frame, text=obj.name, font=(font_style, 12), fg=text_color, bg="#4267B2", padx=10, pady=5, command=lambda index=i: select_object(index))
+    button_select = tk.Button(button_frame, text=obj.name, font=(font_style, 12), fg='red', bg="#4267B2", padx=10, pady=5, command=lambda index=i: select_object(index))
     button_select.pack(side="left", padx=5)
 
 window.mainloop()
