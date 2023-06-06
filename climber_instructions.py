@@ -1,4 +1,3 @@
-from functools import wraps
 from communication.client.client import MountainClient
 
 """ 
@@ -11,6 +10,8 @@ Al declarar estos métodos como estáticos, indicamos que no necesitan ser invoc
  
 SIRVE PARA NO INSTANCIAR LAS CLASES. Y PARA NO USAR SELF. 
  """
+
+from communication.client.client import MountainClient
 
 class Climbers:
     def __init__(self, info):
@@ -27,30 +28,15 @@ class Climbers:
         speed = distance / 1  # segundos (a implementar)
         return speed
 
-    @staticmethod
-    def update_data(func, arg:str):
-        @wraps(func)
-        def wrapper(self, *args, **kwargs):
-            result = func(self, *args, **kwargs)
-            if arg == 'direction':
-                val = self.direction
-            elif arg == 'speed':
-                val = self.speed
-            elif arg == 'inclination':
-                val = self.inclination
-            directions[self.name][arg] = val
-            return result
-        return wrapper
 
-    @update_data
+
+
     def change_pos(self, new_pos):
         self.pos = new_pos
 
-    @update_data
     def change_speed(self, new_speed):
         self.speed = new_speed
 
-    @update_data
     def change_inclination(self, new_inclination):
         self.inclination = new_inclination
 
@@ -63,7 +49,7 @@ cliente = MountainClient()
 climbers = [player1, player2, player3, player4]
 
 directions = {}
-speeds = [30, 20, 10, 4] #son las nuevas speeds dependiendo de la strat. # A IMPLEMENTAR
+speeds = [30, 20, 10, 4] # son las nuevas velocidades dependiendo de la estrategia. A IMPLEMENTAR
 inclinations = [5, 12, 23, 12]
 positions = [(1, 2), (3, 4), (5, 3), (6, 4)]
 
@@ -75,6 +61,8 @@ for index, climber in enumerate(climbers):
     directions[climber.name] = {'speed': speed, 'inclination': inclination, 'direction': direction}
 
 cliente.add_team("LIFFT", [climber.name for climber in climbers])
+print(cliente.get_data())
+
 cliente.next_iteration("LIFFT", directions)
 print(cliente.finish_registration())
 

@@ -2,7 +2,7 @@ import json
 
 from socketserver import BaseRequestHandler
 
-from util.logger import logger
+from communication.util.logger import logger
 
 class TCPHandler(BaseRequestHandler):
 
