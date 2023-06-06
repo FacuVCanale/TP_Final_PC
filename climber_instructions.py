@@ -1,3 +1,5 @@
+import time
+
 from communication.client.client import MountainClient
 
 """ 
@@ -40,29 +42,29 @@ class Climbers:
     def change_inclination(self, new_inclination):
         self.inclination = new_inclination
 
-player1 = Climbers({'name': "facu", 'pos': (0, 0)})
-player2 = Climbers({'name': "fran", 'pos': (0, 0)})
-player3 = Climbers({'name': "ivan", 'pos': (0, 0)})
-player4 = Climbers({'name': "lucas", 'pos': (0, 0)})
+player1 = Climbers({'name': "facu", 'pos': (1, 1)})
+
 
 cliente = MountainClient()
-climbers = [player1, player2, player3, player4]
-
-directions = {}
-directions[player1.name] = {'x': 12, 'y': 14000, 'z': -14109979074.0, 'inclinacion_x': -503966.0, 'inclinacion_y': -503962.0, 'cima': False}
-directions[player2.name] = {'speed': 0, 'inclination': 0, 'direction': (0, 0)}
+climbers = [player1]
 
 
 cliente.add_team("LIFFT", [climber.name for climber in climbers])
-
-print(cliente.get_data())
-
 #{'LIFFT': {'facu': {'x': 14000, 'y': 14000, 'z': -14109979074.0, 'inclinacion_x': -503966.0, 'inclinacion_y': -503962.0, 'cima': False}
 
-cliente.next_iteration("LIFFT", directions)
-print("\n\n")
-print(cliente.get_data())
-#print(cliente.finish_registration())
+
+directions = {}
+
+
+directions[player1.name] = {'speed': 10, 'inclination': 0, 'direction': 3.15}
+
+print(cliente.finish_registration())
+while not cliente.is_over():
+    cliente.next_iteration("LIFFT", directions)
+    print(cliente.get_data())
+
+
+#REGISTER TEAM REGISTRATION NO ESTA VINCULADO CON NADA
 
 
 others_directions = {}  # Ver cómo extraer datos del servidor

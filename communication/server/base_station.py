@@ -98,6 +98,7 @@ class BaseStation:
                     directions[climber]['speed'] = min(max(0, directions[climber]['speed']), self.max_speed)
                 
                 self.next_directions[team][climber] = directions[climber]
+        
         return True
 
     def is_competition_ongoing(self) -> bool:
