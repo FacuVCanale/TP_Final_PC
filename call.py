@@ -7,3 +7,4 @@ parser.add_argument(
 args = parser.parse_args()
 
 ip, port = args.ip.split(':')
+#"LOCALHOST:8080"
