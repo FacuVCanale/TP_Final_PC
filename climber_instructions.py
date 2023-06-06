@@ -28,41 +28,29 @@ class Climbers:
         return speed
 
     @staticmethod
-    def update_direction(func):
+    def update_data(func, arg:str):
         @wraps(func)
         def wrapper(self, *args, **kwargs):
             result = func(self, *args, **kwargs)
-            directions[self.name]['direction'] = self.pos
+            if arg == 'direction':
+                val = self.direction
+            elif arg == 'speed':
+                val = self.speed
+            elif arg == 'inclination':
+                val = self.inclination
+            directions[self.name][arg] = val
             return result
         return wrapper
 
-    @staticmethod
-    def update_inclination(func):
-        @wraps(func)
-        def wrapper(self, *args, **kwargs):
-            result = func(self, *args, **kwargs)
-            directions[self.name]['inclination'] = self.inclination
-            return result
-        return wrapper
-
-    @staticmethod
-    def update_speed(func):
-        @wraps(func)
-        def wrapper(self, *args, **kwargs):
-            result = func(self, *args, **kwargs)
-            directions[self.name]['speed'] = self.speed
-            return result
-        return wrapper
-
-    @update_direction
+    @update_data
     def change_pos(self, new_pos):
         self.pos = new_pos
 
-    @update_speed
+    @update_data
     def change_speed(self, new_speed):
         self.speed = new_speed
 
-    @update_inclination
+    @update_data
     def change_inclination(self, new_inclination):
         self.inclination = new_inclination
 
@@ -102,8 +90,8 @@ directions[player1.name] = {'speed': 0, 'inclination': 0, 'direction': (0, 0)}
 directions[player2.name] = {'speed': 0, 'inclination': 0, 'direction': (0, 0)}
 
 # Cambiar la posición del jugador 1 y actualizar la dirección en el diccionario
-player1.change_pos((1, 2))
+player1.change_pos((1, 2),'pos')
 
 # Cambiar la velocidad del jugador 2 y actualizar la velocidad en el diccionario
-player2.change_speed(30)
+player2.change_speed(30,'speed')
  """
