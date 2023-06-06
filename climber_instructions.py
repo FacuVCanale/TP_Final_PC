@@ -49,22 +49,21 @@ cliente = MountainClient()
 climbers = [player1, player2, player3, player4]
 
 directions = {}
-speeds = [30, 20, 10, 4] # son las nuevas velocidades dependiendo de la estrategia. A IMPLEMENTAR
-inclinations = [5, 12, 23, 12]
-positions = [(1, 2), (3, 4), (5, 3), (6, 4)]
+directions[player1.name] = {'x': 12, 'y': 14000, 'z': -14109979074.0, 'inclinacion_x': -503966.0, 'inclinacion_y': -503962.0, 'cima': False}
+directions[player2.name] = {'speed': 0, 'inclination': 0, 'direction': (0, 0)}
 
-for index, climber in enumerate(climbers):
-    speed = speeds[index]
-    inclination = inclinations[index]
-    direction = positions[index]
-
-    directions[climber.name] = {'speed': speed, 'inclination': inclination, 'direction': direction}
 
 cliente.add_team("LIFFT", [climber.name for climber in climbers])
+
 print(cliente.get_data())
 
+#{'LIFFT': {'facu': {'x': 14000, 'y': 14000, 'z': -14109979074.0, 'inclinacion_x': -503966.0, 'inclinacion_y': -503962.0, 'cima': False}
+
 cliente.next_iteration("LIFFT", directions)
-print(cliente.finish_registration())
+print("\n\n")
+print(cliente.get_data())
+#print(cliente.finish_registration())
+
 
 others_directions = {}  # Ver cómo extraer datos del servidor
 
@@ -73,9 +72,7 @@ others_directions = {}  # Ver cómo extraer datos del servidor
 """ player1 = Climbers({'name': "facu", 'pos': (0, 0)})
 player2 = Climbers({'name': "fran", 'pos': (0, 0)})
 
-directions = {}
-directions[player1.name] = {'speed': 0, 'inclination': 0, 'direction': (0, 0)}
-directions[player2.name] = {'speed': 0, 'inclination': 0, 'direction': (0, 0)}
+
 
 # Cambiar la posición del jugador 1 y actualizar la dirección en el diccionario
 player1.change_pos((1, 2),'pos')
