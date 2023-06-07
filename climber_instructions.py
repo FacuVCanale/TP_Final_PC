@@ -56,18 +56,34 @@ cliente.add_team("LIFFT", [climber.name for climber in climbers])
 directions = {}
 
 
-directions[player1.name] = {'speed': 10, 'inclination': 0, 'direction': 3.15}
+directions[player1.name] = {'speed': 10, 'inclination': 0, 'direction': 45}
 
 print(cliente.finish_registration())
+coord_set = set()  # Conjunto para realizar un seguimiento de las coordenadas únicas
+
 while not cliente.is_over():
+    time.sleep(2)
     cliente.next_iteration("LIFFT", directions)
-    print(cliente.get_data())
+    info = cliente.get_data()
+
+    with open('coordenadas.txt', 'a') as file:
+        for team in info.values():
+            for climber in team.values():
+                x = climber['x']
+                y = climber['y']
+                z = climber['z']
+                coord = (x, y, z)
+                if coord not in coord_set:
+                    line = f"{x} {y} {z}\n"
+                    file.write(line)
+                    coord_set.add(coord)
+
+    directions[player1.name]['direction'] +=1
+    print(directions[player1.name]['direction'])
+    print(info)
 
 
-#REGISTER TEAM REGISTRATION NO ESTA VINCULADO CON NADA
 
-
-others_directions = {}  # Ver cómo extraer datos del servidor
 
 #LEER - EJEMPLO DE USO
 
