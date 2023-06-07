@@ -1,5 +1,5 @@
 import time
-
+import random
 from communication.client.client import MountainClient
 
 """ 
@@ -62,7 +62,7 @@ print(cliente.finish_registration())
 coord_set = set()  # Conjunto para realizar un seguimiento de las coordenadas únicas
 
 while not cliente.is_over():
-    time.sleep(2)
+    time.sleep(5)
     cliente.next_iteration("LIFFT", directions)
     info = cliente.get_data()
 
@@ -78,7 +78,8 @@ while not cliente.is_over():
                     file.write(line)
                     coord_set.add(coord)
 
-    directions[player1.name]['direction'] +=1
+    directions[player1.name]['direction'] += random.choice([i for i in range(120)])
+    
     print(directions[player1.name]['direction'])
     print(info)
 
