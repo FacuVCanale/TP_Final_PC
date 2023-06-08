@@ -7,6 +7,7 @@ s = MountainServer(EasyMountain(1,23000),(0,0),50)
 subprocess.Popen(['python', 'climber_instructions.py'])
 
 
+
 s.start()
 
 
