@@ -1,7 +1,11 @@
 import random
 import time
 from equipos import team1,team2,cliente # peres, facu
+import subprocess
+import os
 
+file_path = os.path.join('/Users/juanfra/Documents/Facultad/Pensamiento computacional/TP_Final_PC', 'interfaz.py')
+subprocess.Popen(['python3', file_path])
 
 
 directions_peres,juanma = team1()
