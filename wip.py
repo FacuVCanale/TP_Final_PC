@@ -28,7 +28,9 @@ def random_function_creator(base_radius):
     for _ in range(num_functions):
         # Generar coeficientes aleatorios para cada función
         coefficients = [random.uniform(-10, 10) for _ in range(6)]
-        functions.append(coefficients)
+        x_range = (random.uniform(-self.base_radius, self.base_radius), random.uniform(-self.base_radius, self.base_radius))
+        y_range = (random.uniform(-self.base_radius, self.base_radius), random.uniform(-self.base_radius, self.base_radius))
+        functions.append((coefficients, x_range, y_range))
     
     def random_function(x: float, y: float) -> float:
         x = x / base_radius * 5
@@ -36,9 +38,10 @@ def random_function_creator(base_radius):
         x = x - 5
         y = y - 5
         f = 0
-        for coefficients in functions:
+        for coefficients, x_range, y_range in functions:
             a, b, c, d, e, f_const = coefficients
-            f += a * math.sin(b * (x + c)) + d * math.cos(e * (y + f_const))
+            if x_range[0] <= x <= x_range[1] and y_range[0] <= y <= y_range[1]:
+                f += a * math.sin(b * (x + c)) + d * math.cos(e * (y + f_const))
         return -f
 
     return random_function
@@ -50,7 +53,9 @@ def random_gradient_function_creator(base_radius):
     for _ in range(num_functions):
         # Generar coeficientes aleatorios para cada función
         coefficients = [random.uniform(-10, 10) for _ in range(6)]
-        functions.append(coefficients)
+        x_range = (random.uniform(-self.base_radius, self.base_radius), random.uniform(-self.base_radius, self.base_radius))
+        y_range = (random.uniform(-self.base_radius, self.base_radius), random.uniform(-self.base_radius, self.base_radius))
+        functions.append((coefficients, x_range, y_range))
     
     def random_function_gradient(x: float, y: float) -> Tuple[float, float]:
         x = x / base_radius * 5
@@ -59,10 +64,11 @@ def random_gradient_function_creator(base_radius):
         y = y - 5
         dfdx = 0
         dfdy = 0
-        for coefficients in functions:
+        for coefficients, x_range, y_range in functions:
             a, b, c, d, e, f_const = coefficients
-            dfdx += a * b * math.cos(b * (x + c))
-            dfdy += -d * e * math.sin(e * (y + f_const))
+            if x_range[0] <= x <= x_range[1] and y_range[0] <= y <= y_range[1]:
+                dfdx += a * b * math.cos(b * (x + c))
+                dfdy += -d * e * math.sin(e * (y + f_const))
         return -dfdx, -dfdy
 
     return random_function_gradient
