@@ -9,10 +9,8 @@ class Climbers:
     def normalize_distance(self, v, w):
         return ((w[0] - v[0]) ** 2 + (w[1] - v[1]) ** 2) ** 0.5
 
-    def calculate_correct_speed(self, target):
-        distance = self.normalize_distance(self.pos, target)
-        speed = distance / 1  # segundos (a implementar)
-        return speed
+    def calculate_correct_direction(self, target):
+        pass
 
     def change_pos(self, new_pos):
         self.pos = new_pos

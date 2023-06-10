@@ -4,8 +4,6 @@ from equipos import team1,team2,cliente # peres, facu
 import subprocess
 import os
 
-file_path = os.path.join('/Users/juanfra/Documents/Facultad/Pensamiento computacional/TP_Final_PC', 'interfaz.py')
-subprocess.Popen(['python3', file_path])
 
 
 directions_peres,juanma = team1()
@@ -14,10 +12,10 @@ cliente.finish_registration()
 
 coord_set = set()
 while not cliente.is_over():
-    
+    time.sleep(5)
     info = cliente.get_data() #{'LIFFT': {'facu': {'x': 14000, 'y': 14000, 'z': -14109979074.0, 'inclinacion_x': -503966.0, 'inclinacion_y': -503962.0, 'cima': False}
     print(info)
-    time.sleep(1)
+    
     cliente.next_iteration("EQUIPO_PERES", directions_peres) 
     #time.sleep(5)
     cliente.next_iteration("LIFFT", directions_lift) #VER POR QUE FACU FALLECE Y NO SE PRINTEA EN GET.DATA(), ES DECIR, NO APARECE EN EL SV. 
