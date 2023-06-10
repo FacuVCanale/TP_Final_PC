@@ -1,7 +1,6 @@
-"""DO NOT MODIFY THIS FILE"""
-import sys
+import math
+
 class Mountain:
-    """STUDENTS: DO NOT USE THIS CLASS"""
     def __init__(self, function, df, flag, visual_radius) -> None:
         self.surface = function
         self.inclination = df
@@ -15,9 +14,7 @@ class Mountain:
         return self.inclination(x, y)
     
     def see_flag(self, x: float, y: float) -> bool:
-        if ((x-self.flag[0])**2 + (y-self.flag[1])**2) < self.visual_radius**2:
-            sys.exit(0)
-        else:
-            return False
+        return ((x-self.flag[0])**2 + (y-self.flag[1])**2) < self.visual_radius**2
+    
     def is_out_of_bounds(self, x, y):
         raise NotImplementedError("This method should be implemented by a subclass")

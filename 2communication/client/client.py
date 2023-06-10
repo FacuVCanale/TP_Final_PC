@@ -19,45 +19,33 @@ class MountainClient:
         self.port = port
 
 
-    def add_team(self, team_name: str, hikers_names: List[str]) -> bool:
+    def add_team(self, team_name: str, climbers_names: List[str]) -> bool:
         """Sends the add_team command to the MountainServer.
 
         Args:
             team_name (str): The name of the team.
-            hikers_names (List[str]): The names of the hikers.
+            climbers_names (List[str]): The names of the climbers.
 
         Returns:
             bool: True if the team was added successfully, False otherwise.
-
-        Example:
-            >>> client.add_team('team1', ['hiker1', 'hiker2'])
-            True
         """
-        data = {'command': 'add_team', 'team': team_name, 'hikers': hikers_names}
+        data = {'command': 'add_team', 'team': team_name, 'climbers': climbers_names}
         data = json.dumps(data) 
         ans = self._socket_send(data)
         return ans == 'True'
 
-    def next_iteration(self, team: str, directives: dict) -> bool:
-        """Sends the directions the hikers will follow.
+    def next_iteration(self, team: str, directions: dict) -> bool:
+        """Sends the directions the climbers will follow.
 
         Args:
             team (str): The name of the team.
-            directives (dict): A dictionary containing the directions and speeds of each hiker.
+            directions (dict): The directions the climbers will follow. Key: climber name, value: direction.
 
         Returns:
             bool: True if the directions were communicated successfully, False otherwise.
-
-        Example:
-            directives = {
-                'hiker1': {'direction': 0, 'speed': 50},
-                'hiker2': {'direction': 3.14, 'speed': 50}
-            }
-            >>> client.next_iteration('team1', directives)
-            True
         """
 
-        data = {'command': 'walk', 'team': team, 'directions': directives}
+        data = {'command': 'walk', 'team': team, 'directions': directions}
         data = json.dumps(data) 
         ans = self._socket_send(data)
         return ans == 'True'
@@ -67,11 +55,6 @@ class MountainClient:
 
         Returns:
             bool: True if the registration was finished successfully, False otherwise.
-        
-        Example:
-            >>> client.add_team('team1', ['hiker1', 'hiker2'])
-            >>> client.finish_registration()
-            True
         """
 
         data = {'command': 'end_registration'}
@@ -79,44 +62,11 @@ class MountainClient:
         ans = self._socket_send(data)
         return ans == 'True'
     
-    def get_data(self): #-> dict[str, dict[str, dict[str, float]]]:
+    def get_data(self) -> dict:
         """Sends the get_data command to the MountainServer.
 
         Returns:
-            dict: The data of each hiker.
-
-        Example:
-            >>> client.get_data()
-            {
-                'team1': {
-                    'hiker1.1': {
-                        'x': 0,
-                        'y': 0,
-                        'z': 0,
-                        'inclinacion_x': 0,
-                        'inclinacion_y': 0,
-                        'cima': False
-                    },
-                    'hiker1.2': {
-                        'x': 0,
-                        'y': 0,
-                        'z': 0,
-                        'inclinacion_x': 0,
-                        'inclinacion_y': 0,
-                        'cima': False
-                    }
-                },
-                'team2': {
-                    'hiker2.1': {
-                        'x': 0,
-                        'y': 0,
-                        'z': 0,
-                        'inclinacion_x': 0,
-                        'inclinacion_y': 0,
-                        'cima': False
-                    }
-                }
-            }
+            dict: The data of each climber.
         """
 
         data = {'command': 'get_data'}
@@ -130,29 +80,9 @@ class MountainClient:
 
         Returns:
             bool: True if the competition is over, False otherwise.
-
-        Example:
-            >>> client.is_over()
-            False
         """
 
         data = {'command': 'is_over'}
-        data = json.dumps(data) 
-        ans = self._socket_send(data)
-        return ans == 'True'
-    
-    def is_registering_teams(self) -> bool:
-        """Sends the is_registering_teams command to the MountainServer.
-
-        Returns:
-            bool: True if the registration is still open, False otherwise.
-
-        Example:
-            >>> client.is_registering_teams()
-            True
-        """
-
-        data = {'command': 'is_registering_teams'}
         data = json.dumps(data) 
         ans = self._socket_send(data)
         return ans == 'True'
@@ -180,16 +110,10 @@ class MountainClient:
             last_received = False
             received = ""
             while not last_received:
-                b = s.recv(1024)
-                
-                if b == b'':
+                chunk = str(s.recv(4096), "utf-8")
+                received += chunk
+                if len(chunk) < 4096:
                     last_received = True
-                else:
-                    
-                    chunk = str(b, "utf-8")
-                    received += chunk
             logger.debug(f"Received data: {received}")
-            s.close()
-
         return received
 

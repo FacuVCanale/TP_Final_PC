@@ -1,10 +1,6 @@
-"""DO NOT MODIFY THIS FILE"""
-
 from communication.server.mountain.mountain import Mountain
 
 class CircularBaseMountain(Mountain):
-    """STUDENTS: DO NOT USE THIS CLASS"""
-
     def __init__(self, function, df, flag, visual_radius, base_radius) -> None:
         super().__init__(function, df, flag, visual_radius)
         self.base_radius = base_radius

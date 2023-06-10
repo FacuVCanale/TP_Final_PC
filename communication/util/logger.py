@@ -1,7 +1,13 @@
 import logging
+from communication.util.logger_formatter import CustomFormatter
 
-logging.basicConfig(format='%(levelname)s: %(asctime)s - %(message)s')
+logger_level = logging.INFO # Change to logging.DEBUG to see debug messages
 
+""" DO NOT MODIFY THIS UNDER THIS LINE """
 logger = logging.getLogger('logger')
-logger.setLevel(logging.INFO)
-
+if len(logger.handlers) == 0:
+    logger.setLevel(logger_level)
+    sh = logging.StreamHandler()
+    sh.setLevel(logger_level)
+    sh.setFormatter(CustomFormatter())
+    logger.addHandler(sh)

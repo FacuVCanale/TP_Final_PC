@@ -1,8 +1,12 @@
+"""DO NOT MODIFY THIS FILE"""
+
 from communication.server.mountain.mountain import Mountain
 from typing import List
 import math
 import threading
 import time
+
+from communication.util.logger import logger
 
 class BaseStation:
     
@@ -16,14 +20,15 @@ class BaseStation:
         self.max_speed = max_speed
         self.teams = {}
         self.next_directions = {}
+        self.minutes_passed = 0
 
-    def add_team(self, team: str, climbers: List[str]) -> bool:
+    def add_team(self, team: str, hikers: List[str]) -> bool:
         """
         Adds a team to the competition.
 
         Args:
             team (str): the team name.
-            climbers (List[str]): a list of climbers.
+            hikers (List[str]): a list of hikers.
 
         Returns:
             bool: True if the team was added successfully.
@@ -32,13 +37,15 @@ class BaseStation:
             RuntimeError: if the competition is not in the 'registering_teams' state.
         """
         if self.state != 'registering_teams':
-            raise RuntimeError('The competition is not in the registering_teams state. Current state: ' + self.state)
+            msg = 'The competition is not in the registering_teams state. Current state: ' + self.state
+            logger.warn(msg)
+            raise RuntimeError(msg)
        
         self.teams[team] = {}
         base_pos = (self.base_position[0], self.base_position[1], self.mountain.get_height(self.base_position[0], self.base_position[1]))
         inclination = self.mountain.get_inclination(self.base_position[0], self.base_position[1])
-        for climber in climbers:
-            self.teams[team][climber] = {
+        for hiker in hikers:
+            self.teams[team][hiker] = {
                 'x': base_pos[0], 
                 'y': base_pos[1], 
                 'z': base_pos[2], 
@@ -46,6 +53,7 @@ class BaseStation:
                 'inclinacion_y': inclination[1], 
                 'cima': False
             }
+        logger.info('Team ' + team + ' added to the competition. Hikers: ' + str(hikers) + '.')
         return True
     
     def finish_team_registration(self) -> bool:
@@ -59,12 +67,22 @@ class BaseStation:
             RuntimeError: if the competition is not in the 'registering_teams' state.
         """
         if self.state != 'registering_teams':
-            raise RuntimeError('The competition is not in the registering_teams state. Current state: ' + self.state)
+            msg = 'The competition is not in the registering_teams state. Current state: ' + self.state
+            logger.warn(msg)
+            raise RuntimeError(msg)
         self.state = 'waiting_for_directions'
-        self.thread = threading.Thread(target = self._check_timeout)
         self.timer = time.time()
+        self.thread = threading.Thread(target = self._check_timeout)
         self.thread.start()
+        logger.info('Team registration finished.')
         return True
+    
+    def is_registering_teams(self) -> bool:
+        """Check if the competition is registering teams.
+        
+        Returns:
+            bool: True if the competition is registering teams, False otherwise."""
+        return self.state == 'registering_teams'
 
     def register_team_directions(self, team: str, directions: dict) -> bool:
         """
@@ -73,7 +91,7 @@ class BaseStation:
         Args:
             team (str): the team name.
             directions (dict): a dictionary containing the directions of each
-            climber.
+            hiker.
             
         Returns:
             bool: True if the directions were registered successfully.
@@ -81,23 +99,41 @@ class BaseStation:
         Raises:
             RuntimeError: if the competition is not in the 'waiting_for_directions'
             state or if the competition is over.
+            ValueError: if the directions dictionary is not well formed.
         """
+        msg = ''
         if not self.is_competition_ongoing():
-            raise RuntimeError('The competition is already over.')
+            msg = 'The competition is already over.'
         elif self.state != 'waiting_for_directions':
-            raise RuntimeError('The competition is not in the waiting_for_directions state. Current state: ' + self.state)
+            msg = 'The competition is not in the waiting_for_directions state. Current state: ' + self.state
         elif team not in self.teams:
-            raise RuntimeError('The team ' + team + ' is not registered.')
+            msg = 'The team ' + team + ' is not registered.'
+       
+        if msg:
+            logger.warn(msg)
+            raise RuntimeError(msg)
         
         self.next_directions[team] = {}
-        for climber in directions:
-            if climber not in self.teams[team]:
-                raise RuntimeError('The climber ' + climber + ' is not in the team ' + team)
+        for hiker in directions:
+            msg = ''
+            if hiker not in self.teams[team]:
+                msg = 'The hiker ' + hiker + ' is not in the team ' + team + '.'
+            elif type(directions[hiker]) != dict:
+                msg = 'The sent dictionary is malformed.'
+            elif 'speed' not in directions[hiker]:
+                msg = 'The hiker ' + hiker + ' of the team ' + team + ' did not receive speed.'
+            elif 'direction' not in directions[hiker]:
+                msg = 'The hiker ' + hiker + ' of the team ' + team + ' did not receive direction.'
+            
+            if msg:
+                logger.warn(msg)
+                raise ValueError(msg)
             else:
-                if directions[climber]['speed'] > self.max_speed:
-                    directions[climber]['speed'] = min(max(0, directions[climber]['speed']), self.max_speed)
+                if directions[hiker]['speed'] > self.max_speed:
+                    directions[hiker]['speed'] = min(max(0, directions[hiker]['speed']), self.max_speed)
                 
-                self.next_directions[team][climber] = directions[climber]
+                self.next_directions[team][hiker] = directions[hiker]
+        logger.debug('Team ' + team + ' sent directions: ' + str(directions) + '.')
         return True
 
     def is_competition_ongoing(self) -> bool:
@@ -110,93 +146,135 @@ class BaseStation:
         
         every_team_in_summit = True
         for team in list(self.teams.keys()):
-            all_climbers_in_summit = True
-            for climber in self.teams[team]:
-                all_climbers_in_summit = all_climbers_in_summit and self.teams[team][climber]['cima']
-            every_team_in_summit = every_team_in_summit and all_climbers_in_summit
+            all_hikers_in_summit = True
+            for hiker in self.teams[team]:
+                all_hikers_in_summit = all_hikers_in_summit and self.teams[team][hiker]['cima']
+            every_team_in_summit = every_team_in_summit and all_hikers_in_summit
 
         if every_team_in_summit:
             self.state = 'over'
+            logger.info('Competition is over. Every (not disqualified) team reached the summit.')
             return False
         return True
 
     def get_data(self) -> dict:
-        """Get the data of the climbers.
+        """Get the data of the hikers.
 
         Returns:
-            dict: a dictionary containing the data of the climbers.
+            dict: a dictionary containing the data of the hikers.
         """
+        logger.debug('Sending data: ' + str(self.teams) + '.')
         return self.teams
+    
+    def get_minutes_passed(self) -> int:
+        """Get the minutes passed since the competition started.
+        
+        Returns:
+            int: the minutes passed since the competition started."""
+        return self.minutes_passed
+
+    def _set_server(self, server):
+        self.server = server
 
     def _check_timeout(self) -> None:
         """
-        Move the climbers if the timeout is reached or all teams have sent their directions.
+        Move the hikers if the timeout is reached or all teams have sent their directions.
         """
         while self.is_competition_ongoing():
             while (time.time() - self.timer < self.TIMEOUT) and (self.teams.keys() != self.next_directions.keys()):
                 time.sleep(self.CHECK_DELAY)
-            self._move_climbers()
+            if self.teams.keys() == self.next_directions.keys():
+                logger.debug('All teams sent directions.')
+            else:
+                logger.info(f'Timeout ({self.TIMEOUT} s) reached.')
+            self._move_hikers()
+        logger.info('Closing server.')
+        time.sleep(5)
+        self.server.shutdown()
+        self.server.server_close()
                                      
-    def _move_climbers(self) -> None:
+    def _move_hikers(self) -> None:
         """
-        Process the received directions and move the climbers.
+        Process the received directions and move the hikers.
         """
         if self.is_competition_ongoing():
             self.state = 'moving'
 
             for team in self.next_directions:
-                for climber in self.next_directions[team]:
-                    if not self.teams[team][climber]['cima']:
-                        self.teams[team][climber] = self._calculate_new_position(
-                            (self.teams[team][climber]['x'], self.teams[team][climber]['y']), 
-                            self.next_directions[team][climber]['direction'],
-                            self.next_directions[team][climber]['speed']
+                for hiker in self.next_directions[team]:
+                    if not self.teams[team][hiker]['cima']:
+                        self.teams[team][hiker] = self._calculate_new_position(
+                            (self.teams[team][hiker]['x'], self.teams[team][hiker]['y']), 
+                            self.next_directions[team][hiker]['direction'],
+                            self.next_directions[team][hiker]['speed']
                         )
+                        if self.teams[team][hiker]['cima']:
+                            logger.info('Hiker ' + hiker + ' of team ' + team + ' reached the summit. Time taken: ' + \
+                                    str(self.minutes_passed) + ' minutes.')
 
-            self._disqualify_missing_climbers()
+            self._disqualify_missing_hikers()
             self.next_directions = {}
+            self.minutes_passed += 1
             self.state = 'waiting_for_directions'
+            logger.debug('Hikers moved.')
+            if self.minutes_passed % 60 == 0:
+                remaining_hikers = 0
+                for team in self.teams:
+                    for hiker in self.teams[team]:
+                        if not self.teams[team][hiker]['cima']:
+                            remaining_hikers += 1
+
+                logger.info(f'{self.minutes_passed} minutes of competition passed. Remaining hikers: ' + \
+                            f'{remaining_hikers}.')
             self.timer = time.time()
 
-    def _disqualify_missing_climbers(self) -> None:
+    def _disqualify_missing_hikers(self) -> None:
         """
-        Disqualify climbers whose team has not sent directions or are out of bounds.
-        Climbers that have reached the summit are not disqualified.
+        Disqualify hikers whose team has not sent directions or are out of bounds.
+        hikers that have reached the summit are not disqualified.
         """
         for team in list(self.teams.keys()): # list() is used to avoid RuntimeError: dictionary changed size during iteration
-            if not self._are_all_team_climbers_in_summit(team):
+            if not self._are_all_team_hikers_in_summit(team):
                 if team not in self.next_directions:
                     del self.teams[team]
+                    logger.info('Team ' + team + ' was disqualified because it did not send directions.')
                 else:
-                    for climber in list(self.teams[team].keys()):
-                        self._disqualify_climber_if_missing(team, climber)
+                    for hiker in list(self.teams[team].keys()):
+                        self._disqualify_hiker_if_missing(team, hiker)
                         
-    def _are_all_team_climbers_in_summit(self, team: str) -> bool:
-        are_all_team_climbers_in_summit = True
-        climber_idx = 0
-        climbers = list(self.teams[team].keys())
-        while are_all_team_climbers_in_summit and climber_idx < len(climbers):
-            climber = climbers[climber_idx]
-            are_all_team_climbers_in_summit = are_all_team_climbers_in_summit and self.teams[team][climber]['cima']
-            climber_idx += 1
-        return are_all_team_climbers_in_summit
+    def _are_all_team_hikers_in_summit(self, team: str) -> bool:
+        are_all_team_hikers_in_summit = True
+        hiker_idx = 0
+        hikers = list(self.teams[team].keys())
+        while are_all_team_hikers_in_summit and hiker_idx < len(hikers):
+            hiker = hikers[hiker_idx]
+            are_all_team_hikers_in_summit = are_all_team_hikers_in_summit and self.teams[team][hiker]['cima']
+            hiker_idx += 1
+        return are_all_team_hikers_in_summit
 
-    def _disqualify_climber_if_missing(self, team:str, climber: str) -> None:
-        if not self.teams[team][climber]['cima']:
-            if (climber not in self.next_directions[team]) or self._is_out_of_bounds(self.teams[team][climber]):
-                del self.teams[team][climber]
-                if len(self.teams[team]) == 0:
-                    del self.teams[team]
+    def _disqualify_hiker_if_missing(self, team:str, hiker: str) -> None:
+        if not self.teams[team][hiker]['cima']:
+            if (hiker not in self.next_directions[team]):
+                logger.info(self.next_directions)
+                del self.teams[team][hiker]
+                logger.info('Hiker ' + hiker + ' of team ' + team + ' was disqualified because it did not send directions.')
+            elif self._is_out_of_bounds(self.teams[team][hiker]):
+                del self.teams[team][hiker]
+                logger.info('Hiker ' + hiker + ' of team ' + team + ' was disqualified because it is out of bounds.')
+
+            if len(self.teams[team]) == 0:
+                del self.teams[team]
+                logger.info('Team ' + team + ' was disqualified because it has no hikers left.')
            
-    def _is_out_of_bounds(self, climber: dict) -> bool:
-        """Check if a climber is out of bounds.
+    def _is_out_of_bounds(self, hiker: dict) -> bool:
+        """Check if a hiker is out of bounds.
         
         Args:
-            climber (dict): a dictionary containing the climber's data.
+            hiker (dict): a dictionary containing the hiker's data.
             
         Returns:
-            bool: True if the climber is out of bounds, False otherwise."""
-        return self.mountain.is_out_of_bounds(climber['x'], climber['y'])
+            bool: True if the hiker is out of bounds, False otherwise."""
+        return self.mountain.is_out_of_bounds(hiker['x'], hiker['y'])
 
     def _calculate_new_position(self, curr_pos: tuple, angle: float, speed: float) -> dict:
         x = curr_pos[0] + speed * math.cos(angle)
