@@ -15,9 +15,8 @@ while not cliente.is_over():
     time.sleep(5)
     info = cliente.get_data() #{'LIFFT': {'facu': {'x': 14000, 'y': 14000, 'z': -14109979074.0, 'inclinacion_x': -503966.0, 'inclinacion_y': -503962.0, 'cima': False}
     print(info)
-    
     cliente.next_iteration("EQUIPO_PERES", directions_peres) 
-    #time.sleep(5)
+
     cliente.next_iteration("LIFFT", directions_lift) #VER POR QUE FACU FALLECE Y NO SE PRINTEA EN GET.DATA(), ES DECIR, NO APARECE EN EL SV. 
     with open('coordenadas.txt', 'a') as file:
         for team in info.values():
