@@ -1,6 +1,7 @@
-import math
+"""DO NOT MODIFY THIS FILE"""
 
 class Mountain:
+    """STUDENTS: DO NOT USE THIS CLASS"""
     def __init__(self, function, df, flag, visual_radius) -> None:
         self.surface = function
         self.inclination = df

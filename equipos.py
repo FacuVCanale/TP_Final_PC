@@ -28,11 +28,7 @@ def team1():
 
     climber2 = [player]
     cliente.add_team("EQUIPO_PERES",[climber.name for climber in climber2])
-    
+    cliente.finish_registration()
 
 
     return directions2,  player.name
-
-
-  
-

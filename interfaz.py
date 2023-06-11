@@ -19,6 +19,8 @@ class Dashboard:
         self.time_step = 500  # ms
         self.animations = []  # for animations to stay alive in memory
         self.figsize = (4.5, 3)
+        self.highest_climber_label = Label(self.root, text="")
+        self.highest_climber_label.pack()
 
         # Crear un marco para mostrar el gráfico
         self.plot_frame = Frame(self.root)
@@ -46,6 +48,7 @@ class Dashboard:
         while not self.client.is_over():
             self.data = self.client.get_data()
             self.update_plot()
+            self.update_highest_climber()  # Actualizar el escalador más alto
             time.sleep(self.time_step / 1000)
 
     def update_plot(self):
@@ -75,6 +78,22 @@ class Dashboard:
 
         self.fig.canvas.draw()
 
+    def update_highest_climber(self):
+        highest_climber = None
+        highest_altitude = float('-inf')
+
+        for team in self.data.values():
+            for climber_name, climber in team.items():
+                altitude = climber['z']
+                if altitude > highest_altitude:
+                    highest_climber = climber
+                    highest_altitude = altitude
+
+        if highest_climber is not None:
+            name = highest_climber.get('name', 'Unknown')
+            altitude = highest_climber['z']
+            self.highest_climber_label.config(text=f"Highest climber: {name} ({altitude})")
+
     def stop(self):
         # No modificar
         self.root.quit()
@@ -82,7 +101,7 @@ class Dashboard:
 
 if __name__ == "__main__":
     # No modificar
-    client = MountainClient('localhost', 8080)
+    client = MountainClient('34.16.147.147', 8080)
     d = Dashboard(client)
     d.visualization_example(plt.gca())
     d.start()
