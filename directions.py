@@ -2,14 +2,16 @@
 # codigo
 from communication.client.client import MountainClient
 from communication.util.logger import logger
+#from climbers import Climbers
+import time
 import random
 
 cliente = MountainClient("34.16.147.147",8080)
 
 
 directions ={}
-directions['facu'] = {'speed': 30, 'direction': 45}
-directions['lucas'] = {'speed': 10, 'direction': 50}
+directions['facu'] = {'speed': 1, 'direction': -2}
+directions['lucas'] = {'speed': 1, 'direction': -45}
 
 cliente.add_team("LIFFT",['facu','lucas'])
     
@@ -35,11 +37,8 @@ def mandar_data():
                         file.write(line)
                         coord_set.add(coord)
 
-        directions['facu']['direction'] += random.choice([i for i in range(300)])
-        directions['lucas']['direction'] += random.choice([i for i in range(200)])
+        directions['facu']['direction'] += random.choice([i for i in range(2)])
 
 mandar_data()
 data = cliente.get_data()
 print(data)
-
-

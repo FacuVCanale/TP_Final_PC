@@ -5,7 +5,7 @@ from typing import Tuple
 
 from communication.server.mountain.circularbase_mountain import CircularBaseMountain
 
-class MishraBirdMountain(CircularBaseMountain):
+class CustomMountain(CircularBaseMountain):
     """Fairly complex mountain modeled after the Mishra's Bird function. The most difficult mountain out of the three 
     examples.
     Args:
@@ -15,12 +15,7 @@ class MishraBirdMountain(CircularBaseMountain):
             considered out of bounds and disqualified.
     """
     def __init__(self, visual_radius: float, base_radius: float) -> None:
-        flag = [-3.1302468, -1.5821422]
-        flag[0] = flag[0] * base_radius / 5
-        flag[1] = flag[1] * base_radius / 5
-        flag[0] = flag[0] - 5
-        flag[1] = flag[1] - 5
-        flag = tuple(flag)
+        flag = (14000, 14000)
         super().__init__(mishra_bird_function_creator(base_radius), mishra_bird_gradient_function_creator(base_radius), flag, visual_radius, base_radius)
 
 

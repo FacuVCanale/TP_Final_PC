@@ -1,19 +1,10 @@
-"""DO NOT MODIFY THIS FILE"""
-
 import math
 from typing import Tuple
 
 from communication.server.mountain.circularbase_mountain import CircularBaseMountain
 
 class McCormickMountain(CircularBaseMountain):
-    """Fairly simple mountain modeled after the McCormick function. Medium-level mountain out of the three examples.
-    Args:
-        visual_radius (float): the radius of the visual area. If the hiker is at least this far from the flag, it will
-            be considered that he has reached the flag.
-        base_radius (float): the radius of the base of the mountain. If the hiker goes outside this radius, he will be
-            considered out of bounds and disqualified.
-    """
-    def __init__(self, visual_radius: float, base_radius: float) -> None:
+    def __init__(self, visual_radius, base_radius) -> None:
         flag = [-0.54719, -1.54719]
         flag[0] = flag[0] * base_radius / 5.5
         flag[1] = flag[1] * base_radius / 7
