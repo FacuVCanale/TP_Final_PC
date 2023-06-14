@@ -124,38 +124,6 @@ class MountainClient:
         ans = self._socket_send(data)
         ans = json.loads(ans)
         return ans
-    
-    def is_over(self) -> bool:
-        """Sends the is_over command to the MountainServer.
-
-        Returns:
-            bool: True if the competition is over, False otherwise.
-
-        Example:
-            >>> client.is_over()
-            False
-        """
-
-        data = {'command': 'is_over'}
-        data = json.dumps(data) 
-        ans = self._socket_send(data)
-        return ans == 'True'
-    
-    def is_registering_teams(self) -> bool:
-        """Sends the is_registering_teams command to the MountainServer.
-
-        Returns:
-            bool: True if the registration is still open, False otherwise.
-
-        Example:
-            >>> client.is_registering_teams()
-            True
-        """
-
-        data = {'command': 'is_registering_teams'}
-        data = json.dumps(data) 
-        ans = self._socket_send(data)
-        return ans == 'True'
 
     def _socket_send(self, data: str) -> str:
         """Sends the data to the server using a socket.
