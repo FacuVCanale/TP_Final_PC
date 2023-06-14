@@ -22,15 +22,18 @@ class MountainEnv(gymnasium.Env):
   """
   Minimal custom environment to demonstrate the Gym interface.
   """
-  def __init__(self, function:function, dxdy:function, base_pos:tuple=(14000, 14000), radius:float=23000., min_height:float=20., max_height:float=250., max_speed:float=50.):   # AGREGUÉ ARGUMENTOS PARA CUANDO LLAMEMOS A MOUNTAIN_ENV
+  def __init__(self, function:function, dxdy:function, flag:list=[1,3], visual_radius:float=50., base_pos:tuple=(14000, 14000), radius:float=23000., min_height:float=20., max_height:float=250., max_speed:float=50.):   # AGREGUÉ ARGUMENTOS PARA CUANDO LLAMEMOS A MOUNTAIN_ENV
     super().__init__()
     self.observation_space = gymnasium.spaces.Box(low=np.array([-1 * radius, -1 * radius, min_height, 0., 0., 0.], dtype='float32'), high=np.array([radius, radius, max_height, np.inf, np.inf, 1.], dtype='float32'), shape=(6,), dtype ="float32")
-    self.action_space = gymnasium.spaces.Box(low=np.array([0., 0.], dtype='float32'), high=np.array([2.*PI, 50.]), shape=(2,))
+    self.action_space = gymnasium.spaces.Box(low=np.array([0., 0.], dtype='float32'), high=np.array([2.*PI, max_speed]), shape=(2,))
     self._state = (base_pos[0], base_pos[1], self.function(base_pos[0], base_pos[1]), dxdy(base_pos[0], base_pos[1])[0], dxdy(base_pos[0], base_pos[1])[1])
     self._episode_ended = False
     self.function = function
     self.dxdy = dxdy
     self.base_pos = base_pos
+    self.radius = radius
+    self.flag = tuple(flag[0] * self.radius / 20, flag[1] * self.radius / 20)
+    self.visual_radius = visual_radius
 
   def reset(self, seed=0) -> Tuple[GymObs, dict]:
     """
@@ -59,9 +62,14 @@ class MountainEnv(gymnasium.Env):
   def _calculate_new_position(self, curr_pos: tuple, angle: float, speed: float) -> dict:
     x = curr_pos[0] + speed * math.cos(angle)
     y = curr_pos[1] + speed * math.sin(angle)
-    z = self.mountain.get_height(x, y)
-    summit = self.mountain.see_flag(x, y)
-    dx, dy = self.mountain.get_inclination(x, y)
+    z = self.function(x, y)
+    dx, dy = self.dxdy(x, y)
+    summit = self.see_flag(x, y)
+    return (x, y, z, dx, dy, summit)
+  
+  def see_flag(self, x, y):
+     return ((x-self.flag[0])**2 + (y-self.flag[1])**2) < self.visual_radius**2
+     
 
 env = MountainEnv()
 # Check your custom environment
@@ -145,8 +153,25 @@ class CircularBaseMountain(Mountain):
         return self.inclination(x, y)
     
     def see_flag(self, x: float, y: float) -> bool:
-        return ((x-self.flag[0])**2 + (y-self.flag[1])**2) < self.visual_radius**2
     
+        flag = [1, 3]
+        flag[0] = flag[0] * base_radius /20
+        flag[1] = flag[1] * base_radius /20
+        flag = tuple(flag)
+
+        summit = ((x-self.flag[0])**2 + (y-self.flag[1])**2) < self.visual_radius**2
+
+        data = {
+                'x': x, 
+                'y': y, 
+                'z': z, 
+                'inclinacion_x': dx, 
+                'inclinacion_y': dy, 
+                'cima': summit
+            }
+        return data
+"""
+"""   
     def is_out_of_bounds(self, x, y):
         return x**2 + y**2 > self.base_radius**2
 """
