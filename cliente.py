@@ -6,7 +6,7 @@ from climbers import Climbers
 import time
 import random
 
-cliente = MountainClient("34.16.147.147",8080)
+cliente = MountainClient("localhost",8080)
 
 
 directions ={}
@@ -21,6 +21,7 @@ coord_set = set()
 def mandar_data():
     while not cliente.is_over():
         info = cliente.get_data() #{'LIFFT': {'facu': {'x': 14000, 'y': 14000, 'z': -14109979074.0, 'inclinacion_x': -503966.0, 'inclinacion_y': -503962.0, 'cima': False}
+        
         print(info)
 
 

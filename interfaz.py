@@ -101,7 +101,12 @@ class Dashboard:
 
 if __name__ == "__main__":
     # No modificar
-    client = MountainClient('34.16.147.147', 8080)
+    client = MountainClient('localhost', 8080)
     d = Dashboard(client)
     d.visualization_example(plt.gca())
     d.start()
+
+
+#10.42.0.1 8888 LINAR
+
+#"34.16.147.147",8080 sv
