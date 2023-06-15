@@ -1,95 +1,83 @@
-import time
-import threading
+"""DO NOT MODIFY THIS FILE"""
+import random
+import math
+from typing import Tuple
+
+from communication.server.mountain.circularbase_mountain import CircularBaseMountain
+
+class MishraBirdMountain(CircularBaseMountain):
+    """Fairly complex mountain modeled after the Mishra's Bird function. The most difficult mountain out of the three 
+    examples.
+    Args:
+        visual_radius (float): the radius of the visual area. If the hiker is at least this far from the flag, it will
+            be considered that he has reached the flag.
+        base_radius (float): the radius of the base of the mountain. If the hiker goes outside this radius, he will be
+            considered out of bounds and disqualified.
+    """
+    def __init__(self, visual_radius: float, base_radius: float) -> None:
+        super().__init__(mishra_bird_function_creator(base_radius), mishra_bird_gradient_function_creator(base_radius), None, visual_radius, base_radius)
+        self.generate_random_flag(base_radius)
+
+    def generate_random_flag(self, base_radius: float) -> None:
+        flag = [random.uniform(-10, 10), random.uniform(-10, 10)]
+        flag[0] = flag[0] * base_radius / 5
+        flag[1] = flag[1] * base_radius / 5
+        flag[0] = flag[0] - 5
+        flag[1] = flag[1] - 5
+        self.flag = tuple(flag)
+
+
+def mishra_bird_function_creator(base_radius):
+    def mishra_bird_function(x: float, y: float) -> float:
+        x = x / base_radius * 5
+        y = y / base_radius * 5
+        x = x - 5
+        y = y - 5
+        f = math.sin(y) * math.exp((1-math.cos(x))**2) + math.cos(x) * math.exp((1-math.sin(y))**2) + (x-y)**2 - 100
+        return -f
+    return mishra_bird_function
+
+def mishra_bird_gradient_function_creator(base_radius):
+    def mishra_bird_function_gradient(x: float, y: float) -> Tuple[float, float]:
+        x = x / base_radius * 5
+        y = y / base_radius * 5
+        x = x - 5
+        y = y - 5
+        dfdx = 2*(x-y) + math.sin(y) * math.exp((1-math.cos(x))**2) * 2 * (1-math.cos(x)) * math.sin(x) - math.sin(x) * math.exp((1-math.sin(y))**2)
+        dfdy = 2*(y-x) - math.cos(x) * math.exp((1-math.sin(y))**2) * 2 * (1-math.sin(y)) * math.cos(y) + math.cos(y) * math.exp((1-math.cos(x))**2)
+        return -dfdx, -dfdy
+    return mishra_bird_function_gradient
+
 import matplotlib.pyplot as plt
-import mpl_toolkits.mplot3d.axes3d as p3
 import numpy as np
 
-from communication.client.client import MountainClient
+# Define the range of x and y values
+x = np.linspace(-10, 10, 100)
+y = np.linspace(-10, 10, 100)
 
-class Dashboard:
-    def __init__(self, client: MountainClient):
-        self.client = client
-        self.data = client.get_data()
-        self.time_step = 500  # ms
-        self.animations = []  # for animations to stay alive in memory
-        self.figsize = (4.5, 3)
-        self.highest_climber_label = None
+# Create a grid of x and y values
+X, Y = np.meshgrid(x, y)
 
-        # Configurar el gráfico
-        self.fig = plt.figure(figsize=self.figsize)
-        self.ax = self.fig.add_subplot(111, projection='3d')
-        self.scatter = None
+# Create an instance of the MishraBirdMountain class
+mountain = MishraBirdMountain(visual_radius=10, base_radius=10)
+mishra_bird_function = mishra_bird_function_creator(mountain.base_radius)
 
-    def visualization_example(self):
-        # Mostrar el gráfico en una ventana emergente
-        plt.show()
+# Calculate the function values for each point in the grid
+Z = np.zeros_like(X)
+for i in range(len(x)):
+    for j in range(len(y)):
+        Z[i, j] = mishra_bird_function(X[i, j], Y[i, j])
 
-    def start(self):
-        # No modificar
-        t = threading.Thread(target=self.update_data)
-        t.start()
+# Create a contour plot
+plt.figure(figsize=(8, 6))
+plt.contourf(X, Y, Z, levels=50, cmap='viridis')
+plt.colorbar()
 
-    def update_data(self):
-        # No modificar
-        while not self.client.is_over():
-            self.data = self.client.get_data()
-            self.update_plot()
-            self.update_highest_climber()  # Actualizar el escalador más alto
-            time.sleep(self.time_step / 1000)
+# Set labels and title
+plt.xlabel('x')
+plt.ylabel('y')
+plt.title("Mishra's Bird Mountain")
 
-    def update_plot(self):
-        x_values = []
-        y_values = []
-        z_values = []
+# Show the plot
+plt.show()
 
-        # Leer las coordenadas del archivo
-        with open('coordenadas.txt', 'r') as file:
-            for line in file:
-                x, y, z = map(float, line.strip().split())
-                x_values.append(x)
-                y_values.append(y)
-                z_values.append(z)
-
-        # Actualizar el gráfico con los nuevos datos
-        if self.scatter is None:
-            self.scatter = self.ax.scatter(x_values, y_values, z_values)
-        else:
-            self.scatter._offsets3d = (x_values, y_values, z_values)
-
-        self.ax.set_xlim(min(x_values), max(x_values))
-        self.ax.set_ylim(min(y_values), max(y_values))
-        self.ax.set_zlim(min(z_values), max(z_values))
-        self.scatter.set_array(z_values)
-        self.scatter.set_cmap('BrBG_r')
-
-        self.fig.canvas.draw()
-
-    def update_highest_climber(self):
-        highest_climber = None
-        highest_altitude = float('-inf')
-
-        for team in self.data.values():
-            for climber_name, climber in team.items():
-                altitude = climber['z']
-                if altitude > highest_altitude:
-                    highest_climber = climber
-                    highest_altitude = altitude
-
-        if highest_climber is not None:
-            name = highest_climber.get('name', 'Unknown')
-            altitude = highest_climber['z']
-            if self.highest_climber_label is None:
-                self.highest_climber_label = f"Highest climber: {name} ({altitude})"
-            else:
-                self.highest_climber_label.config(text=f"Highest climber: {name} ({altitude})")
-
-    def stop(self):
-        # No modificar
-        plt.close()
-
-if __name__ == "__main__":
-    # No modificar
-    client = MountainClient("34.16.147.147", 8080)
-    d = Dashboard(client)
-    d.visualization_example()
-    d.start()

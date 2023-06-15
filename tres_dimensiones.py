@@ -70,11 +70,11 @@ class Dashboard:
         else:
             self.scatter._offsets3d = (x_values, y_values, z_values)
 
-        self.ax.set_xlim(min(x_values), max(x_values))
-        self.ax.set_ylim(min(y_values), max(y_values))
+        self.ax.set_xlim(-23000, 23000)
+        self.ax.set_ylim(-23000, 23000)
         self.ax.set_zlim(min(z_values), max(z_values))
         self.scatter.set_array(z_values)
-        self.scatter.set_cmap('BrBG_r')
+        self.scatter.set_cmap('terrain')
 
         self.fig.canvas.draw()
 
@@ -101,7 +101,7 @@ class Dashboard:
 
 if __name__ == "__main__":
     # No modificar
-    client = MountainClient("34.16.147.147",8080)
+    client = MountainClient("34.16.147.147", 8080)
     d = Dashboard(client)
     d.visualization_example(plt.gca())
     d.start()
