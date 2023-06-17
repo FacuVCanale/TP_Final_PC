@@ -6,3 +6,7 @@ empezamos para ver si anda el workflow con algo mas sencillo
 vectorized invoroment
 que sea discreto
 kaggle ML
+
+los gustos de guille:
+1) boton para seguir equipo
+2) interfaz q muestre el modelo en 3d

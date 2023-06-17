@@ -79,7 +79,7 @@ class MountainClient:
         ans = self._socket_send(data)
         return ans == 'True'
     
-    def get_data(self) -> dict[str, dict[str, dict[str, float]]]:
+    def get_data(self):# -> dict[str, dict[str, dict[str, float]]]:
         """Sends the get_data command to the MountainServer.
 
         Returns:
