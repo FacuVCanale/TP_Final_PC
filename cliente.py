@@ -1,30 +1,41 @@
-#El nombre del equipo es CopNieve
-# codigo
 from communication.client.client import MountainClient
-from communication.util.logger import logger
-from climbers import Climbers
 import time
 import random
+import numpy as np
 
-cliente = MountainClient("localhost",8080)
+cliente = MountainClient("localhost", 8080)
 
+directions = {}
+escaladores = ['facu', 'lucas', 'juan', 'emilio', 'diana', 'raul', 'marta', 'roberto', 'valentina', 'sergio', 'laura', 'oscar']
 
-directions ={}
-directions['facu'] = {'speed': 30, 'direction': 45}
-directions['lucas'] = {'speed': 10, 'direction': 50}
+# Configurar las instrucciones para cada escalador
+angle_forward = np.deg2rad(30)  # Ángulo de avance hacia adelante
+angle_backward = np.deg2rad(150)  # Ángulo de avance hacia atrás
 
-cliente.add_team("LIFFT",['facu','lucas'])
-    
+for i, escalador in enumerate(escaladores):
+    speed = random.randint(10, 50)
+
+    if i < len(escaladores) // 2:
+        # Primer mitad de los escaladores va hacia adelante
+        direction = i * angle_forward
+    else:
+        # Segunda mitad de los escaladores va hacia atrás
+        direction = (i - len(escaladores) // 2) * angle_backward
+
+    directions[escalador] = {'speed': speed, 'direction': direction}
+
+cliente.add_team("CopNieve", escaladores)
 cliente.finish_registration()
 
 coord_set = set()
+
 def mandar_data():
     while not cliente.is_over():
-        info = cliente.get_data()  # {'LIFFT': {'facu': {'x': 14000, 'y': 14000, 'z': -14109979074.0, 'inclinacion_x': -503966.0, 'inclinacion_y': -503962.0, 'cima': False}}
-        time.sleep(4)
+        info = cliente.get_data()
+        time.sleep(2)
         print(info)
 
-        cliente.next_iteration("LIFFT", directions)  # VER POR QUE FACU FALLECE Y NO SE PRINTEA EN GET.DATA(), ES DECIR, NO APARECE EN EL SV.
+        cliente.next_iteration("CopNieve", directions)
         with open('coordenadas.tsv', 'a') as file:
             for team, climbers in info.items():
                 for climber, data in climbers.items():
@@ -37,11 +48,7 @@ def mandar_data():
                         file.write(line)
                         coord_set.add(coord)
 
-        directions['facu']['direction'] += random.choice([i for i in range(300)])
-        directions['lucas']['direction'] += random.choice([i for i in range(200)])
-
 mandar_data()
+
 data = cliente.get_data()
 print(data)
-
-
