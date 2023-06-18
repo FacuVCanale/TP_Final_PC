@@ -164,6 +164,7 @@ class BaseStation:
             dict: a dictionary containing the data of the hikers.
         """
         logger.debug('Sending data: ' + str(self.teams) + '.')
+        
         return self.teams
     
     def get_minutes_passed(self) -> int:
@@ -223,7 +224,6 @@ class BaseStation:
                     for hiker in self.teams[team]:
                         if not self.teams[team][hiker]['cima']:
                             remaining_hikers += 1
-
                 logger.info(f'{self.minutes_passed} minutes of competition passed. Remaining hikers: ' + \
                             f'{remaining_hikers}.')
             self.timer = time.time()
