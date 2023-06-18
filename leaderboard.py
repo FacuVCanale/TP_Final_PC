@@ -3,7 +3,7 @@
 from communication.client.client import MountainClient
 import random
 from teams import Team
-cliente = MountainClient("localhost",8080)
+cliente = MountainClient("34.16.147.147",8080)
 
 
 directions ={}
@@ -23,6 +23,7 @@ def mandar_data():
             tema = Team(info) #FALTA ESCALAR A MAS DE UN TEAM(OSEA FALTARIA LA CLASE "EQUIPOS" | "PARTIDA")
             for i in tema.get_players():
                 print(i)
+            print("\n")
         cliente.next_iteration("LIFFT", directions)
         directions['facu']['direction'] += random.choice([i for i in range(300)])
         directions['lucas']['direction'] += random.choice([i for i in range(200)])

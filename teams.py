@@ -13,7 +13,7 @@ class Team:
         temp = []
         cant = len(self.hikers)
         counter = 0
-        while counter < cant-1:
+        while counter <= cant-1:
             temp.append(self.hikers[counter].name)
-        return temp #NO FUNCIONA CORRECTAMENTE | FALTA UNA VUELTA DE TUERCA | SON LAS 5AM       
-        
+            counter += 1
+        return temp      
