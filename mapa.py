@@ -14,18 +14,17 @@ class Mapa_circular:
         x += self.circulo.filas // 2
         y = self.circulo.filas // 2 - y
 
-        self.circulo[y][x] = f"{chr(num_jugador)}"
-
-        #if type(flag) == bool:
-        #    self.circulo[y][x] = f"\033[92m{chr(num_jugador)}\033[0m"
-        #else:
-        #    self.circulo[y][x] = "\033[94m" + "chr(num_jugador)"+"\033[0m"
-        #no es compatible con archivos .txt
+        if type(flag) == bool:
+            self.circulo[y][x] = "\033[92m" + chr(num_jugador) +"\033[0m"
+        else:
+            self.circulo[y][x] = "\033[94m" + chr(num_jugador) +"\033[0m"
 
     def __repr__(self) -> str:
         return f"import circulo.py\n {self.circulo.str()}\n mapa = Mapa_circular(circle,1000)"
-    def __str__(self) -> str: #NOT WORKING
+    def __str__(self) -> str:
+        fil = len(self.circulo)
         result = ""
-        for fila in self.circulo:
-            result += " ".join(fila) + "\n"
+        for _ in range(fil):
+            linea = ' '.join(self.circulo[_])
+            result += linea + "\n"
         return result

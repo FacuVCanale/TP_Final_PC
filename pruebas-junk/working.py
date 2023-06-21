@@ -18,6 +18,6 @@ while True:
             mapa.agregar_pj((x, y), num_jugador,flag)
             num_jugador += 1
     time.sleep(1)
-    print(mapa)
+
 
     
