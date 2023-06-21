@@ -8,12 +8,11 @@ class Team:
                 player = Player(j, self.name, i)
                 self.hikers.append(player)
                 counter += 1
-        self.hikers.sort()
     def get_players(self):
         temp = []
         cant = len(self.hikers)
         counter = 0
         while counter <= cant-1:
-            temp.append(self.hikers[counter].name)
+            temp.append(self.hikers[counter])
             counter += 1
         return temp      

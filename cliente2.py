@@ -3,7 +3,7 @@
 from communication.client.client import MountainClient
 import random
 import csv
-cliente = MountainClient("34.16.147.147",8080)
+cliente = MountainClient("localhost",8080)
 
 
 directions ={}

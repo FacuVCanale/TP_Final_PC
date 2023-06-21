@@ -43,6 +43,6 @@ class Dashboard:
         self.client.close()
 
 if __name__ == "__main__":
-    client = MountainClient('localhost', 8080)
+    client = MountainClient('34.16.147.147', 8080)
     d = Dashboard(client)
     d.start()
