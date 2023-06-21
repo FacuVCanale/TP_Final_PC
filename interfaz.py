@@ -52,7 +52,7 @@ class App(customtkinter.CTk):
 
         #FRAME DE NAVEGACION
         self.navigation_frame_label = customtkinter.CTkLabel(self.navigation_frame, 
-                                                             text="Lucas pete",
+                                                             text="Lucas",
                                                              image=self.logo_image,  # ELEGIR NOMBRE DE LA BARRA DE TAREAS
                                                              compound="left",
                                                              font=customtkinter.CTkFont(size=15, weight="bold"))
@@ -87,7 +87,7 @@ class App(customtkinter.CTk):
         #FRAME TROLL
         self.frame_3_button = customtkinter.CTkButton(self.navigation_frame, corner_radius=0, height=40,
                                                       border_spacing=10, 
-                                                      text="TROLL",
+                                                      text="easter egg",
                                                       fg_color="transparent", 
                                                       text_color=("gray10", "gray90"),
                                                       hover_color=("gray70", "gray30"),
@@ -192,7 +192,7 @@ class App(customtkinter.CTk):
     def change_appearance_mode_event(self, new_appearance_mode):
         customtkinter.set_appearance_mode(new_appearance_mode)
 
-class SecondFrame(customtkinter.CTkFrame):
+class SecondFrame(customtkinter.CTkFrame): #TODO ESTO TIENE Q ESTAR MODULARIZADO PERO POR COMODIDAD PARA VER QUE HACE LO DEJO ACA. YA SE COMO HACER PARA DIVIDIRLO EN VARIOS ARCHIVOS. TENIA UN ARCHIVO LLAMADO GRAPH_UTILS PERO TUVE QUE HACER STASH POR EL ERROR QUE TENGO. LO MISMO CON EL CUARTO FRAME.
     def __init__(self, master):
         super().__init__(master, corner_radius=0, fg_color="transparent")
         self.grid(row=0, column=1, sticky="nsew")
@@ -275,7 +275,7 @@ class ThirdFrame(customtkinter.CTkFrame):
 
     def button1_event(self):
         image_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "test_images")
-        image = Image.open(os.path.join(image_path, "g.png"))
+        image = Image.open(os.path.join(image_path, "gm.png"))
         if hasattr(self, "image_label"):
             self.image_label.grid_forget()  # Oculta la etiqueta de la imagen anterior
         self.image_label = customtkinter.CTkLabel(self.container_frame, image=customtkinter.CTkImage(image, size=(800, 600)))
