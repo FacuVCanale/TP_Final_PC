@@ -23,7 +23,8 @@ def ascii():
         print(mapa)
         time.sleep(1)
         os.system("clear")
-ascii()
+if __name__ == "__main__":
+    ascii()
     
 
     
