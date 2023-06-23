@@ -7,7 +7,6 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.animation import FuncAnimation
 import numpy as np
 from customtkinter import CTkFrame
-from mpl_toolkits.mplot3d import Axes3D
 from communication.client.client import MountainClient
 import itertools
 
@@ -127,14 +126,14 @@ class App(customtkinter.CTk):
 
 
         # create second frame
-        self.second_frame = SecondFrame(self)
+        #self.second_frame = SecondFrame(self)
 
         
         # create third frame
         self.third_frame = ThirdFrame(self)
         
         #create fourth frame
-        self.fourth_frame = FourthFrame(self)
+        #self.fourth_frame = FourthFrame(self)
         
           
 
@@ -152,28 +151,28 @@ class App(customtkinter.CTk):
     def select_frame_by_name(self, name):
         # set button color for selected button
         self.home_button.configure(fg_color=("gray75", "gray25") if name == "home" else "transparent")
-        self.frame_2_button.configure(fg_color=("gray75", "gray25") if name == "frame_2" else "transparent")
+        #self.frame_2_button.configure(fg_color=("gray75", "gray25") if name == "frame_2" else "transparent")
         self.frame_3_button.configure(fg_color=("gray75", "gray25") if name == "frame_3" else "transparent")
-        self.frame_4_button.configure(fg_color=("gray20", "gray25") if name == "frame_4" else "transparent")
+       # self.frame_4_button.configure(fg_color=("gray20", "gray25") if name == "frame_4" else "transparent")
 
-        # show selected frame
+        # show selected frame 
         if name == "home":
             self.home_frame.grid(row=0, column=1, sticky="nsew")
         else:
             self.home_frame.grid_forget()
-        if name == "frame_2":
-            self.second_frame.grid(row=0, column=1, sticky="nsew")
-            self.second_frame.ani._start()
-        else:
-            self.second_frame.grid_forget()
+        #if name == "frame_2":
+            #self.second_frame.grid(row=0, column=1, sticky="nsew")
+            #self.second_frame.ani._start()
+        #else:
+            #self.second_frame.grid_forget()
         if name == "frame_3":
             self.third_frame.grid(row=0, column=1, sticky="nsew")
         else:
             self.third_frame.grid_forget()
-        if name == "frame_4":
-            self.fourth_frame.grid(row=0, column=1, sticky="nsew")
-        else:
-            self.fourth_frame.grid_forget()
+        #if name == "frame_4":
+            #self.fourth_frame.grid(row=0, column=1, sticky="nsew")
+        #else:
+            #self.fourth_frame.grid_forget()
 
     def home_button_event(self):
         self.select_frame_by_name("home")

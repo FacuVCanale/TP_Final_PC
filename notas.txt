@@ -10,3 +10,7 @@ kaggle ML
 los gustos de guille:
 1) boton para seguir equipo
 2) interfaz q muestre el modelo en 3d
+
+platform.system()
+
+.gitignore

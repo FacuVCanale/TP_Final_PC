@@ -3,8 +3,7 @@ from tkinter import *
 import matplotlib  
 matplotlib.use("TkAgg")  
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg  
-import matplotlib.pyplot as plt  
-import mpl_toolkits.mplot3d.axes3d as p3  
+import matplotlib.pyplot as plt    
 import numpy as np  
 import time
 from communication.client.client import MountainClient  
