@@ -134,6 +134,11 @@ class HomeFrame(customtkinter.CTkFrame):
         self.container_frame.grid_columnconfigure(0, weight=1)
         self.Z = np.zeros((100,100)) +1500
 
+    """ RADIUS = 1.0  # Control this value.
+ax1.set_xlim3d(-RADIUS / 2, RADIUS / 2)
+ax1.set_zlim3d(-RADIUS / 2, RADIUS / 2)
+ax1.set_ylim3d(-RADIUS / 2, RADIUS / 2) """
+
     def show_animation(self):
         res = 100
 
