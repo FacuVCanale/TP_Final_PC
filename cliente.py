@@ -8,7 +8,7 @@ momentum = [0, 0] # momentum, beta
 c = MountainClient('34.16.147.147', 8080)
 c.add_team('LIFFT', ['FACU', 'FRAN', 'IVAN', 'LUQUI'])
 c.finish_registration()
-while not c.is_over():
+while True:
     directions_lifft = {'FACU': {'speed': 50, 'direction': 0},
                         'FRAN': {'speed': 50, 'direction': 0},
                         'IVAN': {'speed': 50, 'direction': 0},
