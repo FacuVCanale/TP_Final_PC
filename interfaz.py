@@ -191,7 +191,8 @@ class App(customtkinter.CTk):
     def change_appearance_mode_event(self, new_appearance_mode):
         customtkinter.set_appearance_mode(new_appearance_mode)
 
-class SecondFrame(customtkinter.CTkFrame): #TODO ESTO TIENE Q ESTAR MODULARIZADO PERO POR COMODIDAD PARA VER QUE HACE LO DEJO ACA. YA SE COMO HACER PARA DIVIDIRLO EN VARIOS ARCHIVOS. TENIA UN ARCHIVO LLAMADO GRAPH_UTILS PERO TUVE QUE HACER STASH POR EL ERROR QUE TENGO. LO MISMO CON EL CUARTO FRAME.
+class SecondFrame(customtkinter.CTkFrame): #TODO ESTO TIENE Q ESTAR MODULARIZADO PERO POR COMODIDAD PARA VER QUE HACE LO DEJO ACA. YA SE COMO HACER PARA DIVIDIRLO EN VARIOS ARCHIVOS. TENIA UN ARCHIVO LLAMADO GRAPH_UTILS PERO TUVE QUE HACER STASH POR EL ERROR QUE TENGO. LO MISMO CON EL CUARTO FRAME. 
+    #HABRIA QUE AGREGAR UNA OPCION PARA SEGUIR A LOS ESCALADORES DE CADA EQUIPO
     def __init__(self, master):
         super().__init__(master, corner_radius=0, fg_color="transparent")
         self.grid(row=0, column=1, sticky="nsew")
