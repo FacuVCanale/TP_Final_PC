@@ -6,7 +6,9 @@ import numpy as np
 cliente = MountainClient("localhost", 8080)
 
 directions = {}
+directions2 = {}
 escaladores = ['facu', 'lucas', 'juan', 'emilio', 'diana', 'raul', 'marta', 'roberto', 'valentina', 'sergio', 'laura', 'oscar']
+escaladores2 = ['ramon', 'ivan', 'cami']
 
 # Configurar las instrucciones para cada escalador
 angle_forward = np.deg2rad(30)  # Ángulo de avance hacia adelante
@@ -24,7 +26,18 @@ for i, escalador in enumerate(escaladores):
 
     directions[escalador] = {'speed': speed, 'direction': direction}
 
+# Configurar las instrucciones para cada escalador de Lifft
+for i, escalador in enumerate(escaladores2):
+    speed = random.randint(10, 50)
+    direction = np.deg2rad(0)  # Ángulo de avance en línea recta (0 grados)
+
+    directions2[escalador] = {'speed': speed, 'direction': direction}
+
+
+
 cliente.add_team("CopNieve", escaladores)
+cliente.add_team("Lifft", escaladores2)  # Agregar equipo "Lifft" con instrucción de ir en línea recta
+
 cliente.finish_registration()
 
 coord_set = set()
@@ -36,17 +49,7 @@ def mandar_data():
         print(info)
 
         cliente.next_iteration("CopNieve", directions)
-        with open('coordenadas.tsv', 'a') as file:
-            for team, climbers in info.items():
-                for climber, data in climbers.items():
-                    x = data['x']
-                    y = data['y']
-                    z = data['z']
-                    coord = (x, y, z)
-                    if coord not in coord_set:
-                        line = f"EQUIPO: {team.ljust(10)}\tESCALADOR: {climber.ljust(10)}\tPOSICION: {x}, {y}, {z}\n"
-                        file.write(line)
-                        coord_set.add(coord)
+        cliente.next_iteration("Lifft", directions2)
 
 mandar_data()
 

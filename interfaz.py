@@ -3,7 +3,7 @@ from customtkinter import CTkFrame
 import os
 from PIL import Image
 import pygame
-from interfaz_utils import SecondFrame
+from interfaz_utils import SecondFrame,HomeFrame
 
 
 class App(customtkinter.CTk):
@@ -89,25 +89,17 @@ class App(customtkinter.CTk):
                                                       command=self.frame_3_button_event)
         self.frame_3_button.grid(row=3, column=0, sticky="ew")
 
-        #FRAME PONER MUSICA 
-        self.music_playing = False
-        
-
-
-
+    
         #CAMBIAR APARIENCIA
         self.appearance_mode_menu = customtkinter.CTkOptionMenu(self.navigation_frame, values=["Dark", "Light", "System"],
                                                                 command=self.change_appearance_mode_event)
         
         self.appearance_mode_menu.grid(row=7, column=0, padx=20, pady=20, sticky="s")
 
+
         # create home frame
-        self.home_frame = customtkinter.CTkFrame(self, corner_radius=0, fg_color="transparent")
-        self.home_frame.grid_columnconfigure(0, weight=1)
-
-        #create first frame
-
-
+        self.home_frame = HomeFrame(self)
+        
 
         # create second frame
         self.second_frame = SecondFrame(self)
@@ -140,8 +132,7 @@ class App(customtkinter.CTk):
         else:
             self.home_frame.grid_forget()
         if name == "frame_2":
-            self.second_frame.grid(row=0, column=1, sticky="nsew")
-            
+            self.second_frame.grid(row=0, column=1, sticky="nsew")   
         else:
             self.second_frame.grid_forget()
         if name == "frame_3":
@@ -152,6 +143,7 @@ class App(customtkinter.CTk):
 
     def home_button_event(self):
         self.select_frame_by_name("home")
+        self.home_frame.show_animation()
 
     def frame_2_button_event(self):
         self.select_frame_by_name("frame_2")
@@ -159,9 +151,7 @@ class App(customtkinter.CTk):
     def frame_3_button_event(self):
         self.select_frame_by_name("frame_3")
 
-    def frame_4_button_event(self):
-        self.select_frame_by_name("frame_4")
-        self.fourth_frame.show_animation() 
+   
         
 
     def change_appearance_mode_event(self, new_appearance_mode):
