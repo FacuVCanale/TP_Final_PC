@@ -16,6 +16,29 @@ def recta_creator(m:float, punto:list):
     print(f"y={m}x + {b}")
     return recta
 
+def donde_int(p1p, p1d, p2p, p2d):
+    if is_direction_vertical(p1d) and is_direction_vertical(p2d):
+        raise Exception("Ni idea pa, son las dos verticales, puede pasar en caulquier lado")
+    if is_direction_vertical(p1d) and not is_direction_vertical(p2d):
+        m2 = round(math.tan(p2d), 3)
+        recta2 = recta_creator(m2, p2p)
+        return p1p[0], recta2(p1p[0])
+    if is_direction_vertical(p2d) and not is_direction_vertical(p1d):
+        m1 = round(math.tan(p1d), 3)
+        recta1 = recta_creator(m1, p1p)
+        return p2p[0], recta1(p2p[0])
+
+    m1 = round(math.tan(p1d), 3)
+    m2 = round(math.tan(p2d), 3)
+
+    recta1 = recta_creator(m1, p1p)
+    recta2 = recta_creator(m2, p2p)
+
+    interseccion = round((-recta1(0) + recta2(0)) / (m1 - m2), 0)
+
+    return (interseccion, recta1(interseccion))
+    
+
 def heading_same_max(player1_position, player1_direction, player2_position, player2_direction):
 
     paralela_info = None
@@ -197,10 +220,16 @@ def heading_same_max(player1_position, player1_direction, player2_position, play
         return True
     return False
 
-player1_position = (1, 2)
-player1_direction = math.pi/2
+player1_position = (500, 124)
+player1_direction = 7 * math.pi/6
 
-player2_position = (3, 4)
-player2_direction = 5*math.pi/4
+player2_position = (-32, 491)
+player2_direction = 5 * math.pi/8
 
-print(heading_same_max(player1_position, player1_direction, player2_position, player2_direction))
+hay_int = heading_same_max(player1_position, player1_direction, player2_position, player2_direction)
+
+print(hay_int)
+
+if hay_int:
+    x, y = donde_int(player1_position, player1_direction, player2_position, player2_direction)
+    print(f"Intersecan en ({x} , {y})")
