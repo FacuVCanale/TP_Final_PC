@@ -5,6 +5,48 @@ import numpy as np
 import math
 c = MountainClient()
 
+class DataAnalyst:
+    def __init__(self, name:str):
+        self.name = name
+        self.data = {}
+        self.all_h_pos = []
+        self.someone_won = False
+
+    def update_data(self):
+        self.data = c.get_data()
+    
+    def check_win(self):
+        """
+        Se fija si algun Hiker gano
+        """
+        for team in self.data:
+            for player in self.data[team]:
+                if self.data[team][player]['cima'] == True:
+                    self.someone_won = True
+                    print('ALGUIEN GANO')
+                    # ----------HACER QUE NUESTROS HIKERS VAYAN AL PUNTO---------------
+
+    def get_all_pos(self):
+        """
+        Guarda las pos de todos los hikers en una lista de tuplas con x y z de cada uno
+        """
+        for team in self.data:
+            for player in self.data[team]:
+                self.all_h_pos.append((self.data[team][player]['x'],self.data[team][player]['y'],self.data[team][player]['z']))
+
+    def get_max(self):
+        """
+        rotorna la max pos en z encontrada por cualquier hiker en una tupla de (x,y,zMAX)
+        """
+        self.get_all_pos()
+        self.all_h_pos = sorted(self.all_h_pos, key=lambda z: z[2])
+        max_xyz = self.all_h_pos.pop()
+        print("MAX LIST=",max_xyz)
+
+        # achicar la lista de todas las pos para solo tener las 100 max
+        self.all_h_pos[-100:]
+
+
 class Hiker:
     def __init__(self, team, name:str):
         self.team = team
@@ -70,11 +112,13 @@ def update_all_data():
     facu.update_data()
     fran.update_data()
     ivan.update_data()
+    dataAnalyst.update_data()
 
 lucas = Hiker('CLIFF','lucas')  
 facu = Hiker('CLIFF','facu')
 fran = Hiker('CLIFF','fran')
 ivan = Hiker('CLIFF','ivan')
+dataAnalyst = DataAnalyst('dataAnalyst')
 
 c.add_team('CLIFF', [lucas.name,facu.name,fran.name,ivan.name])
 c.finish_registration()
@@ -82,10 +126,14 @@ c.finish_registration()
 
 
 while not c.is_over():
-    time.sleep(0.3)
+    time.sleep(2)
     data = c.get_data()
     print("DATA: ",data)
     update_all_data()
+
+    dataAnalyst.get_max()
+    dataAnalyst.check_win()
+
     ivan_direction, ivan_speed = ivan.get_direction_and_vel_to_point(ivan.get_next_point_GA()[0],ivan.get_next_point_GA()[1])
     directives = {
                     lucas.name: {'direction': lucas.get_direction_and_vel_to_point(100,100)[0], 'speed': lucas.get_direction_and_vel_to_point(100,100)[1]},
