@@ -1,5 +1,12 @@
 import math
 
+def is_direction_vertical(direction):
+    # Verifica si la dirección es un múltiplo de pi/2 (recta vertical)
+    if round(math.cos(direction), 3) == 0:
+        return True
+    else:
+        return False
+
 def recta_creator(m:float, punto:list):
     b = punto[1] - punto[0] * m
     def recta(x):
@@ -7,6 +14,101 @@ def recta_creator(m:float, punto:list):
     return recta
 
 def heading_same_max(player1_position, player1_direction, player2_position, player2_direction):
+
+    paralela_info = None
+
+    if is_direction_vertical(player1_direction):
+        if is_direction_vertical(player2_direction):
+            if round(player1_position[0], 0) == round(player2_position[0], 0):
+                if round(player1_direction, 3) == round(math.pi/2, 3):
+                    if round(player2_direction, 3) == round(3*math.pi/2, 3):
+                        if player1_position[1] < player2_position[1]:
+                            return True
+                        return False
+                    return True
+                if round(player2_direction, 3) == round(math.pi/2, 3):
+                    if round(player1_direction, 3) == round(3*math.pi/2, 3):
+                        if player2_position[1] < player1_position[1]:
+                            return True
+                        return False
+                    return True
+                return True
+            return False
+
+        if round(player1_direction, 3) == round(math.pi/2, 3):
+            paralela_info = [round(player1_position[0], 0), math.pi/2, 1]
+        else:
+            paralela_info = [round(player1_position[0], 0), 3*math.pi/2, 1]
+
+
+    if is_direction_vertical(player2_direction):
+        if round(player1_direction, 3) == round(math.pi/2, 3):
+            paralela_info = [round(player2_position[0], 0), math.pi/2, 1]
+        else:
+            paralela_info = [round(player2_position[0], 0), 3*math.pi/2, 1]
+
+    
+    if paralela_info != None:
+        if paralela_info[2] == 1:
+            m2 = round(math.tan(player2_direction), 3)
+            recta2 = recta_creator(m2, player2_position)
+
+            interseccion_y = recta2(paralela_info[0])
+
+            if paralela_info[1] == math.pi/2:
+                if interseccion_y > player1_position[1]:
+                    if math.cos(player2_direction) > 0:
+                        if player2_position[0] < player1_position[0]:
+                            return True
+                        return False
+                    #sino,
+                    if player2_position[0] > player1_position[0]:
+                        return True
+                    return False
+                return False
+            #sino,
+            if interseccion_y < player1_position[1]:
+                if math.cos(player2_direction) > 0:
+                    if player2_position[0] < player1_position[0]:
+                        return True
+                    return False
+                #sino,
+                if player2_position[0] > player1_position[0]:
+                    return True
+                return False
+            return False
+        #sino,
+        m1 = round(math.tan(player1_direction), 3)
+        recta1 = recta_creator(m1, player1_position)
+
+        interseccion_y = recta1(paralela_info[0])
+
+        if paralela_info[1] == math.pi/2:
+            if interseccion_y > player2_position[1]:
+                if math.cos(player1_direction) > 0:
+                    if player1_position[0] < player2_position[0]:
+                        return True
+                    return False
+                #sino,
+                if player1_position[0] > player2_position[0]:
+                    return True
+                return False
+            return False
+        #sino,
+        if interseccion_y < player2_position[1]:
+            if math.cos(player1_direction) > 0:
+                if player1_position[0] < player2_position[0]:
+                    return True
+                return False
+            #sino,
+            if player1_position[0] > player2_position[0]:
+                return True
+            return False
+        return False
+
+
+
+
 
     # Calcula las pendientes de las rectas de movimiento de los jugadores
     m1 = round(math.tan(player1_direction), 3)
@@ -63,6 +165,28 @@ def heading_same_max(player1_position, player1_direction, player2_position, play
     interseccion = (-recta1(0) + recta2(0)) / (m1 - m2)
 
     if math.cos(player1_direction) > 0:
-        
+        if math.cos(player2_direction) > 0:
+            if interseccion > player1_position[0] and interseccion > player2_position[0]:
+                return True
+            return False
+        #sino,
+        if interseccion > player1_position[0] and interseccion < player2_position[0]:
+            return True
+        return False
+    #sino, 
+    if math.cos(player2_direction) > 0:
+        if interseccion < player1_position[0] and interseccion > player2_position[0]:
+            return True
+        return False
+    #sino,
+    if interseccion < player1_position[0] and interseccion < player2_position[0]:
+        return True
+    return False
      
-                
+j1_p = [-7, 5]
+j1_d = 5.2435
+
+j2_p = [0, 6]
+j2_d = 4.125
+
+print(heading_same_max(j1_p, j1_d, j2_p, j2_d))
