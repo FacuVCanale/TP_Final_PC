@@ -224,7 +224,7 @@ player1_position = (500, 124)
 player1_direction = 7 * math.pi/6
 
 player2_position = (-32, 491)
-player2_direction = 5 * math.pi/8
+player2_direction = 13 * math.pi/8
 
 hay_int = heading_same_max(player1_position, player1_direction, player2_position, player2_direction)
 
