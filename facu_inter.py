@@ -1,4 +1,6 @@
 import math
+import matplotlib.pyplot as plt
+import numpy as np
 
 def is_direction_vertical(direction):
     # Verifica si la dirección es un múltiplo de pi/2 (recta vertical)
@@ -11,6 +13,7 @@ def recta_creator(m:float, punto:list):
     b = punto[1] - punto[0] * m
     def recta(x):
         return m*x + b
+    print(f"y={m}x + {b}")
     return recta
 
 def heading_same_max(player1_position, player1_direction, player2_position, player2_direction):
@@ -117,6 +120,16 @@ def heading_same_max(player1_position, player1_direction, player2_position, play
     recta1 = recta_creator(m1, player1_position)
     recta2 = recta_creator(m2, player2_position)
 
+    x1 = np.array([i for i in range(-500, 500)])
+    y1 = recta1(x1)
+    plt.plot(x1, y1)
+
+    y2 = recta2(x1)
+
+    plt.plot(x1, y2)
+
+    plt.show()
+
     # Verifica si las pendientes son iguales (rectas paralelas)
     if m1 == m2:
         if round(player1_position[1], 0) == round(recta2(player1_position[0]), 0):      #CHEQUEO SI LAS RECTAS PARALELAS TIENEN ADEMÁS LA MISMA ORDENADA AL ORIGEN
@@ -162,31 +175,32 @@ def heading_same_max(player1_position, player1_direction, player2_position, play
                         return False
                     return True
     
-    interseccion = (-recta1(0) + recta2(0)) / (m1 - m2)
+    interseccion = round((-recta1(0) + recta2(0)) / (m1 - m2), 0)
+    print(interseccion)
 
     if math.cos(player1_direction) > 0:
         if math.cos(player2_direction) > 0:
-            if interseccion > player1_position[0] and interseccion > player2_position[0]:
+            if interseccion >= player1_position[0] and interseccion >= player2_position[0]:
                 return True
             return False
         #sino,
-        if interseccion > player1_position[0] and interseccion < player2_position[0]:
+        if interseccion >= player1_position[0] and interseccion <= player2_position[0]:
             return True
         return False
     #sino, 
     if math.cos(player2_direction) > 0:
-        if interseccion < player1_position[0] and interseccion > player2_position[0]:
+        if interseccion <= player1_position[0] and interseccion >= player2_position[0]:
             return True
         return False
     #sino,
-    if interseccion < player1_position[0] and interseccion < player2_position[0]:
+    if interseccion <= player1_position[0] and interseccion <= player2_position[0]:
         return True
     return False
-     
-j1_p = [-7, 5]
-j1_d = 5.2435
 
-j2_p = [0, 6]
-j2_d = 4.125
+player1_position = (1, 2)
+player1_direction = math.pi/2
 
-print(heading_same_max(j1_p, j1_d, j2_p, j2_d))
+player2_position = (3, 4)
+player2_direction = 5*math.pi/4
+
+print(heading_same_max(player1_position, player1_direction, player2_position, player2_direction))
