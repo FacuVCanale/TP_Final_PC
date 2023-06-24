@@ -23,8 +23,9 @@ class Hiker:
     def update_data(self):
         # print(self.data)
         self.data = c.get_data()[self.team][self.name]
+        print(self.data)
 
-    def get_data(self,d):
+    def get_data(self, d):
         return self.data[d]
     
     def get_direction_and_vel_to_point(self, xf, yf):
@@ -41,35 +42,43 @@ class Hiker:
         if v_direc < 0:
             v_direc += 2 * math.pi
         
-        if np.linalg.norm(v) < 50:
-            vel = np.linalg.norm(v)
-        else: vel = 50
+        #if np.linalg.norm(v) < 50:                      NO CONVIENE BAJARLE LA VELOCIDAD
+        #    vel = np.linalg.norm(v)
+        #else: vel = 50
+
+        vel = 50
     
         return v_direc,vel
 
     def get_next_point_GA(self):
-        x_new = self.get_data('x')+ self.get_data('inclinacion_x') * self.alpha2
-        y_new = self.get_data('y')+ self.get_data('inclinacion_y') * self.alpha2
+        x_new = self.get_data('x') + self.get_data('inclinacion_x') * self.alpha2
+        y_new = self.get_data('y') + self.get_data('inclinacion_y') * self.alpha2
 
         return x_new,y_new
 
     def get_next_point_MGA(self):
-        vel_x_2 = self.beta * self.vel_x + self.alpha * self.get_data('inclinacion_x')
-        vel_y_2 = self.beta * self.vel_y + self.alpha * self.get_data('inclinacion_y')
+        vel_x_2 = self.beta * self.vel_x + (-1) * self.get_data('inclinacion_x')
+        vel_y_2 = self.beta * self.vel_y + (-1) * self.get_data('inclinacion_y')
         
         self.vel_x = vel_x_2
         self.vel_y = vel_y_2
 
-        x_new = self.get_data('x') + vel_x_2
-        y_new = self.get_data('y') + vel_y_2
+        x_new = self.get_data('x') - vel_x_2 * self.alpha
+        y_new = self.get_data('y') - vel_y_2 * self.alpha
 
-        return x_new,y_new
+        return x_new, y_new
 
-def update_all_data():
-    lucas.update_data()
-    facu.update_data()
-    fran.update_data()
-    ivan.update_data()
+def update_all_data(hikers:list[Hiker]):
+    for hiker in hikers:
+        hiker.update_data()
+
+#       REFERENCE POINTS
+
+point_lucas = [-5000, 18750]
+point_facu = [-19702, -1955]
+point_fran = [-1955, -19702]
+point_ivan = [18750, -5000]
+
 
 lucas = Hiker('CLIFF','lucas')  
 facu = Hiker('CLIFF','facu')
@@ -79,18 +88,24 @@ ivan = Hiker('CLIFF','ivan')
 c.add_team('CLIFF', [lucas.name,facu.name,fran.name,ivan.name])
 c.finish_registration()
 
-
+hikers = [lucas, facu, fran, ivan]
 
 while not c.is_over():
     time.sleep(0.3)
     data = c.get_data()
-    print("DATA: ",data)
-    update_all_data()
-    ivan_direction, ivan_speed = ivan.get_direction_and_vel_to_point(ivan.get_next_point_GA()[0],ivan.get_next_point_GA()[1])
+    update_all_data(hikers)
+
+    lucas_vel_points = lucas.get_direction_and_vel_to_point(point_lucas[0], point_lucas[1])
+    facu_vel_points = facu.get_direction_and_vel_to_point(point_facu[0], point_facu[1])
+    fran_vel_points = fran.get_direction_and_vel_to_point(point_fran[0], point_fran[1])
+
+    ivan_points_GA = ivan.get_next_point_GA()
+    ivan_direction, ivan_speed = ivan.get_direction_and_vel_to_point(ivan_points_GA[0], ivan_points_GA[1])
+
     directives = {
-                    lucas.name: {'direction': lucas.get_direction_and_vel_to_point(100,100)[0], 'speed': lucas.get_direction_and_vel_to_point(100,100)[1]},
-                    facu.name: {'direction': facu.get_direction_and_vel_to_point(-100,100)[0], 'speed': facu.get_direction_and_vel_to_point(-100,100)[1]},
-                    fran.name: {'direction': fran.get_direction_and_vel_to_point(100,-100)[0], 'speed': fran.get_direction_and_vel_to_point(100,-100)[1]},
+                    lucas.name: {'direction': lucas_vel_points[0], 'speed': lucas_vel_points[1]},
+                    facu.name: {'direction': facu_vel_points[0], 'speed': facu_vel_points[1]},
+                    fran.name: {'direction': fran_vel_points[0], 'speed': fran_vel_points[1]},
                     ivan.name: {'direction': ivan_direction, 'speed': ivan_speed},
                 }
 

@@ -1,6 +1,6 @@
 import numpy as np
 
-def move_to_point_direction(pos_o ,pos_f,vel = 50):
+def move_to_point_direction(pos_o, pos_f, vel = 50):
     """" 
     para ir a un punto lo mas rapido posible
     para ir a la max pos
@@ -46,7 +46,7 @@ def apply_gradient_ascent(pos_o, dx, dy, vel_x=0, vel_y=0, alpha=0.01, beta=0.5,
     return v_direc, v_dist, vel_x, vel_y
 
 
-def apply_momentum_gradient_ascent_2(pos_o, dx, dy, vel_x=0, vel_y=0, alpha=0.01, beta=0.5,vel=50):
+def apply_momentum_gradient_ascent_2(pos_o, dx, dy, vel_x=0, vel_y=0, alpha=0.01, beta=0.5, vel=50):
     """
     para testear
     """
@@ -57,7 +57,7 @@ def apply_momentum_gradient_ascent_2(pos_o, dx, dy, vel_x=0, vel_y=0, alpha=0.01
     vel_y = beta * vel_y + alpha * dy
 
     xf = xo + vel_x
-    yf = yo + vel_x
+    yf = yo + vel_y
 
     return xf, yf
 
