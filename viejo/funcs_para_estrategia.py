@@ -19,10 +19,10 @@ def move_to_point_direction(pos_o ,pos_f,vel = 50):
     if np.linalg.norm(v) < 50:
         vel = np.linalg.norm(v)
  
-    return v_direc,vel
+    return np.degrees(v_direc),vel
 
 
-# print(move_to_point_direction((0,0),(1,0)))
+# print(move_to_point_direction((0,0),(10,10)))
 
 def apply_gradient_ascent(pos_o, dx, dy, vel_x=0, vel_y=0, alpha=0.01, beta=0.5,vel=50):
     """
