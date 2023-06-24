@@ -1,28 +1,46 @@
-import numpy as np
+import matplotlib
 import matplotlib.pyplot as plt
+from matplotlib.animation import FuncAnimation
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from mpl_toolkits.mplot3d import Axes3D
-from scipy.interpolate import griddata
+import numpy as np
+from communication.client.client import MountainClient
+import customtkinter
+import seaborn as sns
 
-# Datos de ejemplo
-x = np.random.rand(100)
-y = np.random.rand(100)
-z = np.sin(x * np.pi) * np.cos(y * np.pi)
+matplotlib.use('TkAgg')
 
-# Definir una cuadrícula regular para la interpolación
-res = 100
-xi = np.linspace(min(x), max(x), res)
-yi = np.linspace(min(y), max(y), res)
-xi, yi = np.meshgrid(xi, yi)
+class HomeFrame(customtkinter.CTkFrame):
+    def __init__(self, master):
+        super().__init__(master, corner_radius=0, fg_color="transparent")
+        self.grid(row=0, column=2, sticky="nsew")
+        self.grid_columnconfigure(0, weight=1)
+        self.grid_rowconfigure(0, weight=2)
 
-# Interpolación de los datos
-zi = griddata((x, y), z, (xi, yi), method='cubic')
+        # create container frame with grid layout
+        self.container_frame = customtkinter.CTkFrame(self, corner_radius=0, fg_color="transparent")
+        self.container_frame.grid(row=0, column=0, sticky="nsew")
+        self.container_frame.grid_rowconfigure(0, weight=1)
+        self.container_frame.grid_columnconfigure(0, weight=1)
+        self.cliente = MountainClient("localhost", 8080)
+        self.info = self.cliente.get_data()
 
-# Crear la figura y el eje 3D
-fig = plt.figure()
-ax = fig.add_subplot(111, projection='3d')
+    def show_animation(self):
+        res = 100
 
-# Graficar la superficie interpolada
-ax.plot_surface(xi, yi, zi, cmap='coolwarm')
+        # Crear el rango de valores para los ejes x e y
+        x = np.linspace(-23000, 23000, res)
+        y = np.linspace(-23000, 23000, res)
+        points = []
+        for team, climbers in self.info.items():
+            for climber, data in climbers.items():
+                x2 = data['x']
+                y2 = data['y']
+                points.append((x2, y2))
+        heatmap, _, _ = np.histogram2d(np.array(points)[:, 0], np.array(points)[:, 1], bins=(x, y))
 
-# Mostrar el gráfico
-plt.show()
+        sns.heatmap(heatmap, cmap='viridis', xticklabels=False, yticklabels=False)
+        plt.xlabel('X')
+        plt.ylabel('Y')
+        plt.title('Player Heatmap')
+        plt.show()

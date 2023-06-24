@@ -3,7 +3,7 @@ from customtkinter import CTkFrame
 import os
 from PIL import Image
 import pygame
-from interfaz_utils import SecondFrame,HomeFrame
+from interfaz_utils import SecondFrame,HomeFrame,FourthFrame
 
 
 class App(customtkinter.CTk):
@@ -11,7 +11,7 @@ class App(customtkinter.CTk):
         super().__init__()
 
         self.title("Dashboard")
-        self.geometry("700x450")
+        self.geometry("800x500")
 
         # set grid layout 1x2
         self.grid_rowconfigure(0, weight=1)
@@ -89,6 +89,17 @@ class App(customtkinter.CTk):
                                                       command=self.frame_3_button_event)
         self.frame_3_button.grid(row=3, column=0, sticky="ew")
 
+        self.frame_4_button = customtkinter.CTkButton(self.navigation_frame, corner_radius=0, height=40,
+                                                      border_spacing=10, 
+                                                      text="HEATMAP",
+                                                      fg_color="transparent", 
+                                                      text_color=("gray10", "gray90"),
+                                                      hover_color=("gray70", "gray30"),
+                                                      image=self.add_user_image, 
+                                                      anchor="w", 
+                                                      command=self.frame_3_button_event)
+        self.frame_4_button.grid(row=3, column=0, sticky="ew")
+
     
         #CAMBIAR APARIENCIA
         self.appearance_mode_menu = customtkinter.CTkOptionMenu(self.navigation_frame, values=["Dark", "Light", "System"],
@@ -107,14 +118,13 @@ class App(customtkinter.CTk):
         
         # create third frame
         self.third_frame = ThirdFrame(self)
+
+        self.fourth_frame =FourthFrame(self)
                   
-
-
-        self.select_frame_by_name("home")
     
-        
-
         pygame.mixer.init()
+
+        self.select_frame_by_name("frame_4")
 
     #def music_button_event(self):
         
@@ -125,10 +135,12 @@ class App(customtkinter.CTk):
         self.home_button.configure(fg_color=("gray75", "gray25") if name == "home" else "transparent")
         self.frame_2_button.configure(fg_color=("gray75", "gray25") if name == "frame_2" else "transparent")
         self.frame_3_button.configure(fg_color=("gray75", "gray25") if name == "frame_3" else "transparent")
+        self.frame_4_button.configure(fg_color=("gray75", "gray25") if name == "frame_4" else "transparent")
         
         # show selected frame
         if name == "home":
             self.home_frame.grid(row=0, column=1, sticky="nsew")
+            self.home_frame.show_animation()
         else:
             self.home_frame.grid_forget()
         if name == "frame_2":
@@ -139,11 +151,17 @@ class App(customtkinter.CTk):
             self.third_frame.grid(row=0, column=1, sticky="nsew")
         else:
             self.third_frame.grid_forget()
+
+        if name == "frame_4":
+            self.fourth_frame.grid(row=0, column=1,sticky="nsew")
+            self.fourth_frame.show_animation()  # Call the show_animation method
+        else:
+            self.fourth_frame.grid_forget()
         
 
     def home_button_event(self):
         self.select_frame_by_name("home")
-        self.home_frame.show_animation()
+        
 
     def frame_2_button_event(self):
         self.select_frame_by_name("frame_2")
@@ -151,7 +169,10 @@ class App(customtkinter.CTk):
     def frame_3_button_event(self):
         self.select_frame_by_name("frame_3")
 
-   
+    def frame_4_button_event(self):
+        self.select_frame_by_name("frame_4")
+        self.fourth_frame.show_animation()
+       
         
 
     def change_appearance_mode_event(self, new_appearance_mode):
