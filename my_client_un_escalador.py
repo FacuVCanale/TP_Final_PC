@@ -10,6 +10,15 @@ class Hiker:
         self.team = team
         self.name = name
         self.data = {}
+        
+        # Gradient ascent 
+        self.alpha2 = 0.1 #learning ratev
+        
+        # Momentum Gradient ascent
+        self.vel_x = 0
+        self.vel_y = 0
+        self.alpha = 0.01 #learning rate
+        self.beta = 0.5 #momentum
     
     def update_data(self):
         # print(self.data)
@@ -38,6 +47,25 @@ class Hiker:
     
         return v_direc,vel
 
+    def get_next_point_GA(self):
+        x_new = self.get_data('x')+ self.get_data('inclinacion_x') * self.alpha2
+        y_new = self.get_data('y')+ self.get_data('inclinacion_y') * self.alpha2
+
+        return x_new,y_new
+
+    def get_next_point_MGA(self):
+        vel_x_2 = self.beta * self.vel_x + self.alpha * self.get_data('inclinacion_x')
+        vel_y_2 = self.beta * self.vel_y + self.alpha * self.get_data('inclinacion_y')
+        
+        self.vel_x = vel_x_2
+        self.vel_y = vel_y_2
+
+        x_new = self.get_data('x') + vel_x_2
+        y_new = self.get_data('y') + vel_y_2
+
+        return x_new,y_new
+    
+
 def update_all_data():
     ivan.update_data()
 
@@ -52,9 +80,10 @@ while not c.is_over():
     print("DATA: ",data)
     update_all_data()
 
-    direction, speed = ivan.get_direction_and_vel_to_point(-1000,-1000)
+    # direction, speed = ivan.get_direction_and_vel_to_point(ivan.get_next_point_MGA()[0],ivan.get_next_point_MGA()[1])
+    ivan_direction, ivan_speed = ivan.get_direction_and_vel_to_point(ivan.get_next_point_GA()[0],ivan.get_next_point_GA()[1])
     directives = {
-                    ivan.name: {'direction': direction, 'speed': speed},
+                    ivan.name: {'direction': ivan_direction, 'speed': ivan_speed},
                 }
 
     c.next_iteration('CLIFF', directives)
