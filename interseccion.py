@@ -4,7 +4,7 @@ def are_players_heading_same_point(player1_position, player1_direction, player2_
     # Verifica si alguna de las direcciones es un múltiplo de pi/2 (recta vertical)
     if is_direction_vertical(player1_direction) or is_direction_vertical(player2_direction):
         if round(player1_position[0], 0) == round(player2_position[0], 0):
-            if (round(player1_direction, 0) == round(math.pi/2, 0) and round(player2_direction == 3*math.pi/2, 0)) or (round(player2_direction, 0) == round(math.pi/2, 0) and round(player1_direction == 3*math.pi/2, 0)):
+            if (round(player1_direction, 3) == round(math.pi/2, 3) and round(player2_direction, 3) == round(3*math.pi/2, 3)) or (round(player2_direction, 3) == round(math.pi/2, 3) and round(player1_direction, 3) == round(3*math.pi/2, 3)):
                 return True
             else:
                 return False
@@ -41,7 +41,7 @@ def are_players_heading_same_point(player1_position, player1_direction, player2_
 
 def is_direction_vertical(direction):
     # Verifica si la dirección es un múltiplo de pi/2 (recta vertical)
-    if math.isclose(math.cos(direction), 0):
+    if round(math.cos(direction), 4) == 0:
         return True
     else:
         return False
