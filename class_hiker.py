@@ -6,19 +6,19 @@ c = MountainClient()
 
 # Calss for hikers of our team
 class Hiker:
-    def __init__(self, team:str, name:str):
+    def __init__(self, team:str, name:str, alpha:float = 0.01, beta:float = 0.5):
         self.team = team
         self.name = name
         self.data = {}
         
         # Gradient ascent 
-        self.alpha2 = 0.1 #learning ratev
+        self.alpha2 = 0.1 #learning rate
         
         # Momentum Gradient ascent
         self.vel_x = 0
         self.vel_y = 0
-        self.alpha = 0.01 #learning rate
-        self.beta = 0.5 #momentum
+        self.alpha = alpha #learning rate
+        self.beta = beta #momentum
     
     def update_data(self):
         self.data = c.get_data()[self.team][self.name]
