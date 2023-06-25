@@ -61,7 +61,6 @@ class Hiker:
            vel = np.linalg.norm(v)
         else: vel = 50
 
-        vel = 50
     
         return v_direc,vel
 
