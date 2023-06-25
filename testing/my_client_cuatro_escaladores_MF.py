@@ -23,7 +23,7 @@ class Hiker:
     def update_data(self):
         # print(self.data)
         self.data = c.get_data()[self.team][self.name]
-        print(self.data)
+        # print(self.data)
 
     def get_data(self, d):
         return self.data[d]
@@ -31,7 +31,6 @@ class Hiker:
     def get_direction_and_vel_to_point(self, xf, yf):
         """
         le das el punto donde queres ir y te da la direccion y vel para llegar mas rapido (linea recta)
-        llega justo al punto donde se le pide
         """
         xo = self.get_data('x')
         yo = self.get_data('y')
@@ -42,9 +41,27 @@ class Hiker:
         if v_direc < 0:
             v_direc += 2 * math.pi
         
-        #if np.linalg.norm(v) < 50:                      NO CONVIENE BAJARLE LA VELOCIDAD
-        #    vel = np.linalg.norm(v)
-        #else: vel = 50
+        vel = 50
+    
+        return v_direc,vel
+    
+    def get_direction_and_vel_to_point_JUSTO(self, xf, yf):
+        """
+        le das el punto donde queres ir y te da la direccion y vel para llegar mas rapido (linea recta)
+        llega JUSTO al punto donde se le pide
+        """
+        xo = self.get_data('x')
+        yo = self.get_data('y')
+
+        v = (xf - xo, yf - yo)
+        v_direc = math.atan2(v[1], v[0])
+
+        if v_direc < 0:
+            v_direc += 2 * math.pi
+        
+        if np.linalg.norm(v) < 50:           
+           vel = np.linalg.norm(v)
+        else: vel = 50
 
         vel = 50
     
@@ -93,19 +110,23 @@ hikers = [lucas, facu, fran, ivan]
 while not c.is_over():
     time.sleep(0.3)
     data = c.get_data()
+    print(data)
     update_all_data(hikers)
 
     lucas_vel_points = lucas.get_direction_and_vel_to_point(point_lucas[0], point_lucas[1])
     facu_vel_points = facu.get_direction_and_vel_to_point(point_facu[0], point_facu[1])
-    fran_vel_points = fran.get_direction_and_vel_to_point(point_fran[0], point_fran[1])
+    # fran_vel_points = fran.get_direction_and_vel_to_point(point_fran[0], point_fran[1])
 
     ivan_points_GA = ivan.get_next_point_GA()
-    ivan_direction, ivan_speed = ivan.get_direction_and_vel_to_point(ivan_points_GA[0], ivan_points_GA[1])
+    ivan_direction, ivan_speed = ivan.get_direction_and_vel_to_point_JUSTO(ivan_points_GA[0], ivan_points_GA[1])
+
+    fran_points_GA = fran.get_next_point_GA()
+    fran_direction, fran_speed = fran.get_direction_and_vel_to_point(fran_points_GA[0], fran_points_GA[1])
 
     directives = {
                     lucas.name: {'direction': lucas_vel_points[0], 'speed': lucas_vel_points[1]},
                     facu.name: {'direction': facu_vel_points[0], 'speed': facu_vel_points[1]},
-                    fran.name: {'direction': fran_vel_points[0], 'speed': fran_vel_points[1]},
+                    fran.name: {'direction': fran_direction, 'speed': fran_speed},
                     ivan.name: {'direction': ivan_direction, 'speed': ivan_speed},
                 }
 
