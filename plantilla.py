@@ -8,15 +8,15 @@ from class_hiker import Hiker
 c = MountainClient()
 
 # Initialize DataAnalyst
-dataAnalyst = DataAnalyst()
+dataAnalyst = DataAnalyst(c)
 dataAnalysts = [dataAnalyst]
 
 
 # Initialize hikers
-lucas = Hiker('CLIFF','lucas')  
-facu = Hiker('CLIFF','facu')
-fran = Hiker('CLIFF','fran')
-ivan = Hiker('CLIFF','ivan')
+lucas = Hiker(c,'CLIFF','lucas')
+facu = Hiker(c,'CLIFF','facu')
+fran = Hiker(c,'CLIFF','fran')
+ivan = Hiker(c,'CLIFF','ivan')
 hikers = [lucas, facu, fran, ivan]
 
 
@@ -34,10 +34,10 @@ c.add_team('CLIFF', hikers_names)
 c.finish_registration()
 
 
-# Iterations
+# Instructions
 while not c.is_over():
     # Sleep server for testing
-    time.sleep(3)
+    # time.sleep(3)
 
     # Ask for data of all hikers in map
     data = c.get_data()
@@ -51,7 +51,7 @@ while not c.is_over():
     print("\n DataAnalyst Info = ", dataAnalyst_info)
   
 
-    # ------------------Codigo de prueba------------------
+    # ------------------Codigo de prueba: Aca va la estrategia------------------
 
     ivan_points_GA = ivan.get_next_point_GA()
     ivan_direction, ivan_speed = ivan.get_direction_and_vel_to_point_JUSTO(ivan_points_GA[0], ivan_points_GA[1])
@@ -66,7 +66,7 @@ while not c.is_over():
                     ivan.name: {'direction': ivan_direction, 'speed': ivan_speed},
                 }
     
-    # ------------------Codigo de prueba------------------
+    # ------------------Codigo de prueba: Aca va la estrategia------------------
 
     # Give directives to server
     c.next_iteration('CLIFF', directives)
