@@ -17,7 +17,7 @@ class App(customtkinter.CTk):
         super().__init__()
 
         self.title("Dashboard")
-        self.geometry("700x450")
+        self.attributes("-fullscreen", True)
 
         # set grid layout 1x2
         self.grid_rowconfigure(0, weight=1)
@@ -251,21 +251,41 @@ class SecondFrame(customtkinter.CTkFrame): #TODO ESTO TIENE Q ESTAR MODULARIZADO
         self.fig.canvas.draw()
 
 
-
 class ThirdFrame(customtkinter.CTkFrame):
     def __init__(self, master):
         super().__init__(master, corner_radius=0, fg_color="transparent")
-        self.grid(row=0, column=1, sticky="nsew")
+        self.grid(row=0, column=0, sticky="nsew")
         self.grid_columnconfigure(0, weight=1)
-        self.grid_rowconfigure(0, weight=2)
+        self.grid_rowconfigure(0, weight=1)
+        self.state = True
+    
+    #ACA DEBERIA ESTAR EL ASCII
 
-        # create container frame with grid layout
-        self.container_frame = customtkinter.CTkFrame(self, corner_radius=0, fg_color="transparent")
-        self.container_frame.grid(row=0, column=0, sticky="nsew")
-        self.container_frame.grid_rowconfigure(0, weight=1)
-        self.container_frame.grid_columnconfigure(0, weight=1)
+        self.frame_2_button = customtkinter.CTkButton(self, corner_radius=0, height=40,
+                                                      border_spacing=10, 
+                                                      text="Posicion Hikers",
+                                                      fg_color="transparent", 
+                                                      text_color=("gray10", "gray90"),
+                                                      hover_color=("gray70", "gray30"),
+                                                      anchor="w",command= self.change())
+        self.frame_2_button.pack(pady=12,padx=10)
+        self.call_function()
+        
+    def change(self):
+        self.state = False
 
-    #ACA IMPORTO EL ARCHIVO ASCII
+    def call_function(self):
+        print(self.state)
+        while self.state:
+            label_resultado = customtkinter.CTkLabel(self, text=ascii(), font=('Helvetica', 10))
+            label_resultado.pack()
+
+        
+        
+        
+
+
+
 
 
 class FourthFrame(CTkFrame):

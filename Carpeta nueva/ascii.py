@@ -3,7 +3,7 @@ from classes.mapa import Mapa_circular
 import time
 import os
 from communication.client.client import MountainClient
-cliente = MountainClient("localhost",8080)
+cliente = MountainClient("34.16.147.147",8080)
 def ascii():
     while not cliente.is_over():
         circulo = Circulo(46)
@@ -22,7 +22,7 @@ def ascii():
                 num_jugador += 1
         print(mapa)
         time.sleep(1)
-        os.system("clear")
+        os.sys("clear")
 
 if __name__ == "__main__":
     ascii()
