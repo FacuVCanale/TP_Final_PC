@@ -44,6 +44,7 @@ class Hiker:
         return v_direc,vel
     
     def get_direction_and_vel_to_point_JUSTO(self, xf:float, yf:float)-> tuple[float,float]:
+        #ESTO HAY QUE USARLO CUANDO QUEREMOS IR A UN PUNTO, YA QUE SIEMPRE VA A IR CON 50. EN CAMBIO, CUANDO ESTÉ LLEGANDO, VA A LLEGAR JUSTO GOD.
         """
         le das el punto donde queres ir y te da la direccion y vel para llegar mas rapido (linea recta)
         llega JUSTO al punto donde se le pide
