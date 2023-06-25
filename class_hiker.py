@@ -60,8 +60,6 @@ class Hiker:
         if np.linalg.norm(v) < 50:           
            vel = np.linalg.norm(v)
         else: vel = 50
-
-        vel = 50
     
         return v_direc,vel
 

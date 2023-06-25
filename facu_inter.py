@@ -46,9 +46,9 @@ def heading_same_max(player1_position, player1_direction, player2_position, play
 
     if is_direction_vertical(player2_direction):
         if round(player1_direction, 3) == round(math.pi/2, 3):
-            paralela_info = [round(player2_position[0], 0), math.pi/2, 1]
+            paralela_info = [round(player2_position[0], 0), math.pi/2, 2]
         else:
-            paralela_info = [round(player2_position[0], 0), 3*math.pi/2, 1]
+            paralela_info = [round(player2_position[0], 0), 3*math.pi/2, 2]
 
     
     if paralela_info != None:
@@ -211,11 +211,11 @@ def heading_same_max(player1_position, player1_direction, player2_position, play
 
 
 def main():
-    player1_position = (500, 124)
-    player1_direction = 7 * math.pi/6
+    player1_position = (14588, 14000)
+    player1_direction = 7 * math.pi/4
 
-    player2_position = (-32, 491)
-    player2_direction = 13 * math.pi/8
+    player2_position = (15000, 14008)
+    player2_direction = 5 * math.pi/4
 
     coords, hay_int = heading_same_max(player1_position, player1_direction, player2_position, player2_direction)
 

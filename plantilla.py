@@ -37,11 +37,14 @@ c.finish_registration()
 # Iterations
 while not c.is_over():
     # Sleep server for testing
-    time.sleep(3)
+    #time.sleep(0.3)
 
     # Ask for data of all hikers in map
     data = c.get_data()
-    print("\n Server Info = ",data)
+    print("\n Server Info = ")
+    for hiker in data["CLIFF"]:
+        print(hiker)
+        print(data["CLIFF"][hiker])
 
     # Update data of our hykers
     update_all_data(hikers,dataAnalysts)
@@ -61,7 +64,7 @@ while not c.is_over():
 
     directives = {
                     lucas.name: {'direction': lucas.get_direction_and_vel_to_point_JUSTO(100,100)[0], 'speed': lucas.get_direction_and_vel_to_point_JUSTO(100,100)[1]},
-                    facu.name: {'direction': facu.get_direction_and_vel_to_point_JUSTO(100,100)[0], 'speed': facu.get_direction_and_vel_to_point_JUSTO(100,100)[1]},
+                    facu.name: {'direction': facu.get_direction_and_vel_to_point(100,100)[0], 'speed': facu.get_direction_and_vel_to_point(100,100)[1]},
                     fran.name: {'direction': fran_direction, 'speed': fran_speed},
                     ivan.name: {'direction': ivan_direction, 'speed': ivan_speed},
                 }
