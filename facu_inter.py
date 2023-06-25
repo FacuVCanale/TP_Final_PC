@@ -12,8 +12,7 @@ def is_direction_vertical(direction):
 def recta_creator(m:float, punto:list):
     b = punto[1] - punto[0] * m
     def recta(x):
-        return m*x + b
-    print(f"y={m}x + {b}")
+        return round(m*x + b, 0)
     return recta
 
 def donde_int(p1p, p1d, p2p, p2d):
@@ -42,6 +41,7 @@ def donde_int(p1p, p1d, p2p, p2d):
 def heading_same_max(player1_position, player1_direction, player2_position, player2_direction):
 
     paralela_info = None
+    coords = []
 
     if is_direction_vertical(player1_direction):
         if is_direction_vertical(player2_direction):
@@ -49,17 +49,17 @@ def heading_same_max(player1_position, player1_direction, player2_position, play
                 if round(player1_direction, 3) == round(math.pi/2, 3):
                     if round(player2_direction, 3) == round(3*math.pi/2, 3):
                         if player1_position[1] < player2_position[1]:
-                            return True
-                        return False
-                    return True
+                            return coords, True
+                        return coords, False
+                    return coords, True
                 if round(player2_direction, 3) == round(math.pi/2, 3):
                     if round(player1_direction, 3) == round(3*math.pi/2, 3):
                         if player2_position[1] < player1_position[1]:
-                            return True
-                        return False
-                    return True
-                return True
-            return False
+                            return coords, True
+                        return coords, False
+                    return coords, True
+                return coords, True
+            return coords, False
 
         if round(player1_direction, 3) == round(math.pi/2, 3):
             paralela_info = [round(player1_position[0], 0), math.pi/2, 1]
@@ -85,24 +85,28 @@ def heading_same_max(player1_position, player1_direction, player2_position, play
                 if interseccion_y > player1_position[1]:
                     if math.cos(player2_direction) > 0:
                         if player2_position[0] < player1_position[0]:
-                            return True
-                        return False
+                            coords = [paralela_info[0], interseccion_y]
+                            return coords, True
+                        return coords, False
                     #sino,
                     if player2_position[0] > player1_position[0]:
-                        return True
-                    return False
-                return False
+                        coords = [paralela_info[0], interseccion_y]
+                        return coords, True
+                    return coords, False
+                return coords, False
             #sino,
             if interseccion_y < player1_position[1]:
                 if math.cos(player2_direction) > 0:
                     if player2_position[0] < player1_position[0]:
-                        return True
-                    return False
+                        coords = [paralela_info[0], interseccion_y]
+                        return coords, True
+                    return coords, False
                 #sino,
                 if player2_position[0] > player1_position[0]:
-                    return True
-                return False
-            return False
+                    coords = [paralela_info[0], interseccion_y]
+                    return coords, True
+                return coords, False
+            return coords, False
         #sino,
         m1 = round(math.tan(player1_direction), 3)
         recta1 = recta_creator(m1, player1_position)
@@ -113,26 +117,28 @@ def heading_same_max(player1_position, player1_direction, player2_position, play
             if interseccion_y > player2_position[1]:
                 if math.cos(player1_direction) > 0:
                     if player1_position[0] < player2_position[0]:
-                        return True
-                    return False
+                        coords = [paralela_info[0], interseccion_y]
+                        return coords, True
+                    return coords, False
                 #sino,
                 if player1_position[0] > player2_position[0]:
-                    return True
-                return False
-            return False
+                    coords = [paralela_info[0], interseccion_y]
+                    return coords, True
+                return coords, False
+            return coords, False
         #sino,
         if interseccion_y < player2_position[1]:
             if math.cos(player1_direction) > 0:
                 if player1_position[0] < player2_position[0]:
-                    return True
-                return False
+                    coords = [paralela_info[0], interseccion_y]
+                    return coords, True
+                return coords, False
             #sino,
             if player1_position[0] > player2_position[0]:
-                return True
-            return False
-        return False
-
-
+                coords = [paralela_info[0], interseccion_y]
+                return coords, True
+            return coords, False
+        return coords, False
 
 
 
@@ -143,15 +149,17 @@ def heading_same_max(player1_position, player1_direction, player2_position, play
     recta1 = recta_creator(m1, player1_position)
     recta2 = recta_creator(m2, player2_position)
 
-    x1 = np.array([i for i in range(-500, 500)])
-    y1 = recta1(x1)
-    plt.plot(x1, y1)
+    """ 
+        x1 = np.array([i for i in range(-500, 500)])
+        y1 = recta1(x1)
+        plt.plot(x1, y1)
 
-    y2 = recta2(x1)
+        y2 = recta2(x1)
 
-    plt.plot(x1, y2)
+        plt.plot(x1, y2)
 
-    plt.show()
+        plt.show() 
+    """
 
     # Verifica si las pendientes son iguales (rectas paralelas)
     if m1 == m2:
@@ -159,77 +167,83 @@ def heading_same_max(player1_position, player1_direction, player2_position, play
             if m1 > 0:
                 if player1_direction < math.pi:
                     if round(player1_direction + math.pi, 1) == round(player2_direction, 1):
-                        if player1_position[0] <= player2_position[0]:
-                            return True
-                        return False
-                    return True
+                        if player1_position[0] < player2_position[0]:
+                            return coords, True
+                        return coords, False
+                    return coords, True
                 if player2_direction < math.pi:
                     if round(player2_direction + math.pi, 1) == round(player1_direction, 1):
-                        if player2_position[0] <= player1_position[0]:
-                            return True
-                        return False
-                    return True
-                return True
-            if m1 > 0:
+                        if player2_position[0] < player1_position[0]:
+                            return coords, True
+                        return coords, False
+                    return coords, True
+                return coords, True
+            if m1 < 0:
                 if player1_direction < math.pi:
                     if round(player1_direction + math.pi, 1) == round(player2_direction, 1):
-                        if player1_position[0] >= player2_position[0]:
-                            return True
-                        return False
-                    return True
+                        if player1_position[0] > player2_position[0]:
+                            return coords, True
+                        return coords, False
+                    return coords, True
                 if player2_direction < math.pi:
                     if round(player2_direction + math.pi, 1) == round(player1_direction, 1):
-                        if player2_position[0] >= player1_position[0]:
-                            return True
-                        return False
-                    return True
-                return True
+                        if player2_position[0] > player1_position[0]:
+                            return coords, True
+                        return coords, False
+                    return coords, True
+                return coords, True
             if m1 == 0:
                 if round(player1_direction, 1) == 0:
                     if round(player1_direction + math.pi, 1) == round(player2_direction, 1):
-                        if player1_position[0] <= player2_position[0]:
-                            return True
-                        return False
-                    return True
+                        if player1_position[0] < player2_position[0]:
+                            return coords, True
+                        return coords, False
+                    return coords, True
                 if round(player2_direction, 1) == 0:
                     if round(player2_direction + math.pi, 1) == round(player1_direction, 1):
-                        if player2_position[0] <= player1_position[0]:
-                            return True
-                        return False
-                    return True
+                        if player2_position[0] < player1_position[0]:
+                            return coords, True
+                        return coords, False
+                    return coords, True
+                return coords, True
     
     interseccion = round((-recta1(0) + recta2(0)) / (m1 - m2), 0)
-    print(interseccion)
 
     if math.cos(player1_direction) > 0:
         if math.cos(player2_direction) > 0:
             if interseccion >= player1_position[0] and interseccion >= player2_position[0]:
-                return True
-            return False
+                coords = [interseccion, recta1(interseccion)]
+                return coords, True
+            return coords, False
         #sino,
         if interseccion >= player1_position[0] and interseccion <= player2_position[0]:
-            return True
-        return False
+            coords = [interseccion, recta1(interseccion)]
+            return coords, True
+        return coords, False
     #sino, 
     if math.cos(player2_direction) > 0:
         if interseccion <= player1_position[0] and interseccion >= player2_position[0]:
-            return True
-        return False
+            coords = [interseccion, recta1(interseccion)]
+            return coords, True
+        return coords, False
     #sino,
     if interseccion <= player1_position[0] and interseccion <= player2_position[0]:
-        return True
-    return False
+        coords = [interseccion, recta1(interseccion)]
+        return coords, True
+    return coords, False
 
-player1_position = (500, 124)
-player1_direction = 7 * math.pi/6
 
-player2_position = (-32, 491)
-player2_direction = 13 * math.pi/8
+def main():
+    player1_position = (500, 124)
+    player1_direction = 7 * math.pi/6
 
-hay_int = heading_same_max(player1_position, player1_direction, player2_position, player2_direction)
+    player2_position = (-32, 491)
+    player2_direction = 13 * math.pi/8
 
-print(hay_int)
+    coords, hay_int = heading_same_max(player1_position, player1_direction, player2_position, player2_direction)
 
-if hay_int:
-    x, y = donde_int(player1_position, player1_direction, player2_position, player2_direction)
-    print(f"Intersecan en ({x} , {y})")
+    print(hay_int)
+    print(coords)
+
+if __name__ == "__main__":
+    main()
