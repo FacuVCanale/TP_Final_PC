@@ -121,16 +121,6 @@ point_facu = [-19702, -1955]
 point_fran = [-1955, -19702]
 point_ivan = [18750, -5000]
 
-<<<<<<< HEAD:my_client_cuatro_escaladores.py
-=======
-def update_all_data():
-    lucas.update_data()
-    facu.update_data()
-    fran.update_data()
-    ivan.update_data()
-    dataAnalyst.update_data()
->>>>>>> ivan:testing/my_client_cuatro_escaladores.py
-
 lucas = Hiker('CLIFF','lucas')  
 facu = Hiker('CLIFF','facu')
 fran = Hiker('CLIFF','fran')
@@ -145,8 +135,9 @@ hikers = [lucas, facu, fran, ivan]
 while not c.is_over():
     time.sleep(2)
     data = c.get_data()
-<<<<<<< HEAD:my_client_cuatro_escaladores.py
     update_all_data(hikers)
+    dataAnalyst.get_max()
+    dataAnalyst.check_win()
 
     lucas_vel_points = lucas.get_direction_and_vel_to_point(point_lucas[0], point_lucas[1])
     facu_vel_points = facu.get_direction_and_vel_to_point(point_facu[0], point_facu[1])
@@ -155,15 +146,6 @@ while not c.is_over():
     ivan_points_GA = ivan.get_next_point_GA()
     ivan_direction, ivan_speed = ivan.get_direction_and_vel_to_point(ivan_points_GA[0], ivan_points_GA[1])
 
-=======
-    print("DATA: ",data)
-    update_all_data()
-
-    dataAnalyst.get_max()
-    dataAnalyst.check_win()
-
-    ivan_direction, ivan_speed = ivan.get_direction_and_vel_to_point(ivan.get_next_point_GA()[0],ivan.get_next_point_GA()[1])
->>>>>>> ivan:testing/my_client_cuatro_escaladores.py
     directives = {
                     lucas.name: {'direction': lucas_vel_points[0], 'speed': lucas_vel_points[1]},
                     facu.name: {'direction': facu_vel_points[0], 'speed': facu_vel_points[1]},
