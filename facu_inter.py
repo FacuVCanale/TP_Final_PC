@@ -15,29 +15,6 @@ def recta_creator(m:float, punto:list):
         return round(m*x + b, 0)
     return recta
 
-def donde_int(p1p, p1d, p2p, p2d):
-    if is_direction_vertical(p1d) and is_direction_vertical(p2d):
-        raise Exception("Ni idea pa, son las dos verticales, puede pasar en caulquier lado")
-    if is_direction_vertical(p1d) and not is_direction_vertical(p2d):
-        m2 = round(math.tan(p2d), 3)
-        recta2 = recta_creator(m2, p2p)
-        return p1p[0], recta2(p1p[0])
-    if is_direction_vertical(p2d) and not is_direction_vertical(p1d):
-        m1 = round(math.tan(p1d), 3)
-        recta1 = recta_creator(m1, p1p)
-        return p2p[0], recta1(p2p[0])
-
-    m1 = round(math.tan(p1d), 3)
-    m2 = round(math.tan(p2d), 3)
-
-    recta1 = recta_creator(m1, p1p)
-    recta2 = recta_creator(m2, p2p)
-
-    interseccion = round((-recta1(0) + recta2(0)) / (m1 - m2), 0)
-
-    return (interseccion, recta1(interseccion))
-    
-
 def heading_same_max(player1_position, player1_direction, player2_position, player2_direction):
 
     paralela_info = None
