@@ -3,19 +3,18 @@ from communication.client.client import MountainClient
 
 # Calss to analize data on all hykers on map
 class DataAnalyst:
-    def __init__(self, cliente, name:str = 'dataAnalyst'):
-        self.c = cliente
+    def __init__(self, name:str = 'dataAnalyst'):
         self.name = name
         self.data = {}
         self.all_h_pos = []
         self.someone_won = False
         self.info = {}
 
-    def update_data(self):
+    def update_data(self, data):
         """
         updates data using MountainClient()
         """
-        self.data = self.c.get_data()
+        self.data = data
     
     def check_win(self)-> tuple[bool,tuple[float,float,float]]:
         """

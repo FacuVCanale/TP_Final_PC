@@ -27,11 +27,11 @@ hikers = [lucas, facu, fran, ivan]
 
 
 # Function to update data on all Hykers and DataAnalyst
-def update_all_data(hikers:list[Hiker],dataAnalysts:list[DataAnalyst]):
+def update_all_data(hikers: list[Hiker],dataAnalysts: list[DataAnalyst], data):
     for hiker in hikers:
-        hiker.update_data()
+        hiker.update_data(data)
     for dataAnalyst in dataAnalysts:
-        dataAnalyst.update_data()
+        dataAnalyst.update_data(data)
     
 
 # Add and register team
@@ -55,7 +55,7 @@ while not c.is_over():
     print("\n Server Info = ",data)
 
     # Update data of our hykers
-    update_all_data(hikers,dataAnalysts)
+    update_all_data(hikers, dataAnalysts, data)
 
     # Print usefull data of DataAnalyst
     dataAnalyst_info = dataAnalyst.get_all_info()

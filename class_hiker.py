@@ -4,11 +4,12 @@ import math
 
 # Calss for hikers of our team
 class Hiker:
-    def __init__(self, cliente, team:str, name:str, alpha:float = 0.01, beta:float = 0.5, alpha2:float = 0.1):
-        self.c = cliente
+    def __init__(self, team:str, name:str, puntos:list, strat:str="follow_points", alpha:float = 0.01, beta:float = 0.5, alpha2:float = 0.1):
         self.team = team
         self.name = name
         self.data = {}
+        self.puntos = puntos
+        self.strat = strat
         
         # Gradient ascent 
         self.alpha2 = alpha2 #learning rate
@@ -19,13 +20,13 @@ class Hiker:
         self.alpha = alpha #learning rate
         self.beta = beta #momentum
     
-    def update_data(self):
-        self.data = self.c.get_data()[self.team][self.name]
+    def update_data(self, data):
+        self.data = data[self.team][self.name]
 
     def get_data(self, choice:str):
         return self.data[choice]
     
-    def get_direction_and_vel_to_point(self, xf:float, yf:float)-> tuple[float,float]:
+    def get_direction_and_vel_to_point(self, xf:float, yf:float) -> tuple[float,float]:
         """
         le das el punto donde queres ir y te da la direccion y vel para llegar mas rapido (linea recta)
         """
@@ -42,7 +43,7 @@ class Hiker:
     
         return v_direc,vel
     
-    def get_direction_and_vel_to_point_JUSTO(self, xf:float, yf:float)-> tuple[float,float]:
+    def get_direction_and_vel_to_point_JUSTO(self, xf:float, yf:float) -> tuple[float,float]:
         """
         le das el punto donde queres ir y te da la direccion y vel para llegar mas rapido (linea recta)
         llega JUSTO al punto donde se le pide
@@ -60,7 +61,6 @@ class Hiker:
            vel = np.linalg.norm(v)
         else: vel = 50
 
-    
         return v_direc,vel
 
     def get_next_point_GA(self):
@@ -69,7 +69,7 @@ class Hiker:
 
         return x_new,y_new
 
-    def get_next_point_MGA(self)-> tuple[float,float]:
+    def get_next_point_MGA(self) -> tuple[float,float]:
         vel_x_2 = self.beta * self.vel_x + (-1) * self.get_data('inclinacion_x')
         vel_y_2 = self.beta * self.vel_y + (-1) * self.get_data('inclinacion_y')
         
@@ -83,17 +83,70 @@ class Hiker:
     
     # ---------------- PUEDE SER GA O MGA ------------------
     def direction_GA(self):
-        return self.get_direction_and_vel_to_point(self.get_next_point_GA()[0], self.get_next_point_GA()[1])[0]
+        next_point_GA = self.get_next_point_GA()
+        return self.get_direction_and_vel_to_point(next_point_GA[0], next_point_GA[1])[0]
 
     def speed_GA(self):
-        return self.get_direction_and_vel_to_point(self.get_next_point_GA()[0], self.get_next_point_GA()[1])[1]
+        next_point_GA = self.get_next_point_GA()
+        return self.get_direction_and_vel_to_point(next_point_GA[0], next_point_GA[1])[1]
     # -------------------------------------------------------
    
    
     # ---------------- PUEDE SER JUSTO O NO ----------------
-    def direction_p(self, point=tuple[float,float]):
+    def direction_p(self, point:tuple[float,float]):
         return self.get_direction_and_vel_to_point(point[0],point[1])[0]
     
-    def speed_p(self, point=tuple[float,float]):
+    def speed_p(self, point:tuple[float,float]):
         return self.get_direction_and_vel_to_point(point[0],point[1])[1]
     # -------------------------------------------------------
+
+    def strategy(self):
+        # tolerancia econtrar punto
+        n = 50 
+        # tolerancia derivada parcial
+        n2 = 0.5
+        
+        # check len of list
+        next_point = self.puntos[0]
+
+        x = self.get_data('x')
+        y = self.get_data('y')
+        z = self.get_data('z')
+
+        dx = self.get_data('inclinacion_x')
+        dy = self.get_data('inclinacion_y')
+
+
+        if self.strat == 'follow_points':
+            if np.sqrt((x-next_point[0])**2 + (y-next_point[1])**2) < n:
+                print(self.name, end=" ")
+                print("Estoy en el punto", self.puntos.pop(0))
+
+                self.strat = "hike"
+
+                direction = 0
+                speed = 0
+            
+            else:
+                direction = self.direction_p(next_point)
+                speed = self.speed_p(next_point)
+                print(self.name, end=" ")
+                print("Buscando punto", self.puntos[0])
+
+
+        elif self.strat == 'hike':
+            if abs(dx) < n2 and abs(dy) < n2:
+                print(self.name, end=" ")
+                print('Estoy en un max local')
+                self.strat = 'follow_points'
+
+                direction = 0
+                speed = 0
+
+            else:
+                print(self.name, end=" ")
+                print("Escalando")
+                direction = self.direction_GA()
+                speed = self.speed_GA()
+
+        return direction,speed

@@ -14,21 +14,25 @@ c = MountainClient()
 dataAnalyst = DataAnalyst(c)
 dataAnalysts = [dataAnalyst]
 
+#Set points for every hiker
+lucas_points = [[8000, 15500], [-5000, 18750], [-12000, 13100]]
+facu_points = [[270, 7500], [-14000, 744]]
+fran_points = [[7500, 270], [744, -14000]]
+ivan_points = [[15500, 8000], [18750, -5000], [13100, -12000]]
 
 # Initialize hikers
-lucas = Hiker(c,'CLIFF','lucas')
-facu = Hiker(c,'CLIFF','facu')
-fran = Hiker(c,'CLIFF','fran')
-ivan = Hiker(c,'CLIFF','ivan')
+lucas = Hiker('CLIFF','lucas', lucas_points)
+facu = Hiker('CLIFF','facu', facu_points)
+fran = Hiker('CLIFF','fran', fran_points)
+ivan = Hiker('CLIFF','ivan', ivan_points)
 hikers = [lucas, facu, fran, ivan]
 
-
 # Function to update data on all Hykers and DataAnalyst
-def update_all_data(hikers:list[Hiker],dataAnalysts:list[DataAnalyst]):
+def update_all_data(hikers:list[Hiker],dataAnalysts:list[DataAnalyst], data):
     for hiker in hikers:
-        hiker.update_data()
+        hiker.update_data(data)
     for dataAnalyst in dataAnalysts:
-        dataAnalyst.update_data()
+        dataAnalyst.update_data(data)
     
 
 # Add and register team
@@ -36,96 +40,44 @@ hikers_names = [hiker.name for hiker in hikers]
 c.add_team('CLIFF', hikers_names)
 c.finish_registration()
 
-
-# Definir Puntos y Estado de cada escalador
-puntos_ivan = [(12000,12000),(14000,14000)]
-estado_ivan = 'buscar_punto'
-
-# Esto es la estrategia:----------------------------------------------
-def strategy(hiker,list_of_points,estado):
-    global puntos_ivan
-    global estado_ivan
-
-    estado = estado_ivan
-    puntos_ivan = puntos_ivan
-
-    # tolerancia econtrar punto
-    n = 50 
-    # tolerancia derivada parcial
-    n2 = 0.001
-    
-    # check len of list
-    next_point = list_of_points[0]
-
-    x = hiker.get_data('x')
-    y = hiker.get_data('y')
-    z = hiker.get_data('z')
-
-    dx = hiker.get_data('inclinacion_x')
-    dy = hiker.get_data('inclinacion_y')
-
-
-    if estado == 'buscar_punto':
-        # ver en num negativos
-        if  (x > (next_point[0] - n) and x < (next_point[1] + n)) \
-            and (y > (next_point[0] - n) and y < (next_point[1] + n)):
-            print("Estoy en el punto", x, y)
-            
-            puntos_ivan = puntos_ivan[1:]
-            estado_ivan = 'escalar'
-
-            direction = 0
-            speed = 0
-        
-        else:
-            direction = hiker.direction_p(next_point)
-            speed = hiker.speed_p(next_point)
-            print("buscando punto")
-
-
-    elif estado == 'escalar':
-        
-        if abs(dx) < n2 and abs(dy) < n2:
-            print('estoy en un max local')
-            estado_ivan = 'buscar_punto'
-            direction = 0
-            speed = 0
-        else:
-            print("Escalando")
-            direction = hiker.direction_GA()
-            speed = hiker.speed_GA()
-
-    return direction,speed
-# -----------------------------------------------------------
-
 # Instructions
 while not c.is_over():
     # Sleep server for testing
-    time.sleep(0.5)
+    time.sleep(0.1)
 
     # Ask for data of all hikers in map
     data = c.get_data()
-    print("\n Server Info = ",data)
 
     # Update data of our hykers
-    update_all_data(hikers,dataAnalysts)
+    update_all_data(hikers, dataAnalysts, data)
 
     # Print usefull data of DataAnalyst
     dataAnalyst_info = dataAnalyst.get_all_info()
-    print("\n DataAnalyst Info = ", dataAnalyst_info)
- 
-#  Prints para testear
-    print("GLOBAL",estado_ivan)
-    print("GLOBAL",puntos_ivan)
+
+    print("\n DataAnalyst Info = ")
+    for item in dataAnalyst_info:
+        if item != "n_max_pos":
+            print(item)
+            print(dataAnalyst_info[item])
+
+    print("\n Server Info = ")
+    for hiker in data["CLIFF"]:
+        print(hiker)
+        print(data["CLIFF"][hiker])
+
+
+    lucas_new_d_and_s = lucas.strategy()
+    facu_new_d_and_s = facu.strategy()
+    fran_new_d_and_s = fran.strategy()
+    ivan_new_d_and_s = ivan.strategy()
+
     
     directives = {
-                    lucas.name: {'direction': lucas.direction_p((988,18245)), 'speed': lucas.speed_p((988,18245))},
-                    facu.name: {'direction': facu.direction_p((988,18245)), 'speed': facu.speed_p((988,18245))},
-                    fran.name: {'direction': fran.direction_GA(), 'speed': fran.speed_GA()},
-                    ivan.name: {'direction': strategy(ivan,puntos_ivan,'buscar_punto')[0], 'speed': strategy(ivan,puntos_ivan,'buscar_punto')[1]},
+                    lucas.name: {'direction': lucas_new_d_and_s[0], 'speed': lucas_new_d_and_s[1]},
+                    facu.name: {'direction': facu_new_d_and_s[0], 'speed': facu_new_d_and_s[1]},
+                    fran.name: {'direction': fran_new_d_and_s[0], 'speed': fran_new_d_and_s[1]},
+                    ivan.name: {'direction': ivan_new_d_and_s[0], 'speed': ivan_new_d_and_s[1]},
                 }
     
-    # ------------------Codigo de prueba: Aca va la estrategia------------------
-
     # Give directives to server
     c.next_iteration('CLIFF', directives)
