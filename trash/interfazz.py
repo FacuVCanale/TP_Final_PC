@@ -1,7 +1,6 @@
 import customtkinter
 import os
 from PIL import Image
-from matplotlib.backend_bases import widgets
 import pygame
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg 
@@ -12,7 +11,7 @@ from communication.client.client import MountainClient
 import itertools
 from ascii import ascii
 import sys
-from customtkinter import CTkFrame, CTkLabel
+from customtkinter import CTkFrame
 class App(customtkinter.CTk):
     def __init__(self):
         super().__init__()
@@ -258,12 +257,9 @@ class ThirdFrame(customtkinter.CTkFrame):
         self.grid(row=0, column=0, sticky="nsew")
         self.grid_columnconfigure(0, weight=1)
         self.grid_rowconfigure(0, weight=1)
-        self.state = False
+        self.state = True
     
     #ACA DEBERIA ESTAR EL ASCII
-        label_resultado = customtkinter.CTkLabel(self, text=ascii(), font=('Helvetica', 10))
-        label_resultado.pack()
-
 
         self.frame_2_button = customtkinter.CTkButton(self, corner_radius=0, height=40,
                                                       border_spacing=10, 
@@ -271,22 +267,18 @@ class ThirdFrame(customtkinter.CTkFrame):
                                                       fg_color="transparent", 
                                                       text_color=("gray10", "gray90"),
                                                       hover_color=("gray70", "gray30"),
-                                                      anchor="w",command= self.change)
-        #self.frame_2_button.pack(pady=12,padx=10)
-        #if self.state:
+                                                      anchor="w",command= self.change())
+        self.frame_2_button.pack(pady=12,padx=10)
         self.call_function()
         
     def change(self):
-        self.state = True
-        self.call_function()
+        self.state = False
 
     def call_function(self):
-        for widgets in self.winfo_children():
-            widgets.destroy()
-        label_resultado = customtkinter.CTkLabel(self, text=ascii(), font=('Helvetica', 10))
-        label_resultado.pack()
-        self.after(500,self.call_function)
-
+        print(self.state)
+        while self.state:
+            label_resultado = customtkinter.CTkLabel(self, text=ascii(), font=('Helvetica', 10))
+            label_resultado.pack()
 
         
         
