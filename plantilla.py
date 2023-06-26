@@ -1,9 +1,15 @@
-from communication.client.client import MountainClient
+
 import time
 import numpy as np
 import math
+# Import client:
+from communication.client.client import MountainClient
+# Import classes:
 from class_dataAnalyst import DataAnalyst
 from class_hiker import Hiker
+
+# Import strategy:
+# FIJARSE COMO IMPORTAR LA FUNCION DE ESTRATEGIA QUE USA GLOBAL
 
 c = MountainClient()
 
@@ -33,6 +39,11 @@ hikers_names = [hiker.name for hiker in hikers]
 c.add_team('CLIFF', hikers_names)
 c.finish_registration()
 
+# Definir Puntos y Estado de cada escalador
+    # POR EJEMPLO:
+    # puntos_ivan = [(13500,13500),(14000,14000)]
+    # estado_ivan = 'buscar_punto'
+
 
 # Instructions
 while not c.is_over():
@@ -53,16 +64,14 @@ while not c.is_over():
 
     # ------------------Codigo de prueba: Aca va la estrategia------------------
 
-    ivan_points_GA = ivan.get_next_point_GA()
-    ivan_direction, ivan_speed = ivan.get_direction_and_vel_to_point_JUSTO(ivan_points_GA[0], ivan_points_GA[1])
+    ivan_direction, ivan_speed = ivan.get_direction_and_vel_to_point(ivan.get_next_point_GA()[0], ivan.get_next_point_GA()[1])
 
-    fran_points_GA = fran.get_next_point_GA()
-    fran_direction, fran_speed = fran.get_direction_and_vel_to_point(fran_points_GA[0], fran_points_GA[1])
+    fran_direction, fran_speed = fran.get_direction_and_vel_to_point(fran.get_next_point_GA()[0], fran.get_next_point_GA()[1])
 
     directives = {
-                    lucas.name: {'direction': lucas.get_direction_and_vel_to_point_JUSTO(100,100)[0], 'speed': lucas.get_direction_and_vel_to_point_JUSTO(100,100)[1]},
-                    facu.name: {'direction': facu.get_direction_and_vel_to_point_JUSTO(100,100)[0], 'speed': facu.get_direction_and_vel_to_point_JUSTO(100,100)[1]},
-                    fran.name: {'direction': fran_direction, 'speed': fran_speed},
+                    lucas.name: {'direction': lucas.direction_p((988,18245)), 'speed': lucas.speed_p((988,18245))},
+                    facu.name: {'direction': facu.direction_p((988,18245)), 'speed': facu.speed_p((988,18245))},
+                    fran.name: {'direction': fran.direction_GA(), 'speed': fran.speed_GA()},
                     ivan.name: {'direction': ivan_direction, 'speed': ivan_speed},
                 }
     
