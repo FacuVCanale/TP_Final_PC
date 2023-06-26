@@ -80,3 +80,20 @@ class Hiker:
         y_new = self.get_data('y') - vel_y_2 * self.alpha
 
         return x_new, y_new
+    
+    # ---------------- PUEDE SER GA O MGA ------------------
+    def direction_GA(self):
+        return self.get_direction_and_vel_to_point(self.get_next_point_GA()[0], self.get_next_point_GA()[1])[0]
+
+    def speed_GA(self):
+        return self.get_direction_and_vel_to_point(self.get_next_point_GA()[0], self.get_next_point_GA()[1])[1]
+    # -------------------------------------------------------
+   
+   
+    # ---------------- PUEDE SER JUSTO O NO ----------------
+    def direction_p(self, point=tuple[float,float]):
+        return self.get_direction_and_vel_to_point(point[0],point[1])[0]
+    
+    def speed_p(self, point=tuple[float,float]):
+        return self.get_direction_and_vel_to_point(point[0],point[1])[1]
+    # -------------------------------------------------------
