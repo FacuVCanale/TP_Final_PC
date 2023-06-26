@@ -5,18 +5,18 @@ import math
 from class_dataAnalyst import DataAnalyst
 from class_hiker import Hiker
 
-c = MountainClient()
+c = MountainClient("10.42.0.1",8888)
 
 # Initialize DataAnalyst
-dataAnalyst = DataAnalyst()
+dataAnalyst = DataAnalyst(c)
 dataAnalysts = [dataAnalyst]
 
 
 # Initialize hikers
-lucas = Hiker('CLIFF','lucas')  
-facu = Hiker('CLIFF','facu')
-fran = Hiker('CLIFF','fran')
-ivan = Hiker('CLIFF','ivan')
+lucas = Hiker('CLIFF','lucas', c)  
+facu = Hiker('CLIFF','facu', c)
+fran = Hiker('CLIFF','fran', c)
+ivan = Hiker('CLIFF','ivan', c)
 hikers = [lucas, facu, fran, ivan]
 
 
@@ -37,7 +37,7 @@ c.finish_registration()
 # Iterations
 while not c.is_over():
     # Sleep server for testing
-    #time.sleep(0.3)
+    time.sleep(0.1)
 
     # Ask for data of all hikers in map
     data = c.get_data()

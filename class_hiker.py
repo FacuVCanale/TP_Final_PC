@@ -1,15 +1,15 @@
 from communication.client.client import MountainClient
 import numpy as np
 import math
-c = MountainClient()
 
 
 # Calss for hikers of our team
 class Hiker:
-    def __init__(self, team:str, name:str, alpha:float = 0.01, beta:float = 0.5):
+    def __init__(self, team:str, name:str, cliente, alpha:float = 0.01, beta:float = 0.5):
         self.team = team
         self.name = name
         self.data = {}
+        self.cliente = cliente
         
         # Gradient ascent 
         self.alpha2 = 0.1 #learning rate
@@ -21,7 +21,7 @@ class Hiker:
         self.beta = beta #momentum
     
     def update_data(self):
-        self.data = c.get_data()[self.team][self.name]
+        self.data = self.cliente.get_data()[self.team][self.name]
 
     def get_data(self, choice:str):
         return self.data[choice]
