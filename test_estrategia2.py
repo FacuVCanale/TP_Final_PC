@@ -8,17 +8,15 @@ from class_hiker import Hiker
 # Importar estrategia
 # from estrategia1 import strategy
 
-c = MountainClient()
+from constants import *
+
+c = MountainClient("10.42.0.1", 8888)
+
+local_maxs = []
 
 # Initialize DataAnalyst
 dataAnalyst = DataAnalyst(c)
 dataAnalysts = [dataAnalyst]
-
-#Set points for every hiker
-lucas_points = [[8000, 15500], [-5000, 18750], [-12000, 13100]]
-facu_points = [[270, 7500], [-14000, 744]]
-fran_points = [[7500, 270], [744, -14000]]
-ivan_points = [[15500, 8000], [18750, -5000], [13100, -12000]]
 
 # Initialize hikers
 lucas = Hiker('CLIFF','lucas', lucas_points)
@@ -33,6 +31,25 @@ def update_all_data(hikers:list[Hiker],dataAnalysts:list[DataAnalyst], data):
         hiker.update_data(data)
     for dataAnalyst in dataAnalysts:
         dataAnalyst.update_data(data)
+
+def check_hikers_same_max(hikers):
+    for i in range(len(hikers)-1):
+        for j in range(1, len(hikers)):
+            if hikers[i].strat == "hike" and hikers[j] == "hike":
+                direction_i = directives[hikers[i].name]["direction"]
+                direction_j = directives[hikers[j].name]["direction"]
+                coords, is_same_dir = hikers[i].going_same_max(hikers[j], direction_i, direction_j)
+                if is_same_dir is True:
+                    if len(coords) > 0:
+                        local_maxs.append(coords)
+                        distance_i = np.sqrt((hikers[i].get_data("x") - coords[0]) ** 2 + (hikers[i].get_data("y") - coords[1]) ** 2)
+                        distance_j = np.sqrt((hikers[j].get_data("x") - coords[0]) ** 2 + (hikers[j].get_data("y") - coords[1]) ** 2)
+                        if distance_j > distance_i:
+                            hikers[j].change_strat("follow_points")
+                        else:
+                            hikers[i].change_strat("follow_points")
+                    else:
+                            hikers[i].change_strat("follow_points")
     
 
 # Add and register team
@@ -43,7 +60,7 @@ c.finish_registration()
 # Instructions
 while not c.is_over():
     # Sleep server for testing
-    time.sleep(0.1)
+    time.sleep(0)
 
     # Ask for data of all hikers in map
     data = c.get_data()
@@ -71,7 +88,6 @@ while not c.is_over():
     fran_new_d_and_s = fran.strategy()
     ivan_new_d_and_s = ivan.strategy()
 
-    
     directives = {
                     lucas.name: {'direction': lucas_new_d_and_s[0], 'speed': lucas_new_d_and_s[1]},
                     facu.name: {'direction': facu_new_d_and_s[0], 'speed': facu_new_d_and_s[1]},
@@ -79,5 +95,8 @@ while not c.is_over():
                     ivan.name: {'direction': ivan_new_d_and_s[0], 'speed': ivan_new_d_and_s[1]},
                 }
     
+    #Checks if hikers are going to the same place in GA.
+    #check_hikers_same_max(hikers)
+
     # Give directives to server
     c.next_iteration('CLIFF', directives)

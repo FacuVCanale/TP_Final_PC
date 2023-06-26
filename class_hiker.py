@@ -1,6 +1,7 @@
 from communication.client.client import MountainClient
 import numpy as np
 import math
+import facu_inter
 
 # Calss for hikers of our team
 class Hiker:
@@ -100,11 +101,17 @@ class Hiker:
         return self.get_direction_and_vel_to_point(point[0],point[1])[1]
     # -------------------------------------------------------
 
+    def going_same_max(self, other, self_d, other_d):
+        self_pos = (self.get_data("x"), self.get_data("y"))
+        other_pos = (other.get_data("x"), other.get_data("y"))
+        coords, is_same = facu_inter.heading_same_max(self_pos, self_d, other_pos, other_d)
+        return coords, is_same
+
     def strategy(self):
         # tolerancia econtrar punto
         n = 50 
         # tolerancia derivada parcial
-        n2 = 0.5
+        n2 = 0.3
         
         # check len of list
         next_point = self.puntos[0]
@@ -150,3 +157,7 @@ class Hiker:
                 speed = self.speed_GA()
 
         return direction,speed
+    
+    def change_strat(self, strat):
+        self.strat = strat
+        
