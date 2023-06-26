@@ -4,11 +4,12 @@ import time
 import os
 from communication.client.client import MountainClient
 cliente = MountainClient("localhost",8080)
-def ascii(letter_asig):
+def ascii():
     #while not cliente.is_over():
     circulo = Circulo(46)
     mapa = Mapa_circular(circulo)
     info = cliente.get_data()
+    num_jugador = 65
     for equipo, escaladores in info.items():
         for escalador, infos in escaladores.items():
             x = infos['x']
@@ -17,7 +18,8 @@ def ascii(letter_asig):
                 cima = ""
             else:
                 cima = True
-            mapa.agregar_pj((x, y), letter_asig[equipo],cima)
+            mapa.agregar_pj((x, y), num_jugador,cima)
+        num_jugador += 1
     return mapa
 
 if __name__ == "__main__":

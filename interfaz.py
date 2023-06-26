@@ -259,21 +259,23 @@ class ThirdFrame(customtkinter.CTkFrame):
         self.grid_columnconfigure(0, weight=1)
         self.grid_rowconfigure(0, weight=1)
         self.state = False
-    
-    #ACA DEBERIA ESTAR EL ASCII
-        label_resultado = customtkinter.CTkLabel(self, text=ascii(), font=('Helvetica', 10))
+
+        cliente = MountainClient("localhost",8080)
+        info = cliente.get_data()
+        num_jugador = 65
+        self.letter_asig = {}
+        for equipo, escaladores in info.items():
+            self.letter_asig[equipo] = num_jugador
+            num_jugador += 1
+        #QUE PASA SI UN EQUIPO SE AGREGA DESPUES
+        #NO FUNCA ESTA SOLUCION:
+        #while not(cliente.finish_registration()) or (counter == 0):
+        #    for equipo, escaladores in info.items():
+        #        self.letter_asig[equipo] = num_jugador
+        #        num_jugador += 1
+        #    counter += 1
+        label_resultado = customtkinter.CTkLabel(self, text=ascii(self.letter_asig), font=('Helvetica', 10))
         label_resultado.pack()
-
-
-        self.frame_2_button = customtkinter.CTkButton(self, corner_radius=0, height=40,
-                                                      border_spacing=10, 
-                                                      text="Posicion Hikers",
-                                                      fg_color="transparent", 
-                                                      text_color=("gray10", "gray90"),
-                                                      hover_color=("gray70", "gray30"),
-                                                      anchor="w",command= self.change)
-        #self.frame_2_button.pack(pady=12,padx=10)
-        #if self.state:
         self.call_function()
         
     def change(self):
@@ -283,7 +285,7 @@ class ThirdFrame(customtkinter.CTkFrame):
     def call_function(self):
         for widgets in self.winfo_children():
             widgets.destroy()
-        label_resultado = customtkinter.CTkLabel(self, text=ascii(), font=('Helvetica', 10))
+        label_resultado = customtkinter.CTkLabel(self, text=ascii(self.letter_asig), font=('Helvetica', 10))
         label_resultado.pack()
         self.after(500,self.call_function)
 

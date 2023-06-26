@@ -9,7 +9,7 @@ import numpy as np
 from mpl_toolkits.mplot3d import Axes3D
 from communication.client.client import MountainClient
 import itertools
-from ascii import ascii
+from trash.ascii__ import ascii
 import sys
 from customtkinter import CTkFrame
 class App(customtkinter.CTk):
