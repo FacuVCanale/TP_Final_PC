@@ -365,7 +365,96 @@ class FourthFrame(customtkinter.CTkFrame):
 
     def show_animation(self):
         self.animation = FuncAnimation(self.fig, self.update_heatmap, interval=1000)
+        self.canvas = FigureCanvasTkAgg(self.fig, master=self.container_frame)
+        self.canvas.draw()
+        self.canvas.get_tk_widget().grid(row=0, column=0, sticky="nsew")
+
+
+class FifthFrame(customtkinter.CTkFrame):
+    def __init__(self, master):
+        super().__init__(master, corner_radius=0, fg_color="transparent")
+        self.grid(row=0, column=1, sticky="nsew")
+        self.grid_columnconfigure(0, weight=1)
+        self.grid_rowconfigure(0, weight=2)
+
+        # create container frame with grid layout
+        self.container_frame = customtkinter.CTkFrame(self, corner_radius=0, fg_color="transparent")
+        self.container_frame.grid(row=0, column=0, sticky="nsew")
+        self.container_frame.grid_rowconfigure(0, weight=1)
+        self.container_frame.grid_columnconfigure(0, weight=1)
+
+        self.selected_team = 'Everyone'
+
+        # create container frame with grid layout
+        self.client = MountainClient("localhost", 8080)
+        self.info = self.client.get_data()
+
+        self.show_scatter()
+
+        
+
+    def show_scatter(self):
+        fig, ax = plt.subplots()
+
+        ax.set_xlabel('X')
+        ax.set_ylabel('Y')
+        ax.set_xlim(-23000, 20000)
+        ax.set_ylim(-23000, 20000)
+
+        self.points = ax.scatter([], [], c='green', marker='o')
+
+        self.animation = FuncAnimation(fig, self.update_scatter, interval=1000, blit=False, repeat=False)
+
+        canvas = FigureCanvasTkAgg(fig, master=self.container_frame)
+        canvas.draw()
+        canvas.get_tk_widget().grid(row=0, column=0, sticky="nsew")
+
+        self.animation._start()
+
+    def update_scatter(self, frame):
+        """
+        Update the scatter plot based on the data received from the server.
+
+        Args:
+            frame: The frame to update the scatter plot on.
+
+        Returns:
+            The updated points object.
+
+        """
+        self.info = self.client.get_data()  # Update server data
+
+        points = []
+        for team, climbers in self.info.items():
+            if self.selected_team == 'Everyone':
+                for climber, data in climbers.items():
+                    x = data['x']
+                    y = data['y']
+                    points.append((x, y))
+            elif team == self.selected_team:
+                for climber, data in climbers.items():
+                    x = data['x']
+                    y = data['y']
+                    points.append((x, y))
+
+        x, y = zip(*points) if points else ([], [])
+        self.points.set_offsets(np.column_stack((x, y)))
+
+        return self.points,
+
+
+    def show_animation(self):
+        self.animation = FuncAnimation(self.fig, self.update_scatter, interval=1000)
 
         self.canvas = FigureCanvasTkAgg(self.fig, master=self.container_frame)
         self.canvas.draw()
         self.canvas.get_tk_widget().grid(row=0, column=0, sticky="nsew")
+
+
+        
+        
+        
+
+
+
+
