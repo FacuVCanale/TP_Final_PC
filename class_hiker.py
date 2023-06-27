@@ -11,6 +11,8 @@ class Hiker:
         self.data = {}
         self.puntos = puntos
         self.strat = strat
+        self.vel = 0
+        self.direc = 0
         
         # Gradient ascent 
         self.alpha2 = alpha2 #learning rate
@@ -42,6 +44,8 @@ class Hiker:
         
         vel = 50
     
+        self.vel = vel
+        self.direc = v_direc
         return v_direc,vel
     
     def get_direction_and_vel_to_point_JUSTO(self, xf:float, yf:float) -> tuple[float,float]:
@@ -61,6 +65,9 @@ class Hiker:
         if np.linalg.norm(v) < 50:           
            vel = np.linalg.norm(v)
         else: vel = 50
+
+        self.vel = vel
+        self.direc = v_direc
 
         return v_direc,vel
 
@@ -121,7 +128,7 @@ class Hiker:
         # tolerancia econtrar punto
         n = 50 
         # tolerancia derivada parcial
-        n2 = 0.3
+        n2 = 0.05
         
         # check len of list
         next_point = self.puntos[0]
@@ -170,4 +177,23 @@ class Hiker:
     
     def change_strat(self, strat):
         self.strat = strat
+
+    def get_next_point(self):
+        """"
+        returns next point that hiker ig going to go
+        """
+        x_next = self.get_data('x') + self.vel*math.cos(self.direc)
+        y_next = self.get_data('y') + self.vel*math.sin(self.direc)
         
+        return x_next,y_next
+
+    def check_out_of_bounds(self,radius = 23000):
+        """"
+        checks if hikers next point is out of bounds
+        """
+        x_next,y_next = self.get_next_point()[0],self.get_next_point()[1]
+        distance_center = math.sqrt(x_next ** 2 + y_next ** 2)
+        if distance_center < radius:
+            return False
+        else:
+            return True
