@@ -9,10 +9,7 @@ import customtkinter
 import seaborn as sns
 matplotlib.use('TkAgg')
 import customtkinter
-import os
-from PIL import Image
 from matplotlib.backend_bases import widgets
-import pygame
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg 
 from matplotlib.animation import FuncAnimation
@@ -21,8 +18,6 @@ from mpl_toolkits.mplot3d import Axes3D
 from communication.client.client import MountainClient
 import itertools
 from ascii import ascii
-import sys
-from leaderboard import mandar_data
 from customtkinter import CTkFrame, CTkLabel
 
 
