@@ -147,23 +147,18 @@ class App(customtkinter.CTk):
         # create third frame
         self.third_frame = ThirdFrame(self,self.client)
 
-
-        #Create fourth frame
-<<<<<<< HEAD
         self.fourth_frame =FourthFrame(self,self.client)
                   
 
 
-        self.select_frame_by_name("home")
-=======
-        self.fourth_frame = FourthFrame(self)
+        
+
 
         self.fifth_frame = FifthFrame(self)
                   
 
 
-        self.select_frame_by_name("frame_3")
->>>>>>> testlucasenfran
+        self.select_frame_by_name("home")
 
     #def music_button_event(self):
         
@@ -180,9 +175,9 @@ class App(customtkinter.CTk):
         # show selected frame
         if name == "home":
             self.home_frame.grid(row=0, column=1, sticky="nsew")
-        
         else:
             self.home_frame.grid_forget()
+            
         if name == "frame_2":
             self.second_frame.grid(row=0, column=1, sticky="nsew")   
         else:
@@ -202,7 +197,7 @@ class App(customtkinter.CTk):
             self.fifth_frame.grid(row=0, column=1, sticky="nsew")
             self.fifth_frame.show_animation()
         else:
-            self.third_frame.grid_forget()
+            self.fifth_frame.grid_forget()
         
 
     def home_button_event(self):
