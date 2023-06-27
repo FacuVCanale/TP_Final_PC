@@ -10,7 +10,7 @@ from class_hiker import Hiker
 
 from constants import *
 
-c = MountainClient("10.42.0.1", 8888)
+c = MountainClient()
 
 local_maxs = []
 
@@ -96,7 +96,7 @@ while not c.is_over():
                 }
     
     #Checks if hikers are going to the same place in GA.
-    #check_hikers_same_max(hikers)
+    check_hikers_same_max(hikers)
 
     # Give directives to server
     c.next_iteration('CLIFF', directives)

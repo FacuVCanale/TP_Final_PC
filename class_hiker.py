@@ -91,14 +91,24 @@ class Hiker:
         next_point_GA = self.get_next_point_GA()
         return self.get_direction_and_vel_to_point(next_point_GA[0], next_point_GA[1])[1]
     # -------------------------------------------------------
+
+    # ---------------- PUEDE SER GA O MGA ------------------
+    def direction_MGA(self):
+        next_point_MGA = self.get_next_point_MGA()
+        return self.get_direction_and_vel_to_point(next_point_MGA[0], next_point_MGA[1])[0]
+
+    def speed_MGA(self):
+        next_point_MGA = self.get_next_point_MGA()
+        return self.get_direction_and_vel_to_point(next_point_MGA[0], next_point_MGA[1])[1]
+    # -------------------------------------------------------
    
    
     # ---------------- PUEDE SER JUSTO O NO ----------------
     def direction_p(self, point:tuple[float,float]):
-        return self.get_direction_and_vel_to_point(point[0],point[1])[0]
+        return self.get_direction_and_vel_to_point_JUSTO(point[0],point[1])[0]
     
     def speed_p(self, point:tuple[float,float]):
-        return self.get_direction_and_vel_to_point(point[0],point[1])[1]
+        return self.get_direction_and_vel_to_point_JUSTO(point[0],point[1])[1]
     # -------------------------------------------------------
 
     def going_same_max(self, other, self_d, other_d):
@@ -153,8 +163,8 @@ class Hiker:
             else:
                 print(self.name, end=" ")
                 print("Escalando")
-                direction = self.direction_GA()
-                speed = self.speed_GA()
+                direction = self.direction_MGA()
+                speed = self.speed_MGA()
 
         return direction,speed
     
