@@ -9,21 +9,106 @@ import customtkinter
 import seaborn as sns
 matplotlib.use('TkAgg')
 import customtkinter
-import os
-from PIL import Image
-from matplotlib.backend_bases import widgets
-import pygame
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg 
 from matplotlib.animation import FuncAnimation
 import numpy as np
 from mpl_toolkits.mplot3d import Axes3D
 from communication.client.client import MountainClient
-import itertools
 from ascii import ascii
-import sys
-from leaderboard import mandar_data
 from customtkinter import CTkFrame, CTkLabel
+
+ 
+class HomeFrame(customtkinter.CTkFrame):
+
+    def __init__(self, master):
+        super().__init__(master, corner_radius=0, fg_color="transparent")
+        self.grid(row=0, column=2, sticky="nsew")
+        self.grid_columnconfigure(0, weight=1)
+        self.grid_rowconfigure(0, weight=2)
+
+        # create container frame with grid layout
+        self.container_frame = customtkinter.CTkFrame(self, corner_radius=0, fg_color="transparent")
+        self.container_frame.grid(row=0, column=0, sticky="nsew")
+        self.container_frame.grid_rowconfigure(0, weight=1)
+        self.container_frame.grid_columnconfigure(0, weight=1)
+        self.Z = np.zeros((100,100)) +1500
+
+    """ RADIUS = 1.0  # Control this value.
+ax1.set_xlim3d(-RADIUS / 2, RADIUS / 2)
+ax1.set_zlim3d(-RADIUS / 2, RADIUS / 2)
+ax1.set_ylim3d(-RADIUS / 2, RADIUS / 2) """
+
+    def show_animation(self):
+        res = 100
+
+        # Crear el rango de valores para los ejes x e y
+        x = np.linspace(-23000, 23000, res)
+        y = np.linspace(-23000, 23000, res)
+
+        # Crear el meshgrid inicial a partir de los valores de x e y
+        X, Y = np.meshgrid(x, y)
+        
+
+        # Crear la figura y el eje 3D
+        fig = plt.figure()
+        ax = fig.add_subplot(111, projection='3d')
+
+        cliente = MountainClient("localhost", 8080)
+        info = cliente.get_data()
+
+        # Crear una matriz Z para almacenar los valores de altura
+        #Z = np.zeros_like(X)
+
+        
+
+        # Funcion de inicializacion
+        def init():
+            return ax,
+
+        # Funcion de actualizacion 
+        def update(frame):
+            nonlocal X, Y
+
+            # Obtener los datos actualizados del cliente
+            info = cliente.get_data()
+
+            # Actualizar los valores de Z en la superficie
+            for team, climbers in info.items():
+                for climber, data in climbers.items():
+                    x2 = data['x']
+                    y2 = data['y']
+                    z2 = data['z']
+
+                    # Verificar si el punto ya existe en la lista de picos
+                    
+                    # Calcular las distancias entre los puntos (x, y) y (x2, y2) -> EUCLIDEAN
+                    # Encontrar la posición del punto más cercano
+                    idx_x = np.argmin(abs(x - x2))
+                    idx_y = np.argmin(abs(y - y2))
+
+                    # Asignar el valor de altura al punto correspondiente en Z
+                    self.Z[idx_x, idx_y] = z2
+
+
+            
+            ax.set_xlabel("Eje X")
+            ax.set_ylabel("Eje Y")
+            ax.set_zlabel("Altura")
+            ax.clear()  # Limpiar el eje antes de agregar la nueva superficie
+            ax.plot_surface(X, Y, self.Z, cmap='coolwarm', linewidth=0)
+
+            return ax,
+
+        # Animacion
+        animation = FuncAnimation(fig, update, frames=None, init_func=init, blit=False)
+
+        # Create a Matplotlib canvas and display it in the container frame
+        canvas = FigureCanvasTkAgg(fig, master=self.container_frame)
+        canvas.draw()
+        canvas.get_tk_widget().grid(row=0, column=0)
+
+
 
 
 class SecondFrame(customtkinter.CTkFrame):
@@ -96,7 +181,7 @@ class SecondFrame(customtkinter.CTkFrame):
 
         if points: 
 
-            min_z, max_z = min(z), max(z)
+            max_z = max(z)
 
             
             self.ax.set_zlim3d(0, max_z)
@@ -198,100 +283,48 @@ class ScrollableLabelButtonFrame(customtkinter.CTkScrollableFrame):
         # Append the button to the 'button_list'
         self.button_list.append(button)
 
-    
-class HomeFrame(customtkinter.CTkFrame):
+   
 
+class ThirdFrame(customtkinter.CTkFrame):
     def __init__(self, master):
         super().__init__(master, corner_radius=0, fg_color="transparent")
-        self.grid(row=0, column=2, sticky="nsew")
-        self.grid_columnconfigure(0, weight=1)
-        self.grid_rowconfigure(0, weight=2)
+        self.grid(row=0, column=1, sticky="nsew")
+        self.state = False
 
-        # create container frame with grid layout
-        self.container_frame = customtkinter.CTkFrame(self, corner_radius=0, fg_color="transparent")
-        self.container_frame.grid(row=0, column=0, sticky="nsew")
-        self.container_frame.grid_rowconfigure(0, weight=1)
-        self.container_frame.grid_columnconfigure(0, weight=1)
-        self.Z = np.zeros((100,100)) +1500
-
-    """ RADIUS = 1.0  # Control this value.
-ax1.set_xlim3d(-RADIUS / 2, RADIUS / 2)
-ax1.set_zlim3d(-RADIUS / 2, RADIUS / 2)
-ax1.set_ylim3d(-RADIUS / 2, RADIUS / 2) """
-
-    def show_animation(self):
-        res = 100
-
-        # Crear el rango de valores para los ejes x e y
-        x = np.linspace(-23000, 23000, res)
-        y = np.linspace(-23000, 23000, res)
-
-        # Crear el meshgrid inicial a partir de los valores de x e y
-        X, Y = np.meshgrid(x, y)
-        
-
-        # Crear la figura y el eje 3D
-        fig = plt.figure()
-        ax = fig.add_subplot(111, projection='3d')
-
-        cliente = MountainClient("localhost", 8080)
+        cliente = MountainClient("localhost",8080)
         info = cliente.get_data()
+        num_jugador = 65
+        self.letter_asig = {}
+        counter = 0
+        while cliente.is_registering_teams() or (counter == 0):
+            for equipo, escaladores in info.items():
+                self.letter_asig[equipo] = num_jugador
+                num_jugador += 1
+            counter += 1
+        label_resultado = customtkinter.CTkLabel(self, text=ascii(self.letter_asig), font=('Helvetica', 10))
+        label_resultado.pack()
+        self.call_function()
+        
+    def change(self):
+        self.state = True
+        self.call_function()
 
-        # Crear una matriz Z para almacenar los valores de altura
-        #Z = np.zeros_like(X)
+    def call_function(self):
+        for widgets in self.winfo_children():
+            widgets.destroy()
+        label_resultado = customtkinter.CTkLabel(self, text=ascii(self.letter_asig), font=('Helvetica', 10))
+        label_resultado.pack()
+        self.after(500,self.call_function)
+
 
         
-
-        # Funcion de inicializacion
-        def init():
-            return ax,
-
-        # Funcion de actualizacion 
-        def update(frame):
-            nonlocal X, Y
-
-            # Obtener los datos actualizados del cliente
-            info = cliente.get_data()
-
-            # Actualizar los valores de Z en la superficie
-            for team, climbers in info.items():
-                for climber, data in climbers.items():
-                    x2 = data['x']
-                    y2 = data['y']
-                    z2 = data['z']
-
-                    # Verificar si el punto ya existe en la lista de picos
-                    
-                    # Calcular las distancias entre los puntos (x, y) y (x2, y2) -> EUCLIDEAN
-                    # Encontrar la posición del punto más cercano
-                    idx_x = np.argmin(abs(x - x2))
-                    idx_y = np.argmin(abs(y - y2))
-
-                    # Asignar el valor de altura al punto correspondiente en Z
-                    self.Z[idx_x, idx_y] = z2
-
-
-            
-            ax.set_xlabel("Eje X")
-            ax.set_ylabel("Eje Y")
-            ax.set_zlabel("Altura")
-            ax.clear()  # Limpiar el eje antes de agregar la nueva superficie
-            ax.plot_surface(X, Y, self.Z, cmap='coolwarm', linewidth=0)
-
-            return ax,
-
-        # Animacion
-        animation = FuncAnimation(fig, update, frames=None, init_func=init, blit=False)
-
-        # Create a Matplotlib canvas and display it in the container frame
-        canvas = FigureCanvasTkAgg(fig, master=self.container_frame)
-        canvas.draw()
-        canvas.get_tk_widget().grid(row=0, column=0)
+        
+        
 
 class FourthFrame(customtkinter.CTkFrame):
     def __init__(self, master):
         super().__init__(master, corner_radius=0, fg_color="transparent")
-        self.grid(row=0, column=2, sticky="nsew")
+        self.grid(row=0, column=1, sticky="nsew")
         self.grid_columnconfigure(0, weight=1)
         self.grid_rowconfigure(0, weight=2)
 
@@ -331,11 +364,11 @@ class FourthFrame(customtkinter.CTkFrame):
             self.canvas = FigureCanvasTkAgg(self.fig, master=self.container_frame)
             self.canvas.get_tk_widget().grid(row=0, column=0, sticky="nsew")
         else:
-            self.heatmap.set_data(heatmap)
+            self.heatmap.collections[0].set_array(heatmap.ravel())  # Actualizar los datos del QuadMesh
             self.heatmap.autoscale()
 
-        self.canvas.draw()
-
+        self.canvas.draw_idle()
+        self.canvas.flush_events()
 
     def show_animation(self):
         self.animation = FuncAnimation(self.fig, self.update_heatmap, interval=1000)
@@ -343,43 +376,3 @@ class FourthFrame(customtkinter.CTkFrame):
         self.canvas = FigureCanvasTkAgg(self.fig, master=self.container_frame)
         self.canvas.draw()
         self.canvas.get_tk_widget().grid(row=0, column=0, sticky="nsew")
-
-class ThirdFrame(customtkinter.CTkFrame):
-    def __init__(self, master):
-        super().__init__(master, corner_radius=0, fg_color="transparent")
-        self.grid(row=0, column=1, sticky="nsew")
-        self.state = False
-
-        cliente = MountainClient("localhost",8080)
-        info = cliente.get_data()
-        num_jugador = 65
-        self.letter_asig = {}
-        counter = 0
-        while cliente.is_registering_teams() or (counter == 0):
-            for equipo, escaladores in info.items():
-                self.letter_asig[equipo] = num_jugador
-                num_jugador += 1
-            counter += 1
-        label_resultado = customtkinter.CTkLabel(self, text=ascii(self.letter_asig), font=('Helvetica', 10))
-        label_resultado.pack()
-        self.call_function()
-        
-    def change(self):
-        self.state = True
-        self.call_function()
-
-    def call_function(self):
-        for widgets in self.winfo_children():
-            widgets.destroy()
-        label_resultado = customtkinter.CTkLabel(self, text=ascii(self.letter_asig), font=('Helvetica', 10))
-        label_resultado.pack()
-        self.after(500,self.call_function)
-
-
-        
-        
-        
-
-
-
-

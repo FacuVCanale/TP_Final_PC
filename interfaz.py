@@ -2,16 +2,16 @@ import customtkinter
 from customtkinter import CTkFrame
 import os
 from PIL import Image
-import pygame
 from interfaz_utils import SecondFrame,HomeFrame,FourthFrame, ThirdFrame
-from leaderboard import mandar_data
+from leaderboard import show_leaderboard
 
 class App(customtkinter.CTk):
     def __init__(self):
         super().__init__()
 
         self.title("Dashboard")
-        self.geometry("800x500")
+        self.geometry("1280x720")
+        self.resizable(False, False)
 
         # set grid layout 1x2
         self.grid_rowconfigure(0, weight=1)
@@ -52,11 +52,14 @@ class App(customtkinter.CTk):
                                                              compound="left",
                                                              font=customtkinter.CTkFont(size=15, weight="bold"), text="")
         self.navigation_frame_label.grid(row=0, column=0, padx=20, pady=20)
-                #FRAME DE NAVEGACION
+                
+                
+                
+        #LEADERBOARD
         self.navigation_frame_label2 = customtkinter.CTkLabel(self.navigation_frame2,
                                                               # ELEGIR NOMBRE DE LA BARRA DE TAREAS
                                                              compound="right",
-                                                             font=customtkinter.CTkFont(size=15, weight="bold"), text=mandar_data())
+                                                             font=customtkinter.CTkFont(size=15, weight="bold"), text=show_leaderboard())
         self.navigation_frame_label2.grid(row=0, column=0, padx=20, pady=20)
 
         #FRAME 3D
@@ -127,10 +130,11 @@ class App(customtkinter.CTk):
         # create third frame
         self.third_frame = ThirdFrame(self)
 
+
+        #Create fourth frame
         self.fourth_frame =FourthFrame(self)
                   
-    
-        pygame.mixer.init()
+
 
         self.select_frame_by_name("frame_4")
 
