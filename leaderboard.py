@@ -6,7 +6,7 @@ import os
 
 cliente1 = MountainClient("localhost", 8080)
 
-def show_leaderboard():
+def mandar_data():
     count = 1
     output = ""
     info = cliente1.get_data()
