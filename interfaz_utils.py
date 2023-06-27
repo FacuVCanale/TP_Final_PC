@@ -121,6 +121,8 @@ class SecondFrame(customtkinter.CTkFrame):
         self.create_scrollable_frame()
 
     def show_graf3D(self):
+
+        
         fig = plt.figure()
         self.ax = fig.add_subplot(111, projection='3d')
 
@@ -180,7 +182,6 @@ class SecondFrame(customtkinter.CTkFrame):
             self.ax.set_zlim3d(0, max_z)
 
         
-
 
     def get_team_list_from_server(self):
         """

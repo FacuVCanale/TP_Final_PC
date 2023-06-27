@@ -2,7 +2,6 @@ import customtkinter
 from customtkinter import CTkFrame
 import os
 from PIL import Image
-import pygame
 from interfaz_utils import SecondFrame,HomeFrame,FourthFrame, ThirdFrame, FifthFrame
 from leaderboard import show_leaderboard
 from communication.client.client import MountainClient
@@ -160,7 +159,7 @@ class App(customtkinter.CTk):
 
         self.select_frame_by_name("home")
 
-    #def music_button_event(self):
+ 
         
 
     #CAMBIAR DE PESTAÑAS - MODIFICO LA VISUALIZACION DE CADA PESTAÑA
@@ -177,7 +176,7 @@ class App(customtkinter.CTk):
             self.home_frame.grid(row=0, column=1, sticky="nsew")
         else:
             self.home_frame.grid_forget()
-            
+
         if name == "frame_2":
             self.second_frame.grid(row=0, column=1, sticky="nsew")   
         else:
