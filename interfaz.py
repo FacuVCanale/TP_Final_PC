@@ -4,6 +4,7 @@ import os
 from PIL import Image
 from interfaz_utils import SecondFrame,HomeFrame,FourthFrame, ThirdFrame
 from leaderboard import show_leaderboard
+from communication.client.client import MountainClient
 
 class App(customtkinter.CTk):
     def __init__(self):
@@ -17,6 +18,9 @@ class App(customtkinter.CTk):
         self.grid_rowconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=1)
         self.grid_columnconfigure(2, weight=1)
+
+
+        self.client = MountainClient()
 
         # load images with light and dark mode image
         image_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "test_images")
@@ -120,23 +124,23 @@ class App(customtkinter.CTk):
 
 
         # create home frame
-        self.home_frame = HomeFrame(self)
+        self.home_frame = HomeFrame(self,self.client)
         
 
         # create second frame
-        self.second_frame = SecondFrame(self)
+        self.second_frame = SecondFrame(self,self.client)
 
         
         # create third frame
-        self.third_frame = ThirdFrame(self)
+        self.third_frame = ThirdFrame(self,self.client)
 
 
         #Create fourth frame
-        self.fourth_frame =FourthFrame(self)
+        self.fourth_frame =FourthFrame(self,self.client)
                   
 
 
-        self.select_frame_by_name("frame_4")
+        self.select_frame_by_name("home")
 
     #def music_button_event(self):
         
@@ -152,7 +156,7 @@ class App(customtkinter.CTk):
         # show selected frame
         if name == "home":
             self.home_frame.grid(row=0, column=1, sticky="nsew")
-            self.home_frame.show_animation()
+        
         else:
             self.home_frame.grid_forget()
         if name == "frame_2":
@@ -188,7 +192,8 @@ class App(customtkinter.CTk):
         
 
     def change_appearance_mode_event(self, new_appearance_mode):
-        customtkinter.set_appearance_mode(new_appearance_mode)
+        mode = customtkinter.set_appearance_mode(new_appearance_mode)
+        return mode
 
 if __name__ == "__main__":
     app = App()
