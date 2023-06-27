@@ -5,7 +5,7 @@ import facu_inter
 
 # Calss for hikers of our team
 class Hiker:
-    def __init__(self, team:str, name:str, puntos:list, strat:str="follow_points", alpha:float = 0.01, beta:float = 0.5, alpha2:float = 0.1):
+    def __init__(self, team:str, name:str, puntos:list, strat:str="follow_points", alpha:float = 0.1, beta:float = 0.8, alpha2:float = 0.1):
         self.team = team
         self.name = name
         self.data = {}
@@ -124,11 +124,9 @@ class Hiker:
         coords, is_same = facu_inter.heading_same_max(self_pos, self_d, other_pos, other_d)
         return coords, is_same
 
-    def strategy(self):
+    def strategy(self, GA_o_MGA:str ="GA", n=50, n2=0.01):
         # tolerancia econtrar punto
-        n = 50 
         # tolerancia derivada parcial
-        n2 = 0.05
         
         # check len of list
         next_point = self.puntos[0]
@@ -170,8 +168,14 @@ class Hiker:
             else:
                 print(self.name, end=" ")
                 print("Escalando")
-                direction = self.direction_MGA()
-                speed = self.speed_MGA()
+                if GA_o_MGA == "GA":
+                    direction = self.direction_GA()
+                    speed = self.speed_GA()
+                elif GA_o_MGA == "MGA":
+                    direction = self.direction_MGA()
+                    speed = self.speed_MGA()
+                    
+            
 
         return direction,speed
     

@@ -19,10 +19,10 @@ dataAnalyst = DataAnalyst(c)
 dataAnalysts = [dataAnalyst]
 
 # Initialize hikers
-lucas = Hiker('CLIFF','lucas', lucas_points)
-facu = Hiker('CLIFF','facu', facu_points)
-fran = Hiker('CLIFF','fran', fran_points)
-ivan = Hiker('CLIFF','ivan', ivan_points)
+lucas = Hiker('CLIFF','lucas', lucas_points, alpha=.7, beta=.9)
+facu = Hiker('CLIFF','facu', facu_points, alpha=.1)         #ESTE TIENE GA
+fran = Hiker('CLIFF','fran', fran_points, alpha=.7, beta=.9)
+ivan = Hiker('CLIFF','ivan', ivan_points, alpha=.7, beta=.9)
 hikers = [lucas, facu, fran, ivan]
 
 # Function to update data on all Hykers and DataAnalyst
@@ -83,32 +83,32 @@ while not c.is_over():
         print(data["CLIFF"][hiker])
 
     
-    if not dataAnalyst.check_win()[0]:# If no team won
+    #if not dataAnalyst.check_win()[0]:# If no team won
 
-        lucas_new_d_and_s = lucas.strategy()
-        facu_new_d_and_s = facu.strategy()
-        fran_new_d_and_s = fran.strategy()
-        ivan_new_d_and_s = ivan.strategy()
+    lucas_new_d_and_s = lucas.strategy("MGA")
+    facu_new_d_and_s = facu.strategy("GA")
+    fran_new_d_and_s = fran.strategy("MGA")
+    ivan_new_d_and_s = ivan.strategy("MGA")
 
-        directives = {
-                        lucas.name: {'direction': lucas_new_d_and_s[0], 'speed': lucas_new_d_and_s[1]},
-                        facu.name: {'direction': facu_new_d_and_s[0], 'speed': facu_new_d_and_s[1]},
-                        fran.name: {'direction': fran_new_d_and_s[0], 'speed': fran_new_d_and_s[1]},
-                        ivan.name: {'direction': ivan_new_d_and_s[0], 'speed': ivan_new_d_and_s[1]},
-                    }
-        
-    # Check if a hyker is going out of bounds   
-        for hiker in hikers:
-            if hiker.check_out_of_bounds():
-                print(hiker.name)
-                print("ME ESTROY POR IR\nME ESTROY POR IR\nME ESTROY POR IR\nME ESTROY POR IR\nME ESTROY POR IR\n")
-                hiker.change_strat('follow_points')
-                # hiker.puntos = hiker.puntos[1:] PARA TESTEAR AGREGANDO UN PUNTO A LA LSITA
-                hiker_dir_speed = hiker.strategy()
-                directives[hiker.name] = {'direction': hiker_dir_speed[0], 'speed': hiker_dir_speed[1]}
-
+    directives = {
+                    lucas.name: {'direction': lucas_new_d_and_s[0], 'speed': lucas_new_d_and_s[1]},
+                    facu.name: {'direction': facu_new_d_and_s[0], 'speed': facu_new_d_and_s[1]},
+                    fran.name: {'direction': fran_new_d_and_s[0], 'speed': fran_new_d_and_s[1]},
+                    ivan.name: {'direction': ivan_new_d_and_s[0], 'speed': ivan_new_d_and_s[1]},
+                }
     
-    else: # If a team wins, all our hikers go to win pos
+    # Check if a hyker is going out of bounds   
+    for hiker in hikers:
+        if hiker.check_out_of_bounds():
+            print(hiker.name)
+            print("ME ESTROY POR IR\nME ESTROY POR IR\nME ESTROY POR IR\nME ESTROY POR IR\nME ESTROY POR IR\n")
+            hiker.change_strat('follow_points')
+            # hiker.puntos = hiker.puntos[1:] PARA TESTEAR AGREGANDO UN PUNTO A LA LSITA
+            hiker_dir_speed = hiker.strategy("MGA")
+            directives[hiker.name] = {'direction': hiker_dir_speed[0], 'speed': hiker_dir_speed[1]}
+
+
+    """ else: # If a team wins, all our hikers go to win pos
         print(f'Alguien gano escaladores yendo a pos {dataAnalyst.check_win()[1]}')
         x_y_win = (dataAnalyst.check_win()[1][0],dataAnalyst.check_win()[1][1])
         directives = {
@@ -116,12 +116,12 @@ while not c.is_over():
                 facu.name: {'direction': facu.direction_p(x_y_win), 'speed': facu.speed_p(x_y_win)},
                 fran.name: {'direction': fran.direction_p(x_y_win), 'speed': fran.speed_p(x_y_win)},
                 ivan.name: {'direction': ivan.direction_p(x_y_win), 'speed': ivan.speed_p(x_y_win)},
-            }
+            } """
 
 
 
     #Checks if hikers are going to the same place in GA.
-    check_hikers_same_max(hikers)
+    #check_hikers_same_max(hikers)
 
     # Give directives to server
     c.next_iteration('CLIFF', directives)
