@@ -12,6 +12,7 @@ from communication.client.client import MountainClient
 import itertools
 from ascii import ascii
 import sys
+from leaderboard import mandar_data
 from customtkinter import CTkFrame, CTkLabel
 class App(customtkinter.CTk):
     def __init__(self):
@@ -22,14 +23,14 @@ class App(customtkinter.CTk):
 
         # set grid layout 1x2
         self.grid_rowconfigure(0, weight=1)
-        self.grid_columnconfigure(1, weight=1)
+        self.grid_columnconfigure(1, weight=4)
+        self.grid_columnconfigure(2, weight=1)
 
         # load images with light and dark mode image
         image_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "test_images")
         self.logo_image = customtkinter.CTkImage(Image.open(os.path.join(image_path, "logo.png")), size=(155, 64))
 
         self.large_test_image = customtkinter.CTkImage(Image.open(os.path.join(image_path, "large_test_image.png")), size=(500, 150))
-
         self.image_icon_image = customtkinter.CTkImage(Image.open(os.path.join(image_path, "image_icon_light.png")), size=(20, 20))
 
         self.home_image = customtkinter.CTkImage(light_image=Image.open(os.path.join(image_path, "home_dark.png")),
@@ -50,8 +51,16 @@ class App(customtkinter.CTk):
         self.navigation_frame.grid(row=0, column=0, sticky="nsew")
         self.navigation_frame.grid_rowconfigure(6, weight=1)  # ELEGIR CUANTAS OPCIONES PONER EN EL LADO IZQUIERDO ES DECIR CUANTOS RECTANGULOS
 
+        self.navigation_frame2 = customtkinter.CTkFrame(self, corner_radius=0)
+        self.navigation_frame2.grid(row=0, column=2, sticky="nsew")
+        self.navigation_frame2.grid_rowconfigure(1, weight=1)
 
         #FRAME DE NAVEGACION
+        self.navigation_frame_label = customtkinter.CTkLabel(self.navigation_frame2,
+                                                             compound="right",
+                                                             font=customtkinter.CTkFont(size=15, weight="bold"), text=mandar_data())
+        self.navigation_frame_label.grid(row=0, column=0, padx=20, pady=20)
+        
         self.navigation_frame_label = customtkinter.CTkLabel(self.navigation_frame,
                                                              image=self.logo_image,  # ELEGIR NOMBRE DE LA BARRA DE TAREAS
                                                              compound="left",
@@ -120,7 +129,6 @@ class App(customtkinter.CTk):
 
         # create home frame
         self.home_frame = customtkinter.CTkFrame(self, corner_radius=0, fg_color="transparent")
-        self.home_frame.grid_columnconfigure(0, weight=1)
 
         #create first frame
 
@@ -195,9 +203,7 @@ class App(customtkinter.CTk):
 class SecondFrame(customtkinter.CTkFrame): #TODO ESTO TIENE Q ESTAR MODULARIZADO PERO POR COMODIDAD PARA VER QUE HACE LO DEJO ACA. YA SE COMO HACER PARA DIVIDIRLO EN VARIOS ARCHIVOS. TENIA UN ARCHIVO LLAMADO GRAPH_UTILS PERO TUVE QUE HACER STASH POR EL ERROR QUE TENGO. LO MISMO CON EL CUARTO FRAME.
     def __init__(self, master):
         super().__init__(master, corner_radius=0, fg_color="transparent")
-        self.grid(row=0, column=1, sticky="nsew")
-        self.grid_columnconfigure(0, weight=1)
-        self.grid_rowconfigure(0, weight=2)
+        self.grid(row=0, column=0, sticky="nsew")
 
         # Crear la figura y el gráfico 3D
         self.fig = plt.figure()
@@ -255,25 +261,19 @@ class SecondFrame(customtkinter.CTkFrame): #TODO ESTO TIENE Q ESTAR MODULARIZADO
 class ThirdFrame(customtkinter.CTkFrame):
     def __init__(self, master):
         super().__init__(master, corner_radius=0, fg_color="transparent")
-        self.grid(row=0, column=0, sticky="nsew")
-        self.grid_columnconfigure(0, weight=1)
-        self.grid_rowconfigure(0, weight=1)
+        self.grid(row=0, column=1, sticky="nsew")
         self.state = False
 
         cliente = MountainClient("localhost",8080)
         info = cliente.get_data()
         num_jugador = 65
         self.letter_asig = {}
-        for equipo, escaladores in info.items():
-            self.letter_asig[equipo] = num_jugador
-            num_jugador += 1
-        #QUE PASA SI UN EQUIPO SE AGREGA DESPUES
-        #NO FUNCA ESTA SOLUCION:
-        #while not(cliente.finish_registration()) or (counter == 0):
-        #    for equipo, escaladores in info.items():
-        #        self.letter_asig[equipo] = num_jugador
-        #        num_jugador += 1
-        #    counter += 1
+        counter = 0
+        while cliente.is_registering_teams() or (counter == 0):
+            for equipo, escaladores in info.items():
+                self.letter_asig[equipo] = num_jugador
+                num_jugador += 1
+            counter += 1
         label_resultado = customtkinter.CTkLabel(self, text=ascii(self.letter_asig), font=('Helvetica', 10))
         label_resultado.pack()
         self.call_function()
@@ -302,15 +302,6 @@ class FourthFrame(CTkFrame):
     def __init__(self, master):
         super().__init__(master, corner_radius=0, fg_color="transparent")
         self.grid(row=0, column=2, sticky="nsew")
-        self.grid_columnconfigure(0, weight=1)
-        self.grid_rowconfigure(0, weight=2)
-
-        # create container frame with grid layout
-        self.container_frame = CTkFrame(self, corner_radius=0, fg_color="transparent")
-        self.container_frame.grid(row=0, column=0, sticky="nsew")
-        self.container_frame.grid_rowconfigure(0, weight=1)
-        self.container_frame.grid_columnconfigure(0, weight=1)
-
     def show_animation(self):
         res = 100
 
