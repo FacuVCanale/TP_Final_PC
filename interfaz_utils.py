@@ -380,17 +380,19 @@ class FourthFrame(customtkinter.CTkFrame):
 class FifthFrame(customtkinter.CTkFrame):
     def __init__(self, master):
         super().__init__(master, corner_radius=0, fg_color="transparent")
-        self.grid(row=0, column=3, sticky="nsew")
+        self.grid(row=0, column=1, sticky="nsew")
         self.grid_columnconfigure(0, weight=1)
         self.grid_rowconfigure(0, weight=2)
-
-        self.selected_team = 'Everyone'
 
         # create container frame with grid layout
         self.container_frame = customtkinter.CTkFrame(self, corner_radius=0, fg_color="transparent")
         self.container_frame.grid(row=0, column=0, sticky="nsew")
         self.container_frame.grid_rowconfigure(0, weight=1)
         self.container_frame.grid_columnconfigure(0, weight=1)
+
+        self.selected_team = 'Everyone'
+
+        # create container frame with grid layout
         self.client = MountainClient("localhost", 8080)
         self.info = self.client.get_data()
 

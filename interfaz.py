@@ -100,7 +100,7 @@ class App(customtkinter.CTk):
                                                       anchor="w", 
                                                       command=self.frame_3_button_event)
         self.frame_3_button.grid(row=3, column=0, sticky="ew")
-
+        #HEATMAP
         self.frame_4_button = customtkinter.CTkButton(self.navigation_frame, corner_radius=0, height=40,
                                                       border_spacing=10, 
                                                       text="HEATMAP",
@@ -111,7 +111,7 @@ class App(customtkinter.CTk):
                                                       anchor="w", 
                                                       command=self.frame_3_button_event)
         self.frame_4_button.grid(row=4, column=0, sticky="ew")
-
+        #SCATTER
         self.frame_5_button = customtkinter.CTkButton(self.navigation_frame, corner_radius=0, height=40,
                                               border_spacing=10, 
                                               text="SCATTER",
@@ -151,7 +151,7 @@ class App(customtkinter.CTk):
                   
 
 
-        self.select_frame_by_name("frame_4")
+        self.select_frame_by_name("frame_3")
 
     #def music_button_event(self):
         
@@ -163,6 +163,7 @@ class App(customtkinter.CTk):
         self.frame_2_button.configure(fg_color=("gray75", "gray25") if name == "frame_2" else "transparent")
         self.frame_3_button.configure(fg_color=("gray75", "gray25") if name == "frame_3" else "transparent")
         self.frame_4_button.configure(fg_color=("gray75", "gray25") if name == "frame_4" else "transparent")
+        self.frame_5_button.configure(fg_color=("gray75", "gray25") if name == "frame_5" else "transparent")
         
         # show selected frame
         if name == "home":
@@ -184,6 +185,12 @@ class App(customtkinter.CTk):
             self.fourth_frame.show_animation()  # Call the show_animation method
         else:
             self.fourth_frame.grid_forget()
+
+        if name == "frame_5":
+            self.fifth_frame.grid(row=0, column=1, sticky="nsew")
+            self.fifth_frame.show_animation()
+        else:
+            self.third_frame.grid_forget()
         
 
     def home_button_event(self):
