@@ -102,11 +102,11 @@ class Hiker:
     # ---------------- PUEDE SER GA O MGA ------------------
     def direction_MGA(self):
         next_point_MGA = self.get_next_point_MGA()
-        return self.get_direction_and_vel_to_point(next_point_MGA[0], next_point_MGA[1])[0]
+        return self.get_direction_and_vel_to_point_JUSTO(next_point_MGA[0], next_point_MGA[1])[0]
 
     def speed_MGA(self):
         next_point_MGA = self.get_next_point_MGA()
-        return self.get_direction_and_vel_to_point(next_point_MGA[0], next_point_MGA[1])[1]
+        return self.get_direction_and_vel_to_point_JUSTO(next_point_MGA[0], next_point_MGA[1])[1]
     # -------------------------------------------------------
    
    
@@ -191,7 +191,8 @@ class Hiker:
         """"
         checks if hikers next point is out of bounds
         """
-        x_next,y_next = self.get_next_point()[0],self.get_next_point()[1]
+        next_coords = self.get_next_point()
+        x_next,y_next = next_coords[0], next_coords[1]
         distance_center = math.sqrt(x_next ** 2 + y_next ** 2)
         if distance_center < radius:
             return False
