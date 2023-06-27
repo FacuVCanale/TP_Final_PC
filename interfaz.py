@@ -113,7 +113,7 @@ class App(customtkinter.CTk):
                                                       hover_color=("gray70", "gray30"),
                                                       image=self.add_user_image, 
                                                       anchor="w", 
-                                                      command=self.frame_3_button_event)
+                                                      command=self.frame_4_button_event)
         self.frame_4_button.grid(row=4, column=0, sticky="ew")
         #SCATTER
         self.frame_5_button = customtkinter.CTkButton(self.navigation_frame, corner_radius=0, height=40,

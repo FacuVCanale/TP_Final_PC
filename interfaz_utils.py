@@ -36,7 +36,7 @@ class HomeFrame(customtkinter.CTkFrame):
         
 
         res = 20
-        self.Z = np.zeros((res,res)) +1500
+        self.Z = np.zeros((res,res))
         
     
 
@@ -97,7 +97,7 @@ ax1.set_ylim3d(-RADIUS / 2, RADIUS / 2) """
                 self.Z[idx_x, idx_y] = z2
 
         self.ax.clear()
-        self.ax.plot_surface(self.X, self.Y, self.Z)
+        self.ax.plot_surface(self.X, self.Y, self.Z, cmap="terrain")
 
         
 
