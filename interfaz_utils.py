@@ -8,6 +8,23 @@ from communication.client.client import MountainClient
 import customtkinter
 import seaborn as sns
 matplotlib.use('TkAgg')
+import customtkinter
+import os
+from PIL import Image
+from matplotlib.backend_bases import widgets
+import pygame
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg 
+from matplotlib.animation import FuncAnimation
+import numpy as np
+from mpl_toolkits.mplot3d import Axes3D
+from communication.client.client import MountainClient
+import itertools
+from ascii import ascii
+import sys
+from leaderboard import mandar_data
+from customtkinter import CTkFrame, CTkLabel
+
 
 class SecondFrame(customtkinter.CTkFrame):
     def __init__(self, master):
@@ -326,3 +343,43 @@ class FourthFrame(customtkinter.CTkFrame):
         self.canvas = FigureCanvasTkAgg(self.fig, master=self.container_frame)
         self.canvas.draw()
         self.canvas.get_tk_widget().grid(row=0, column=0, sticky="nsew")
+
+class ThirdFrame(customtkinter.CTkFrame):
+    def __init__(self, master):
+        super().__init__(master, corner_radius=0, fg_color="transparent")
+        self.grid(row=0, column=1, sticky="nsew")
+        self.state = False
+
+        cliente = MountainClient("localhost",8080)
+        info = cliente.get_data()
+        num_jugador = 65
+        self.letter_asig = {}
+        counter = 0
+        while cliente.is_registering_teams() or (counter == 0):
+            for equipo, escaladores in info.items():
+                self.letter_asig[equipo] = num_jugador
+                num_jugador += 1
+            counter += 1
+        label_resultado = customtkinter.CTkLabel(self, text=ascii(self.letter_asig), font=('Helvetica', 10))
+        label_resultado.pack()
+        self.call_function()
+        
+    def change(self):
+        self.state = True
+        self.call_function()
+
+    def call_function(self):
+        for widgets in self.winfo_children():
+            widgets.destroy()
+        label_resultado = customtkinter.CTkLabel(self, text=ascii(self.letter_asig), font=('Helvetica', 10))
+        label_resultado.pack()
+        self.after(500,self.call_function)
+
+
+        
+        
+        
+
+
+
+

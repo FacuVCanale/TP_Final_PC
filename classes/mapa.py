@@ -14,11 +14,13 @@ class Mapa_circular:
         x += self.circulo.filas // 2
         y = self.circulo.filas // 2 - y
 
-        if type(flag) == bool:
-            self.circulo[y][x] = "\033[92m" + chr(num_jugador) +"\033[0m"
-        else:
-            self.circulo[y][x] = "\033[94m" + chr(num_jugador) +"\033[0m"
-
+        #if type(flag) == bool:
+        #    self.circulo[y][x] = "\033[92m" + chr(num_jugador) +"\033[0m"
+        #else:
+        #    self.circulo[y][x] = "\033[94m" + chr(num_jugador) +"\033[0m"
+        #NO FUNCA
+        
+        self.circulo[y][x] = chr(num_jugador)
     def __repr__(self) -> str:
         return f"import circulo.py\n {self.circulo.str()}\n mapa = Mapa_circular(circle,1000)"
     def __str__(self) -> str:

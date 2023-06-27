@@ -3,8 +3,8 @@ from customtkinter import CTkFrame
 import os
 from PIL import Image
 import pygame
-from interfaz_utils import SecondFrame,HomeFrame,FourthFrame
-#a
+from interfaz_utils import SecondFrame,HomeFrame,FourthFrame, ThirdFrame
+from leaderboard import mandar_data
 
 class App(customtkinter.CTk):
     def __init__(self):
@@ -16,6 +16,7 @@ class App(customtkinter.CTk):
         # set grid layout 1x2
         self.grid_rowconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=1)
+        self.grid_columnconfigure(2, weight=1)
 
         # load images with light and dark mode image
         image_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "test_images")
@@ -42,14 +43,21 @@ class App(customtkinter.CTk):
         self.navigation_frame = customtkinter.CTkFrame(self, corner_radius=0)
         self.navigation_frame.grid(row=0, column=0, sticky="nsew")
         self.navigation_frame.grid_rowconfigure(6, weight=1)  # ELEGIR CUANTAS OPCIONES PONER EN EL LADO IZQUIERDO ES DECIR CUANTOS RECTANGULOS
-
-
+        self.navigation_frame2 = customtkinter.CTkFrame(self, corner_radius=0)
+        self.navigation_frame2.grid(row=0, column=2, sticky="nsew")
+        self.navigation_frame2.grid_rowconfigure(1, weight=1)
         #FRAME DE NAVEGACION
         self.navigation_frame_label = customtkinter.CTkLabel(self.navigation_frame,
                                                              image=self.logo_image,  # ELEGIR NOMBRE DE LA BARRA DE TAREAS
                                                              compound="left",
                                                              font=customtkinter.CTkFont(size=15, weight="bold"), text="")
         self.navigation_frame_label.grid(row=0, column=0, padx=20, pady=20)
+                #FRAME DE NAVEGACION
+        self.navigation_frame_label2 = customtkinter.CTkLabel(self.navigation_frame2,
+                                                              # ELEGIR NOMBRE DE LA BARRA DE TAREAS
+                                                             compound="right",
+                                                             font=customtkinter.CTkFont(size=15, weight="bold"), text=mandar_data())
+        self.navigation_frame_label2.grid(row=0, column=0, padx=20, pady=20)
 
         #FRAME 3D
         self.home_button = customtkinter.CTkButton(self.navigation_frame, 
@@ -98,7 +106,7 @@ class App(customtkinter.CTk):
                                                       image=self.add_user_image, 
                                                       anchor="w", 
                                                       command=self.frame_3_button_event)
-        self.frame_4_button.grid(row=3, column=0, sticky="ew")
+        self.frame_4_button.grid(row=4, column=0, sticky="ew")
 
     
         #CAMBIAR APARIENCIA
@@ -177,27 +185,6 @@ class App(customtkinter.CTk):
 
     def change_appearance_mode_event(self, new_appearance_mode):
         customtkinter.set_appearance_mode(new_appearance_mode)
-
-
-
-class ThirdFrame(customtkinter.CTkFrame):
-    def __init__(self, master):
-        super().__init__(master, corner_radius=0, fg_color="transparent")
-        self.grid(row=0, column=1, sticky="nsew")
-        self.grid_columnconfigure(0, weight=1)
-        self.grid_rowconfigure(0, weight=2)
-
-        # create container frame with grid layout
-        self.container_frame = customtkinter.CTkFrame(self, corner_radius=0, fg_color="transparent")
-        self.container_frame.grid(row=0, column=0, sticky="nsew")
-        self.container_frame.grid_rowconfigure(0, weight=1)
-        self.container_frame.grid_columnconfigure(0, weight=1)
-
-    #ascii()
-
-    #ACA IMPORTO EL ARCHIVO ASCII
-
-
 
 if __name__ == "__main__":
     app = App()
