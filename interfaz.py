@@ -3,7 +3,7 @@ from customtkinter import CTkFrame
 import os
 from PIL import Image
 import pygame
-from interfaz_utils import SecondFrame,HomeFrame,FourthFrame, ThirdFrame
+from interfaz_utils import SecondFrame,HomeFrame,FourthFrame, ThirdFrame, FifthFrame
 from leaderboard import mandar_data
 
 class App(customtkinter.CTk):
@@ -108,6 +108,18 @@ class App(customtkinter.CTk):
                                                       command=self.frame_3_button_event)
         self.frame_4_button.grid(row=4, column=0, sticky="ew")
 
+        self.frame_5_button = customtkinter.CTkButton(self.navigation_frame, corner_radius=0, height=40,
+                                              border_spacing=10, 
+                                              text="SCATTER",
+                                              fg_color="transparent", 
+                                              text_color=("gray10", "gray90"),
+                                              hover_color=("gray70", "gray30"),
+                                              image=self.add_user_image, 
+                                              anchor="w", 
+                                              command=self.frame_5_button_event)
+        self.frame_5_button.grid(row=5, column=0, sticky="ew")
+
+
     
         #CAMBIAR APARIENCIA
         self.appearance_mode_menu = customtkinter.CTkOptionMenu(self.navigation_frame, values=["Dark", "Light", "System"],
@@ -127,7 +139,9 @@ class App(customtkinter.CTk):
         # create third frame
         self.third_frame = ThirdFrame(self)
 
-        self.fourth_frame =FourthFrame(self)
+        self.fourth_frame = FourthFrame(self)
+
+        self.fifth_frame = FifthFrame(self)
                   
     
         pygame.mixer.init()
@@ -180,7 +194,10 @@ class App(customtkinter.CTk):
     def frame_4_button_event(self):
         self.select_frame_by_name("frame_4")
         self.fourth_frame.show_animation()
-       
+    
+    def frame_5_button_event(self):
+        self.select_frame_by_name("frame_5")
+        self.fifth_frame.show_animation()       
         
 
     def change_appearance_mode_event(self, new_appearance_mode):
