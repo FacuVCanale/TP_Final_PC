@@ -96,6 +96,17 @@ while not c.is_over():
                         fran.name: {'direction': fran_new_d_and_s[0], 'speed': fran_new_d_and_s[1]},
                         ivan.name: {'direction': ivan_new_d_and_s[0], 'speed': ivan_new_d_and_s[1]},
                     }
+        
+    # Check if a hyker is going out of bounds   
+        for hiker in hikers:
+            if hiker.check_out_of_bounds():
+                print(hiker.name)
+                print("ME ESTROY POR IR\nME ESTROY POR IR\nME ESTROY POR IR\nME ESTROY POR IR\nME ESTROY POR IR\n")
+                hiker.change_strat('follow_points')
+                # hiker.puntos = hiker.puntos[1:] PARA TESTEAR AGREGANDO UN PUNTO A LA LSITA
+                hiker_dir_speed = hiker.strategy()
+                directives[hiker.name] = {'direction': hiker_dir_speed[0], 'speed': hiker_dir_speed[1]}
+
     
     else: # If a team wins, all our hikers go to win pos
         print(f'Alguien gano escaladores yendo a pos {dataAnalyst.check_win()[1]}')
@@ -107,7 +118,8 @@ while not c.is_over():
                 ivan.name: {'direction': ivan.direction_p(x_y_win), 'speed': ivan.speed_p(x_y_win)},
             }
 
-    
+
+
     #Checks if hikers are going to the same place in GA.
     check_hikers_same_max(hikers)
 
