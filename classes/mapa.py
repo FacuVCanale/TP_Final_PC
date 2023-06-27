@@ -19,6 +19,7 @@ class Mapa_circular:
         #else:
         #    self.circulo[y][x] = "\033[94m" + chr(num_jugador) +"\033[0m"
         #NO FUNCA
+        
         self.circulo[y][x] = chr(num_jugador)
     def __repr__(self) -> str:
         return f"import circulo.py\n {self.circulo.str()}\n mapa = Mapa_circular(circle,1000)"

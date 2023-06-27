@@ -1,36 +1,34 @@
 import customtkinter
+from customtkinter import CTkFrame
 import os
 from PIL import Image
-from matplotlib.backend_bases import widgets
 import pygame
-import matplotlib.pyplot as plt
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg 
-from matplotlib.animation import FuncAnimation
-import numpy as np
-from mpl_toolkits.mplot3d import Axes3D
+from interfaz_utils import SecondFrame,HomeFrame,FourthFrame, ThirdFrame, FifthFrame
+from leaderboard import show_leaderboard
 from communication.client.client import MountainClient
-import itertools
-from ascii import ascii
-import sys
-from leaderboard import mandar_data
-from customtkinter import CTkFrame, CTkLabel
+
 class App(customtkinter.CTk):
     def __init__(self):
         super().__init__()
 
         self.title("Dashboard")
-        self.attributes("-fullscreen", True)
+        self.geometry("1280x720")
+        self.resizable(False, False)
 
         # set grid layout 1x2
         self.grid_rowconfigure(0, weight=1)
-        self.grid_columnconfigure(1, weight=4)
+        self.grid_columnconfigure(1, weight=1)
         self.grid_columnconfigure(2, weight=1)
+
+
+        self.client = MountainClient()
 
         # load images with light and dark mode image
         image_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "test_images")
         self.logo_image = customtkinter.CTkImage(Image.open(os.path.join(image_path, "logo.png")), size=(155, 64))
 
         self.large_test_image = customtkinter.CTkImage(Image.open(os.path.join(image_path, "large_test_image.png")), size=(500, 150))
+
         self.image_icon_image = customtkinter.CTkImage(Image.open(os.path.join(image_path, "image_icon_light.png")), size=(20, 20))
 
         self.home_image = customtkinter.CTkImage(light_image=Image.open(os.path.join(image_path, "home_dark.png")),
@@ -50,22 +48,24 @@ class App(customtkinter.CTk):
         self.navigation_frame = customtkinter.CTkFrame(self, corner_radius=0)
         self.navigation_frame.grid(row=0, column=0, sticky="nsew")
         self.navigation_frame.grid_rowconfigure(6, weight=1)  # ELEGIR CUANTAS OPCIONES PONER EN EL LADO IZQUIERDO ES DECIR CUANTOS RECTANGULOS
-
         self.navigation_frame2 = customtkinter.CTkFrame(self, corner_radius=0)
         self.navigation_frame2.grid(row=0, column=2, sticky="nsew")
         self.navigation_frame2.grid_rowconfigure(1, weight=1)
-
         #FRAME DE NAVEGACION
-        self.navigation_frame_label = customtkinter.CTkLabel(self.navigation_frame2,
-                                                             compound="right",
-                                                             font=customtkinter.CTkFont(size=15, weight="bold"), text=mandar_data())
-        self.navigation_frame_label.grid(row=0, column=0, padx=20, pady=20)
-        
         self.navigation_frame_label = customtkinter.CTkLabel(self.navigation_frame,
                                                              image=self.logo_image,  # ELEGIR NOMBRE DE LA BARRA DE TAREAS
                                                              compound="left",
                                                              font=customtkinter.CTkFont(size=15, weight="bold"), text="")
         self.navigation_frame_label.grid(row=0, column=0, padx=20, pady=20)
+                
+                
+                
+        #LEADERBOARD
+        self.navigation_frame_label2 = customtkinter.CTkLabel(self.navigation_frame2,
+                                                              # ELEGIR NOMBRE DE LA BARRA DE TAREAS
+                                                             compound="right",
+                                                             font=customtkinter.CTkFont(size=15, weight="bold"), text=show_leaderboard())
+        self.navigation_frame_label2.grid(row=0, column=0, padx=20, pady=20)
 
         #FRAME 3D
         self.home_button = customtkinter.CTkButton(self.navigation_frame, 
@@ -104,54 +104,61 @@ class App(customtkinter.CTk):
                                                       anchor="w", 
                                                       command=self.frame_3_button_event)
         self.frame_3_button.grid(row=3, column=0, sticky="ew")
-
-        #FRAME PONER MUSICA 
-        self.music_playing = False
+        #HEATMAP
         self.frame_4_button = customtkinter.CTkButton(self.navigation_frame, corner_radius=0, height=40,
                                                       border_spacing=10, 
-                                                      text="Gráfico Estimado de la Montaña ",
+                                                      text="HEATMAP",
                                                       fg_color="transparent", 
                                                       text_color=("gray10", "gray90"),
                                                       hover_color=("gray70", "gray30"),
                                                       image=self.add_user_image, 
                                                       anchor="w", 
-                                                      command=self.frame_4_button_event)
+                                                      command=self.frame_3_button_event)
         self.frame_4_button.grid(row=4, column=0, sticky="ew")
+        #SCATTER
+        self.frame_5_button = customtkinter.CTkButton(self.navigation_frame, corner_radius=0, height=40,
+                                              border_spacing=10, 
+                                              text="SCATTER",
+                                              fg_color="transparent", 
+                                              text_color=("gray10", "gray90"),
+                                              hover_color=("gray70", "gray30"),
+                                              image=self.add_user_image, 
+                                              anchor="w", 
+                                              command=self.frame_5_button_event)
+        self.frame_5_button.grid(row=5, column=0, sticky="ew")
 
 
-
-
+    
         #CAMBIAR APARIENCIA
         self.appearance_mode_menu = customtkinter.CTkOptionMenu(self.navigation_frame, values=["Dark", "Light", "System"],
                                                                 command=self.change_appearance_mode_event)
         
         self.appearance_mode_menu.grid(row=7, column=0, padx=20, pady=20, sticky="s")
 
+
         # create home frame
-        self.home_frame = customtkinter.CTkFrame(self, corner_radius=0, fg_color="transparent")
-
-        #create first frame
-
-
+        self.home_frame = HomeFrame(self,self.client)
+        
 
         # create second frame
-        self.second_frame = SecondFrame(self)
+        self.second_frame = SecondFrame(self,self.client)
 
         
         # create third frame
-        self.third_frame = ThirdFrame(self)
+        self.third_frame = ThirdFrame(self,self.client)
+
+        self.fourth_frame =FourthFrame(self,self.client)
+                  
+
+
         
-        #create fourth frame
-        self.fourth_frame = FourthFrame(self)
-        
-          
+
+
+        self.fifth_frame = FifthFrame(self)
+                  
 
 
         self.select_frame_by_name("home")
-    
-        
-
-        pygame.mixer.init()
 
     #def music_button_event(self):
         
@@ -162,29 +169,40 @@ class App(customtkinter.CTk):
         self.home_button.configure(fg_color=("gray75", "gray25") if name == "home" else "transparent")
         self.frame_2_button.configure(fg_color=("gray75", "gray25") if name == "frame_2" else "transparent")
         self.frame_3_button.configure(fg_color=("gray75", "gray25") if name == "frame_3" else "transparent")
-        self.frame_4_button.configure(fg_color=("gray20", "gray25") if name == "frame_4" else "transparent")
-
+        self.frame_4_button.configure(fg_color=("gray75", "gray25") if name == "frame_4" else "transparent")
+        self.frame_5_button.configure(fg_color=("gray75", "gray25") if name == "frame_5" else "transparent")
+        
         # show selected frame
         if name == "home":
             self.home_frame.grid(row=0, column=1, sticky="nsew")
         else:
             self.home_frame.grid_forget()
+            
         if name == "frame_2":
-            self.second_frame.grid(row=0, column=1, sticky="nsew")
-            self.second_frame.ani._start()
+            self.second_frame.grid(row=0, column=1, sticky="nsew")   
         else:
             self.second_frame.grid_forget()
         if name == "frame_3":
             self.third_frame.grid(row=0, column=1, sticky="nsew")
         else:
             self.third_frame.grid_forget()
+
         if name == "frame_4":
-            self.fourth_frame.grid(row=0, column=1, sticky="nsew")
+            self.fourth_frame.grid(row=0, column=1,sticky="nsew")
+            self.fourth_frame.show_animation()  # Call the show_animation method
         else:
             self.fourth_frame.grid_forget()
 
+        if name == "frame_5":
+            self.fifth_frame.grid(row=0, column=1, sticky="nsew")
+            self.fifth_frame.show_animation()
+        else:
+            self.fifth_frame.grid_forget()
+        
+
     def home_button_event(self):
         self.select_frame_by_name("home")
+        
 
     def frame_2_button_event(self):
         self.select_frame_by_name("frame_2")
@@ -194,243 +212,16 @@ class App(customtkinter.CTk):
 
     def frame_4_button_event(self):
         self.select_frame_by_name("frame_4")
-        self.fourth_frame.show_animation() 
+        self.fourth_frame.show_animation()
+    
+    def frame_5_button_event(self):
+        self.select_frame_by_name("frame_5")
+        self.fifth_frame.show_animation()       
         
 
     def change_appearance_mode_event(self, new_appearance_mode):
-        customtkinter.set_appearance_mode(new_appearance_mode)
-
-class SecondFrame(customtkinter.CTkFrame): #TODO ESTO TIENE Q ESTAR MODULARIZADO PERO POR COMODIDAD PARA VER QUE HACE LO DEJO ACA. YA SE COMO HACER PARA DIVIDIRLO EN VARIOS ARCHIVOS. TENIA UN ARCHIVO LLAMADO GRAPH_UTILS PERO TUVE QUE HACER STASH POR EL ERROR QUE TENGO. LO MISMO CON EL CUARTO FRAME.
-    def __init__(self, master):
-        super().__init__(master, corner_radius=0, fg_color="transparent")
-        self.grid(row=0, column=0, sticky="nsew")
-
-        # Crear la figura y el gráfico 3D
-        self.fig = plt.figure()
-        self.ax = self.fig.add_subplot(111, projection='3d')
-
-        # Configurar los límites del gráfico
-        self.ax.set_xlim3d(0, 20000)
-        self.ax.set_ylim3d(0, 20000)
-        self.ax.set_zlim3d(0, 5000)
-
-        # Crear la instancia del cliente
-        self.cliente = MountainClient("localhost", 8080)
-
-        # Crear la animación (dejar el resto del código intacto)
-        self.ani = FuncAnimation(self.fig, self.update_graph, frames=itertools.count(), interval=1000)  # Intervalo en milisegundos
-
-        # Crear el canvas y dibujar el gráfico inicial (dejar el resto del código intacto)
-        canvas = FigureCanvasTkAgg(self.fig, master=self)
-        canvas.draw()
-        canvas.get_tk_widget().grid(row=0, column=0, sticky="nsew")
-
-        # Iniciar la animación
-        self.ani._start()
-
-    def update_graph(self, frame):
-        # Obtener los datos del cliente
-        info = self.cliente.get_data()
-
-        # Recorrer los datos y extraer las coordenadas
-        points = []
-        for team, climbers in info.items():
-            for climber, data in climbers.items():
-                x = data['x']
-                y = data['y']
-                z = data['z']
-
-                # Agregar el punto a la lista
-                points.append((x, y, z))
-
-        # Limpiar el gráfico de dispersión
-        self.ax.cla()
-
-        # Actualizar el gráfico de dispersión con los nuevos puntos
-        self.ax.scatter(*zip(*points))
-
-        # Configurar los límites del gráfico
-        self.ax.set_xlim3d(0, 20000)
-        self.ax.set_ylim3d(0, 20000)
-        self.ax.set_zlim3d(0, 5000)
-
-        # Redibujar el gráfico en el canvas
-        self.fig.canvas.draw()
-
-
-class ThirdFrame(customtkinter.CTkFrame):
-    def __init__(self, master):
-        super().__init__(master, corner_radius=0, fg_color="transparent")
-        self.grid(row=0, column=1, sticky="nsew")
-        self.state = False
-
-        cliente = MountainClient("localhost",8080)
-        info = cliente.get_data()
-        num_jugador = 65
-        self.letter_asig = {}
-        counter = 0
-        while cliente.is_registering_teams() or (counter == 0):
-            for equipo, escaladores in info.items():
-                self.letter_asig[equipo] = num_jugador
-                num_jugador += 1
-            counter += 1
-        label_resultado = customtkinter.CTkLabel(self, text=ascii(self.letter_asig), font=("-lucidatypewriter-medium-r-*-*-*-15-*-*-*-*-*-*", 10))
-        label_resultado.pack()
-        self.call_function()
-        
-    def change(self):
-        self.state = True
-        self.call_function()
-
-    def call_function(self):
-        for widgets in self.winfo_children():
-            widgets.destroy()
-        label_resultado = customtkinter.CTkLabel(self, text=ascii(self.letter_asig), font=("-lucidatypewriter-medium-r-*-*-*-15-*-*-*-*-*-*", 10))
-        label_resultado.pack()
-        self.after(500,self.call_function)
-
-
-        
-        
-        
-
-
-
-
-
-class FourthFrame(CTkFrame):
-    def __init__(self, master):
-        super().__init__(master, corner_radius=0, fg_color="transparent")
-        self.grid(row=0, column=2, sticky="nsew")
-    def show_animation(self):
-        res = 100
-
-        # Crear el rango de valores para los ejes x e y
-        x = np.linspace(-23000, 23000, res)
-        y = np.linspace(-23000, 23000, res)
-
-        # Crear el meshgrid inicial a partir de los valores de x e y
-        X, Y = np.meshgrid(x, y)
-
-        # Crear la figura y el eje 3D
-        fig = plt.figure()
-        ax = fig.add_subplot(111, projection='3d')
-
-        cliente = MountainClient("localhost", 8080)
-        info = cliente.get_data()
-
-        # Crear una matriz Z para almacenar los valores de altura
-        Z = np.zeros_like(X)
-
-        # Funcion de inicializacion
-        def init():
-            return ax,
-
-        # Funcion de actualizacion 
-        def update(frame):
-            nonlocal X, Y, Z
-
-            # Obtener los datos actualizados del cliente
-            info = cliente.get_data()
-
-            # Actualizar los valores de Z en la superficie
-            for team, climbers in info.items():
-                for climber, data in climbers.items():
-                    x2 = data['x']
-                    y2 = data['y']
-                    z2 = data['z']
-
-                    # Calcular las distancias entre los puntos (x, y) y (x2, y2) -> EUCLIDEAN
-                    # Encontrar la posición del punto más cercano
-                    idx_x = np.argmin(abs(x - x2))
-                    idx_y = np.argmin(abs(y - y2))
-
-                    # Asignar el valor de altura al punto correspondiente en Z
-                    Z[idx_x, idx_y] = z2
-
-            ax.clear()  # Limpiar el eje antes de agregar la nueva superficie
-            ax.plot_surface(X, Y, Z, cmap='coolwarm', linewidth=0)
-
-            return ax,
-
-        # Animacion
-        animation = FuncAnimation(fig, update, frames=None, init_func=init, blit=False)
-
-        # Create a Matplotlib canvas and display it in the container frame
-        canvas = FigureCanvasTkAgg(fig, master=self.container_frame)
-        canvas.draw()
-        canvas.get_tk_widget().grid(row=0, column=0)
-
-
-
-
-class FifthFrame(CTkFrame):
-    def __init__(self, master):
-        super().__init__(master, corner_radius=0, fg_color="transparent")
-        self.grid(row=0, column=3, sticky="nsew")
-    def show_animation(self):
-        res = 100
-
-        # Crear el rango de valores para los ejes x e y
-        x = np.linspace(-23000, 23000, res)
-        y = np.linspace(-23000, 23000, res)
-
-        # Crear el meshgrid inicial a partir de los valores de x e y
-        X, Y = np.meshgrid(x, y)
-
-        # Crear la figura y el eje 3D
-        fig = plt.figure()
-        ax = fig.add_subplot(111, projection='3d')
-
-        cliente = MountainClient("localhost", 8080)
-        info = cliente.get_data()
-
-        # Crear una matriz Z para almacenar los valores de altura
-        Z = np.zeros_like(X)
-
-        # Funcion de inicializacion
-        def init():
-            return ax,
-
-        # Funcion de actualizacion 
-        def update(frame):
-            nonlocal X, Y, Z
-
-            # Obtener los datos actualizados del cliente
-            info = cliente.get_data()
-
-            # Actualizar los valores de Z en la superficie
-            for team, climbers in info.items():
-                for climber, data in climbers.items():
-                    x2 = data['x']
-                    y2 = data['y']
-                    z2 = data['z']
-
-                    # Calcular las distancias entre los puntos (x, y) y (x2, y2) -> EUCLIDEAN
-                    # Encontrar la posición del punto más cercano
-                    idx_x = np.argmin(abs(x - x2))
-                    idx_y = np.argmin(abs(y - y2))
-
-                    # Asignar el valor de altura al punto correspondiente en Z
-                    Z[idx_x, idx_y] = z2
-
-            ax.clear()  # Limpiar el eje antes de agregar la nueva superficie
-            ax.plot_surface(X, Y, Z, cmap='coolwarm', linewidth=0)
-
-            return ax,
-
-        # Animacion
-        animation = FuncAnimation(fig, update, frames=None, init_func=init, blit=False)
-
-        # Create a Matplotlib canvas and display it in the container frame
-        canvas = FigureCanvasTkAgg(fig, master=self.container_frame)
-        canvas.draw()
-        canvas.get_tk_widget().grid(row=0, column=0)
-
-       
-        
-
-    
+        mode = customtkinter.set_appearance_mode(new_appearance_mode)
+        return mode
 
 if __name__ == "__main__":
     app = App()
