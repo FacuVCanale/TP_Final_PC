@@ -24,7 +24,7 @@ class Hiker:
         self.alpha = alpha #learning rate
         self.beta = beta #momentum
     
-    def update_data(self, data):
+    def update_data(self, data)->None:
         """
         Updates data of hiker and saves it on attribute self.data
 
@@ -246,7 +246,7 @@ class Hiker:
         coords, is_same = facu_inter.heading_same_max(self_pos, self_d, other_pos, other_d)
         return coords, is_same
 
-    def strategy(self, GA_o_MGA:str ="GA", n=50, n2=0.01):
+    def strategy(self, GA_o_MGA:str ="GA", n=50, n2=0.01)-> tuple[float,float]:
         """
         Strategy to find global max. 
 
