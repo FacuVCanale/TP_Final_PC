@@ -1,8 +1,8 @@
 from communication.client.client import MountainClient
 from classes.partida import Partida
 from tabulate import tabulate
-import time
-import os
+
+
 
 cliente1 = MountainClient("localhost", 8080)
 

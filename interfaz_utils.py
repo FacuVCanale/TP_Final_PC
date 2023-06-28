@@ -2,21 +2,13 @@ import matplotlib
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-from mpl_toolkits.mplot3d import Axes3D
 import numpy as np
-from communication.client.client import MountainClient
 import customtkinter
-import seaborn as sns
 matplotlib.use('TkAgg')
 import customtkinter
-import matplotlib.pyplot as plt
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg 
-from matplotlib.animation import FuncAnimation
-import numpy as np
-from mpl_toolkits.mplot3d import Axes3D
 from communication.client.client import MountainClient
 from ascii import ascii
-from customtkinter import CTkFrame, CTkLabel
+import random
 
  
 class HomeFrame(customtkinter.CTkFrame):
@@ -117,6 +109,8 @@ class SecondFrame(customtkinter.CTkFrame):
         self.selected_team = 'Everyone'
         self.client = client
 
+        self.team_colors = {'Everyone': 'blue'}
+
         self.show_graf3D()
         self.create_scrollable_frame()
 
@@ -132,7 +126,12 @@ class SecondFrame(customtkinter.CTkFrame):
         self.ax.set_xlim3d(-23000, 20000)
         self.ax.set_ylim3d(-23000, 20000)
         
-        self.points = self.ax.scatter([], [], [], c='green', marker='o')
+        if self.selected_team == 'Everyone':
+            color = self.team_colors['Everyone']
+        else:
+            color = self.team_colors[self.selected_team]
+
+        self.points = self.ax.scatter([], [], [], c=color, marker='o')
 
         self.ani = FuncAnimation(fig, self.update_graph, interval=1000, blit=False, repeat=False)
 
@@ -142,7 +141,7 @@ class SecondFrame(customtkinter.CTkFrame):
 
         self.ani._start()
 
-    def update_graph(self,_):
+    def update_graph(self, _):
         """
         Update the graph based on the data received from the server.
 
@@ -151,50 +150,58 @@ class SecondFrame(customtkinter.CTkFrame):
 
         Returns:
             The updated points object.
-
         """
         self.info = self.client.get_data()  # Update server data
 
         points = []
+        colors = []
         for team, climbers in self.info.items():
-            if self.selected_team == 'Everyone': #To show all the points (players) on the map
+            if self.selected_team == 'Everyone':  # To show all the points (players) on the map
                 for climber, data in climbers.items():
                     x = data['x']
                     y = data['y']
                     z = data['z']
+
+                    if team in self.team_colors:
+                        colors.append(self.team_colors[team])
+                    else:
+                        color = '#{:06x}'.format(random.randint(0, 0xFFFFFF))
+                        self.team_colors[team] = color
+                        colors.append(color)
+
                     points.append((x, y, z))
             elif team == self.selected_team:
                 for climber, data in climbers.items():
                     x = data['x']
                     y = data['y']
                     z = data['z']
+                    if team in self.team_colors:
+                        colors.append(self.team_colors[team])
+                    else:
+                        color = '#{:06x}'.format(random.randint(0, 0xFFFFFF))
+                        self.team_colors[team] = color
+                        colors.append(color)
                     points.append((x, y, z))
 
         x, y, z = zip(*points) if points else ([], [], [])
         self.points.set_3d_properties(z, zdir='z')
         self.points.set_offsets(np.column_stack((x, y)))
+        self.points.set_color(colors)
 
-        if points: 
-
+        if points:
             max_z = max(z)
-
-            
             self.ax.set_zlim3d(0, max_z)
 
-        
-
     def get_team_list_from_server(self):
-        """
-        Retrieve the list of teams from the server data.
-
-        Returns:
-            A list of teams.
-
-        """
         teams = []
         for team, climbers in self.info.items():
+    
+            if team not in self.team_colors:
+                color = '#{:06x}'.format(random.randint(0, 0xFFFFFF))
+                self.team_colors[team] = color
             teams.append(team)
         return teams
+
 
 
     def create_scrollable_frame(self):
