@@ -21,7 +21,7 @@ class App(customtkinter.CTk):
         self.grid_columnconfigure(2, weight=1)
 
 
-        self.client = MountainClient()
+        self.client = MountainClient("10.42.0.1", 8888)
 
         # load images with light and dark mode image
         image_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "test_images")
@@ -63,7 +63,7 @@ class App(customtkinter.CTk):
         self.navigation_frame_label2 = customtkinter.CTkLabel(self.navigation_frame2,
                                                               # ELEGIR NOMBRE DE LA BARRA DE TAREAS
                                                              compound="right",
-                                                             font=customtkinter.CTkFont(size=15, weight="bold"), text=show_leaderboard())
+                                                             font=customtkinter.CTkFont(size=15, weight="bold"), text=show_leaderboard(self.client))
         self.navigation_frame_label2.grid(row=0, column=0, padx=20, pady=20)
 
 
@@ -154,7 +154,7 @@ class App(customtkinter.CTk):
         
 
 
-        self.fifth_frame = FifthFrame(self)
+        self.fifth_frame = FifthFrame(self, self.client)
                   
 
 

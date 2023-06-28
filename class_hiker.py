@@ -1,6 +1,7 @@
 import numpy as np
 import math
 import facu_inter
+import random
 
 class Hiker:
     """
@@ -39,7 +40,7 @@ class Hiker:
         """
         self.data = data[self.team][self.name]
 
-    def get_data(self, choice:str)->float:
+    def get_data(self, choice:str)->float: # PODEMOS UTILIZAR MÉTODOS MÁGICOS (GETITEM)
         """
         Returns a specific hiker data 
 
@@ -54,7 +55,7 @@ class Hiker:
         """
         return self.data[choice]
     
-    def get_direction_and_vel_to_point(self, xf:float, yf:float) -> tuple[float,float]:
+    def get_direction_and_vel_to_point_fixed(self, xf:float, yf:float) -> tuple[float,float]:
         """
         Receives the x y coords of a point and returns the direction and vel to get to that point (+- 50)
         vel is always 50
@@ -135,6 +136,46 @@ class Hiker:
         y_new = self.get_data('y') + self.get_data('inclinacion_y') * self.alpha2
 
         return x_new,y_new
+    
+    def get_next_point_GD(self)-> tuple[float,float]:
+        """
+        Using data on hiker attributes gets the next position to climb mountain 
+        with gradient ascent method
+
+        Returns
+        -------
+        tuple
+            tuple with x coord and y coord of next point to climb mountain
+        """
+        x_new = self.get_data('x') - self.get_data('inclinacion_x') * self.alpha2
+        y_new = self.get_data('y') - self.get_data('inclinacion_y') * self.alpha2
+
+        return x_new,y_new
+    
+    def direction_GD(self)-> float:
+        """
+        Faster way to call a function that returns direction to climb mountain 
+        using Gradient ascent
+
+        Returns
+        -------
+        float
+            direction
+        """
+        next_point_GD = self.get_next_point_GD()
+        return self.get_direction_and_vel_to_point_fixed(next_point_GD[0], next_point_GD[1])[0]
+    
+    def speed_GD(self)-> float:
+        """
+        Faster way to call a function that returns speed to climb mountain 
+        using Gradient ascent
+        Returns
+        -------
+        float
+            speed
+        """
+        next_point_GD = self.get_next_point_GD()
+        return self.get_direction_and_vel_to_point_fixed(next_point_GD[0], next_point_GD[1])[1]
 
     def get_next_point_MGA(self) -> tuple[float,float]:
         """
@@ -157,6 +198,51 @@ class Hiker:
 
         return x_new, y_new
     
+    def get_next_point_MGD(self) -> tuple[float,float]:
+        """
+        Using data on hiker attributes gets the next position to climb mountain 
+        with momentum gradient ascent method
+
+        Returns
+        -------
+        tuple
+            tuple with x coord and y coord of next point to climb mountain
+        """
+        vel_x_2 = self.beta * self.vel_x + self.get_data('inclinacion_x')
+        vel_y_2 = self.beta * self.vel_y + self.get_data('inclinacion_y')
+        
+        self.vel_x = vel_x_2
+        self.vel_y = vel_y_2
+
+        x_new = self.get_data('x') + vel_x_2 * self.alpha
+        y_new = self.get_data('y') + vel_y_2 * self.alpha
+
+        return x_new, y_new
+
+    def direction_MGD(self)-> float:
+        """
+        Faster way to call a function that returns direction to climb mountain 
+        using Momentum Gradient ascent
+        Returns
+        -------
+        float
+            direction
+        """
+        next_point_MGD = self.get_next_point_MGD()
+        return self.get_direction_and_vel_to_point_JUSTO(next_point_MGD[0], next_point_MGD[1])[0]
+
+    def speed_MGD(self)-> float:
+        """
+        Faster way to call a function that returns direction to climb mountain 
+        using Momentum Gradient ascent
+        Returns
+        -------
+        float
+            speed
+        """
+        next_point_MGD = self.get_next_point_MGD()
+        return self.get_direction_and_vel_to_point_JUSTO(next_point_MGD[0], next_point_MGD[1])[1]
+    
 
     def direction_GA(self)-> float:
         """
@@ -169,7 +255,7 @@ class Hiker:
             direction
         """
         next_point_GA = self.get_next_point_GA()
-        return self.get_direction_and_vel_to_point(next_point_GA[0], next_point_GA[1])[0]
+        return self.get_direction_and_vel_to_point_fixed(next_point_GA[0], next_point_GA[1])[0]
 
     def speed_GA(self)-> float:
         """
@@ -181,7 +267,7 @@ class Hiker:
             speed
         """
         next_point_GA = self.get_next_point_GA()
-        return self.get_direction_and_vel_to_point(next_point_GA[0], next_point_GA[1])[1]
+        return self.get_direction_and_vel_to_point_fixed(next_point_GA[0], next_point_GA[1])[1]
 
     def direction_MGA(self)-> float:
         """
@@ -246,7 +332,7 @@ class Hiker:
         coords, is_same = facu_inter.heading_same_max(self_pos, self_d, other_pos, other_d)
         return coords, is_same
 
-    def strategy(self, GA_o_MGA:str ="GA", n=50, n2=0.01)-> tuple[float,float]:
+    def strategy(self, local_maxs:list, GA_o_MGA:str ="GA", n=50, n2=0.001)-> tuple[float,float]:
         """
         Strategy to find global max. 
 
@@ -265,10 +351,6 @@ class Hiker:
             tuple with next direction and speed hiker has to go to follow strategy
         """
         
-
-        # check len of list
-        next_point = self.puntos[0]
-
         x = self.get_data('x')
         y = self.get_data('y')
         z = self.get_data('z')
@@ -278,6 +360,13 @@ class Hiker:
 
 
         if self.strat == 'follow_points':
+            if len(self.puntos) == 0:
+                print("No hay más puntos!")
+                self.strat = "descent"
+                return self.strategy(local_maxs)
+            
+            next_point = self.puntos[0]
+            
             if np.sqrt((x-next_point[0])**2 + (y-next_point[1])**2) < n:
                 print(self.name, end=" ")
                 print("Estoy en el punto", self.puntos.pop(0))
@@ -298,10 +387,17 @@ class Hiker:
             if abs(dx) < n2 and abs(dy) < n2:
                 print(self.name, end=" ")
                 print('Estoy en un max local')
-                self.strat = 'follow_points'
 
-                direction = 0
-                speed = 0
+                point = (self.get_data("x"), self.get_data("y"))
+                local_maxs.append(point)
+
+                #if len(self.puntos) == 0:
+                self.strat = "descent"
+                #else:
+                #    self.strat = 'follow_points'
+
+                direction = self.direction_GA()
+                speed = 50
 
             else:
                 print(self.name, end=" ")
@@ -312,10 +408,25 @@ class Hiker:
                 elif GA_o_MGA == "MGA":
                     direction = self.direction_MGA()
                     speed = self.speed_MGA()
-                    
-            
+        
+        elif self.strat == "descent":
+            if abs(dx) < n2 and abs(dy) < n2:
+                print(self.name, end=" ")
+                print('Estoy en un min local')
+                self.strat = 'hike'
 
-        return direction,speed
+                direction = self.direction_MGD()
+                speed = 50
+
+                #direction, speed = self.strategy(local_maxs) #LO MANDA A GA
+
+            else:
+                print(self.name, end=" ")
+                print("Bajando")
+                direction = self.direction_MGD()
+                speed = self.speed_MGD()
+
+        return direction, speed
     
     def change_strat(self, strat:str)->None:
         """
@@ -365,3 +476,11 @@ class Hiker:
             return False
         else:
             return True
+        
+    def is_near_point(self, point):
+        self_pos = (self.get_data("x"), self.get_data("y"))
+        is_near = facu_inter.check_distance(self_pos, point, 200)
+        return is_near
+    
+    def random_opposite_direction(self, direction):
+        return direction + math.pi/2 + math.pi * random.random()

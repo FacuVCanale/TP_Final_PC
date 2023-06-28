@@ -64,9 +64,9 @@ while not c.is_over():
 
     # ------------------Codigo de prueba: Aca va la estrategia------------------
 
-    ivan_direction, ivan_speed = ivan.get_direction_and_vel_to_point(ivan.get_next_point_GA()[0], ivan.get_next_point_GA()[1])
+    ivan_direction, ivan_speed = ivan.get_direction_and_vel_to_point_fixed(ivan.get_next_point_GA()[0], ivan.get_next_point_GA()[1])
 
-    fran_direction, fran_speed = fran.get_direction_and_vel_to_point(fran.get_next_point_GA()[0], fran.get_next_point_GA()[1])
+    fran_direction, fran_speed = fran.get_direction_and_vel_to_point_fixed(fran.get_next_point_GA()[0], fran.get_next_point_GA()[1])
 
     directives = {
                     lucas.name: {'direction': lucas.direction_p((988,18245)), 'speed': lucas.speed_p((988,18245))},

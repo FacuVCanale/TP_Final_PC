@@ -294,7 +294,7 @@ class ThirdFrame(customtkinter.CTkFrame):
                 self.letter_asig[equipo] = num_jugador
                 num_jugador += 1
             counter += 1
-        label_resultado = customtkinter.CTkLabel(self, text=ascii(self.letter_asig), font=('Helvetica', 10))
+        label_resultado = customtkinter.CTkLabel(self, text=ascii(self.letter_asig, self.client), font=('Helvetica', 10))
         label_resultado.pack()
         self.call_function()
         
@@ -305,7 +305,7 @@ class ThirdFrame(customtkinter.CTkFrame):
     def call_function(self):
         for widgets in self.winfo_children():
             widgets.destroy()
-        label_resultado = customtkinter.CTkLabel(self, text=ascii(self.letter_asig), font=('Helvetica', 10))
+        label_resultado = customtkinter.CTkLabel(self, text=ascii(self.letter_asig, self.client), font=('Helvetica', 10))
         label_resultado.pack()
         self.after(1000,self.call_function)
 
@@ -322,7 +322,7 @@ class FourthFrame(customtkinter.CTkFrame):
         self.container_frame.grid_rowconfigure(0, weight=1)
         self.container_frame.grid_columnconfigure(0, weight=1)
 
-        self.client = MountainClient("localhost", 8080)
+        self.client = client
         self.info = self.client.get_data()
 
         self.show_heatmap()
@@ -405,7 +405,7 @@ class FourthFrame(customtkinter.CTkFrame):
 
 
 class FifthFrame(customtkinter.CTkFrame):
-    def __init__(self, master):
+    def __init__(self, master, client):
         super().__init__(master, corner_radius=0, fg_color="transparent")
         self.grid(row=0, column=1, sticky="nsew")
         self.grid_columnconfigure(0, weight=1)
@@ -420,7 +420,7 @@ class FifthFrame(customtkinter.CTkFrame):
         self.selected_team = 'Everyone'
 
         # create container frame with grid layout
-        self.client = MountainClient("localhost", 8080)
+        self.client = client
         self.info = self.client.get_data()
 
         self.show_scatter()

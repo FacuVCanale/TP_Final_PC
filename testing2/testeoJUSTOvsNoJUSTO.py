@@ -57,7 +57,7 @@ while not c.is_over():
     ivan_direction, ivan_speed = ivan.get_direction_and_vel_to_point_JUSTO(ivan_points_GA[0], ivan_points_GA[1])
 
     fran_points_GA = fran.get_next_point_MGA()
-    fran_direction, fran_speed = fran.get_direction_and_vel_to_point(fran_points_GA[0], fran_points_GA[1])
+    fran_direction, fran_speed = fran.get_direction_and_vel_to_point_fixed(fran_points_GA[0], fran_points_GA[1])
 
     directives = {
                     lucas.name: {'direction': lucas.get_direction_and_vel_to_point_JUSTO(100,100)[0], 'speed': lucas.get_direction_and_vel_to_point_JUSTO(100,100)[1]},

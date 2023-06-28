@@ -26,9 +26,9 @@ def check_distance(point1, point2, max_distance=18000*np.sqrt(2)):
         return False
 
 
-def heading_same_max(player1_position, player1_direction, player2_position, player2_direction):
+def heading_same_max(player1_position, player1_direction, player2_position, player2_direction, radius=400):
 
-    is_possible = check_distance(player1_position, player2_position)
+    is_possible = check_distance(player1_position, player2_position, radius*0.5)
     if not is_possible:
         return False
 
@@ -78,7 +78,7 @@ def heading_same_max(player1_position, player1_direction, player2_position, play
                     if math.cos(player2_direction) > 0:
                         if player2_position[0] < player1_position[0]:
                             coords = [paralela_info[0], interseccion_y]
-                            is_possible = check_distance(player1_position, coords, 10000) and check_distance(player2_position, coords, 10000)
+                            is_possible = check_distance(player1_position, coords, radius) and check_distance(player2_position, coords, radius)
                             if not is_possible:
                                 coords = []
                                 return coords, False
@@ -87,7 +87,7 @@ def heading_same_max(player1_position, player1_direction, player2_position, play
                     #sino,
                     if player2_position[0] > player1_position[0]:
                         coords = [paralela_info[0], interseccion_y]
-                        is_possible = check_distance(player1_position, coords, 10000) and check_distance(player2_position, coords, 10000)
+                        is_possible = check_distance(player1_position, coords, radius) and check_distance(player2_position, coords, radius)
                         if not is_possible:
                             coords = []
                             return coords, False
@@ -99,7 +99,7 @@ def heading_same_max(player1_position, player1_direction, player2_position, play
                 if math.cos(player2_direction) > 0:
                     if player2_position[0] < player1_position[0]:
                         coords = [paralela_info[0], interseccion_y]
-                        is_possible = check_distance(player1_position, coords, 10000) and check_distance(player2_position, coords, 10000)
+                        is_possible = check_distance(player1_position, coords, radius) and check_distance(player2_position, coords, radius)
                         if not is_possible:
                             coords = []
                             return coords, False
@@ -108,7 +108,7 @@ def heading_same_max(player1_position, player1_direction, player2_position, play
                 #sino,
                 if player2_position[0] > player1_position[0]:
                     coords = [paralela_info[0], interseccion_y]
-                    is_possible = check_distance(player1_position, coords, 10000) and check_distance(player2_position, coords, 10000)
+                    is_possible = check_distance(player1_position, coords, radius) and check_distance(player2_position, coords, radius)
                     if not is_possible:
                         coords = []
                         return coords, False
@@ -126,7 +126,7 @@ def heading_same_max(player1_position, player1_direction, player2_position, play
                 if math.cos(player1_direction) > 0:
                     if player1_position[0] < player2_position[0]:
                         coords = [paralela_info[0], interseccion_y]
-                        is_possible = check_distance(player1_position, coords, 10000) and check_distance(player2_position, coords, 10000)
+                        is_possible = check_distance(player1_position, coords, radius) and check_distance(player2_position, coords, radius)
                         if not is_possible:
                             coords = []
                             return coords, False
@@ -135,7 +135,7 @@ def heading_same_max(player1_position, player1_direction, player2_position, play
                 #sino,
                 if player1_position[0] > player2_position[0]:
                     coords = [paralela_info[0], interseccion_y]
-                    is_possible = check_distance(player1_position, coords, 10000) and check_distance(player2_position, coords, 10000)
+                    is_possible = check_distance(player1_position, coords, radius) and check_distance(player2_position, coords, radius)
                     if not is_possible:
                         coords = []
                         return coords, False
@@ -147,7 +147,7 @@ def heading_same_max(player1_position, player1_direction, player2_position, play
             if math.cos(player1_direction) > 0:
                 if player1_position[0] < player2_position[0]:
                     coords = [paralela_info[0], interseccion_y]
-                    is_possible = check_distance(player1_position, coords, 10000) and check_distance(player2_position, coords, 10000)
+                    is_possible = check_distance(player1_position, coords, radius) and check_distance(player2_position, coords, radius)
                     if not is_possible:
                         coords = []
                         return coords, False
@@ -156,7 +156,7 @@ def heading_same_max(player1_position, player1_direction, player2_position, play
             #sino,
             if player1_position[0] > player2_position[0]:
                 coords = [paralela_info[0], interseccion_y]
-                is_possible = check_distance(player1_position, coords, 10000) and check_distance(player2_position, coords, 10000)
+                is_possible = check_distance(player1_position, coords, radius) and check_distance(player2_position, coords, radius)
                 if not is_possible:
                     coords = []
                     return coords, False
@@ -237,7 +237,7 @@ def heading_same_max(player1_position, player1_direction, player2_position, play
         if math.cos(player2_direction) > 0:
             if interseccion >= player1_position[0] and interseccion >= player2_position[0]:
                 coords = [interseccion, recta1(interseccion)]
-                is_possible = check_distance(player1_position, coords, 10000) and check_distance(player2_position, coords, 10000)
+                is_possible = check_distance(player1_position, coords, radius) and check_distance(player2_position, coords, radius)
                 if not is_possible:
                     coords = []
                     return coords, False
@@ -246,7 +246,7 @@ def heading_same_max(player1_position, player1_direction, player2_position, play
         #sino,
         if interseccion >= player1_position[0] and interseccion <= player2_position[0]:
             coords = [interseccion, recta1(interseccion)]
-            is_possible = check_distance(player1_position, coords, 10000) and check_distance(player2_position, coords, 10000)
+            is_possible = check_distance(player1_position, coords, radius) and check_distance(player2_position, coords, radius)
             if not is_possible:
                 coords = []
                 return coords, False
@@ -256,7 +256,7 @@ def heading_same_max(player1_position, player1_direction, player2_position, play
     if math.cos(player2_direction) > 0:
         if interseccion <= player1_position[0] and interseccion >= player2_position[0]:
             coords = [interseccion, recta1(interseccion)]
-            is_possible = check_distance(player1_position, coords, 10000) and check_distance(player2_position, coords, 10000)
+            is_possible = check_distance(player1_position, coords, radius) and check_distance(player2_position, coords, radius)
             if not is_possible:
                 coords = []
                 return coords, False
@@ -265,7 +265,7 @@ def heading_same_max(player1_position, player1_direction, player2_position, play
     #sino,
     if interseccion <= player1_position[0] and interseccion <= player2_position[0]:
         coords = [interseccion, recta1(interseccion)]
-        is_possible = check_distance(player1_position, coords, 10000) and check_distance(player2_position, coords, 10000)
+        is_possible = check_distance(player1_position, coords, radius) and check_distance(player2_position, coords, radius)
         if not is_possible:
             coords = []
             return coords, False

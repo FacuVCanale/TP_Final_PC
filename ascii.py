@@ -3,12 +3,12 @@ from classes.mapa import Mapa_circular
 import time
 import os
 from communication.client.client import MountainClient
-cliente = MountainClient("localhost",8080)
-def ascii(letter_asig):
+
+def ascii(letter_asig, client):
     #while not cliente.is_over():
     circulo = Circulo(46)
     mapa = Mapa_circular(circulo)
-    info = cliente.get_data()
+    info = client.get_data()
     for equipo, escaladores in info.items():
         for escalador, infos in escaladores.items():
             x = infos['x']

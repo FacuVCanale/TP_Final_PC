@@ -4,12 +4,11 @@ from tabulate import tabulate
 import time
 import os
 
-cliente1 = MountainClient("localhost", 8080)
 
-def show_leaderboard():
+def show_leaderboard(cliente):
     count = 1
     output = ""
-    info = cliente1.get_data()
+    info = cliente.get_data()
     if len(info) > 0:
         match = Partida(info)
         teams = match.get_teams()

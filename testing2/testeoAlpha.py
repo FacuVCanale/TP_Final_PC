@@ -53,13 +53,13 @@ while not c.is_over():
 
     # ------------------Codigo de prueba------------------
 
-    lucas_direction, lucas_speed = lucas.get_direction_and_vel_to_point(lucas.get_next_point_GA()[0], lucas.get_next_point_GA()[1])
+    lucas_direction, lucas_speed = lucas.get_direction_and_vel_to_point_fixed(lucas.get_next_point_GA()[0], lucas.get_next_point_GA()[1])
 
-    facu_direction, facu_speed = facu.get_direction_and_vel_to_point(facu.get_next_point_GA()[0], facu.get_next_point_GA()[1])
+    facu_direction, facu_speed = facu.get_direction_and_vel_to_point_fixed(facu.get_next_point_GA()[0], facu.get_next_point_GA()[1])
 
-    fran_direction, fran_speed = fran.get_direction_and_vel_to_point(fran.get_next_point_GA()[0], fran.get_next_point_GA()[1])
+    fran_direction, fran_speed = fran.get_direction_and_vel_to_point_fixed(fran.get_next_point_GA()[0], fran.get_next_point_GA()[1])
 
-    ivan_direction, ivan_speed = ivan.get_direction_and_vel_to_point(ivan.get_next_point_GA()[0], ivan.get_next_point_GA()[1])
+    ivan_direction, ivan_speed = ivan.get_direction_and_vel_to_point_fixed(ivan.get_next_point_GA()[0], ivan.get_next_point_GA()[1])
 
     directives = {
                     lucas.name: {'direction': lucas_direction, 'speed': lucas_speed},
