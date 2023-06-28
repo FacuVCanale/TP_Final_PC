@@ -1,8 +1,7 @@
-from communication.client.client import MountainClient
-# c = MountainClient()
-
-# Calss to analize data on all hykers on map
 class DataAnalyst:
+    """
+    Calss to analize data on all hykers on map
+    """
     def __init__(self, name:str = 'dataAnalyst'):
         self.name = name
         self.data = {}
@@ -12,13 +11,24 @@ class DataAnalyst:
 
     def update_data(self, data):
         """
-        updates data using MountainClient()
+        Updates data of DataAnalyst with data of hikers on all the map
+        Parameters
+        ----------
+        data : function
+            function that returns new data
         """
         self.data = data
     
     def check_win(self)-> tuple[bool,tuple[float,float,float]]:
         """
-        Se fija si algun Hiker gano
+        Checks if a team won the game
+
+        Returns
+        -------
+        tuple
+            tuple with:
+            0: True if a team won / False is not
+            1: if a team won tuple with xyz coords of wining point / None if no team won
         """
         for team in self.data:
             for player in self.data[team]:
@@ -51,6 +61,13 @@ class DataAnalyst:
         return max_xyz
     
     def get_all_info(self)-> dict[bool,tuple,list]:
+        """
+        Using data on DataAnalyst attributes returns a dictionary with useful info
+        
+        Returns
+        -------
+        dict
+        """
         self.info = {'win': self.check_win(), 'max_pos': self.get_max(), 'n_max_pos': self.all_h_pos}
         return self.info
 
