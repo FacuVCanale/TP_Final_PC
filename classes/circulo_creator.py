@@ -10,7 +10,7 @@ class Circulo:
             for columna in range(self.filas):
                 # Verificar si el punto actual está dentro del círculo
                 if (columna - 23)**2 + (fila - 23)**2 <= 23**2:
-                    nueva_fila.append('X')
+                    nueva_fila.append('.')
                 else:
                     nueva_fila.append(' ')
             # Agregar la fila a la lista del círculo

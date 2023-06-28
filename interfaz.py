@@ -47,7 +47,9 @@ class App(customtkinter.CTk):
         # create navigation frame
         self.navigation_frame = customtkinter.CTkFrame(self, corner_radius=0)
         self.navigation_frame.grid(row=0, column=0, sticky="nsew")
-        self.navigation_frame.grid_rowconfigure(6, weight=1)  # ELEGIR CUANTAS OPCIONES PONER EN EL LADO IZQUIERDO ES DECIR CUANTOS RECTANGULOS
+        self.navigation_frame.grid_rowconfigure(6, weight=1)
+        
+          # ELEGIR CUANTAS OPCIONES PONER EN EL LADO IZQUIERDO ES DECIR CUANTOS RECTANGULOS
         self.navigation_frame2 = customtkinter.CTkFrame(self, corner_radius=0)
         self.navigation_frame2.grid(row=0, column=2, sticky="nsew")
         self.navigation_frame2.grid_rowconfigure(1, weight=1)
@@ -58,14 +60,12 @@ class App(customtkinter.CTk):
                                                              font=customtkinter.CTkFont(size=15, weight="bold"), text="")
         self.navigation_frame_label.grid(row=0, column=0, padx=20, pady=20)
                 
-                
-                
-        #LEADERBOARD
         self.navigation_frame_label2 = customtkinter.CTkLabel(self.navigation_frame2,
                                                               # ELEGIR NOMBRE DE LA BARRA DE TAREAS
                                                              compound="right",
                                                              font=customtkinter.CTkFont(size=15, weight="bold"), text=show_leaderboard())
         self.navigation_frame_label2.grid(row=0, column=0, padx=20, pady=20)
+
 
         #FRAME 3D
         self.home_button = customtkinter.CTkButton(self.navigation_frame, 
@@ -163,7 +163,7 @@ class App(customtkinter.CTk):
     #def music_button_event(self):
         
 
-    #CAMBIAR DE PESTAÑAS - MODIFICO LA VISUALIZACION DE CADA PESTAÑA
+    #CAMBIAR DE PESTAÑ  AS - MODIFICO LA VISUALIZACION DE CADA PESTAÑA
     def select_frame_by_name(self, name):
         # set button color for selected button
         self.home_button.configure(fg_color=("gray75", "gray25") if name == "home" else "transparent")
