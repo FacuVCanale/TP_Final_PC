@@ -18,6 +18,8 @@ from communication.client.client import MountainClient
 from ascii import ascii
 from customtkinter import CTkFrame, CTkLabel
 
+from matplotlib.patches import Rectangle
+
  
 class HomeFrame(customtkinter.CTkFrame):
 
@@ -161,6 +163,7 @@ class SecondFrame(customtkinter.CTkFrame):
                     y = data['y']
                     z = data['z']
                     points.append((x, y, z))
+
             elif team == self.selected_team:
                 for climber, data in climbers.items():
                     x = data['x']
@@ -173,10 +176,7 @@ class SecondFrame(customtkinter.CTkFrame):
         self.points.set_offsets(np.column_stack((x, y)))
 
         if points: 
-
-            max_z = max(z)
-
-            
+            max_z = max(z)            
             self.ax.set_zlim3d(0, max_z)
 
         
@@ -307,15 +307,10 @@ class ThirdFrame(customtkinter.CTkFrame):
             widgets.destroy()
         label_resultado = customtkinter.CTkLabel(self, text=ascii(self.letter_asig), font=('Helvetica', 10))
         label_resultado.pack()
-        self.after(500,self.call_function)
-
-
-        
-        
-        
+        self.after(500, self.call_function)
 
 class FourthFrame(customtkinter.CTkFrame):
-    def __init__(self, master,client):
+    def __init__(self, master, client):
         super().__init__(master, corner_radius=0, fg_color="transparent")
         self.grid(row=0, column=1, sticky="nsew")
         self.grid_columnconfigure(0, weight=1)
@@ -326,42 +321,81 @@ class FourthFrame(customtkinter.CTkFrame):
         self.container_frame.grid(row=0, column=0, sticky="nsew")
         self.container_frame.grid_rowconfigure(0, weight=1)
         self.container_frame.grid_columnconfigure(0, weight=1)
-        self.client = client
+
+        self.client = MountainClient("localhost", 8080)
         self.info = self.client.get_data()
 
-        self.fig, self.ax = plt.subplots()
-        self.heatmap = None  # Initialize the heatmap attribute
-        self.canvas = None
+        self.show_heatmap()
+
+    def show_heatmap(self):
+        self.points = []
+
+        for team, team_info in self.info.items():
+            for hiker, hiker_info in team_info.items():
+                point = (hiker_info["x"], hiker_info["y"])
+                self.points.append(point)
+
+        self.fig = plt.figure()
+        self.ax = self.fig.add_subplot()
+        
+        outer_circle = plt.Circle((0, 0), radius=23000, color='purple')
+        self.ax.add_artist(outer_circle)
+
+        self.ax.set_xlabel('X')
+        self.ax.set_ylabel('Y')
+
+        # Calcular la frecuencia de cada punto
+        unique_points, counts = np.unique(self.points, axis=0, return_counts=True)
+
+        # Crear cuadrados con colores según la cantidad de jugadores
+        for point, count in zip(unique_points, counts):
+            x = point[0]
+            y = point[1]
+            color = 'yellow' if count <= 2 else 'green' if count <= 5 else 'white'  # Cambia los colores según tus necesidades
+            square = Rectangle((x - 500, y - 500), 1000, 1000, color=color)
+            self.ax.add_artist(square)
+
+        self.animation = FuncAnimation(self.fig, self.update_heatmap, interval=1000, blit=False, repeat=False)
+        self.ax.set_xlim(-25000, 25000)
+        self.ax.set_ylim(-25000, 25000)
+        canvas = FigureCanvasTkAgg(self.fig, master=self.container_frame)
+        canvas.draw()
+        canvas.get_tk_widget().grid(row=0, column=0, sticky="nsew")
+
+        self.animation._start()
 
     def update_heatmap(self, frame):
-        self.ax.clear()
-        res = 100
+        self.info = self.client.get_data()  # Update server data
 
+        self.points = []
+
+        for team, team_info in self.info.items():
+            for hiker, hiker_info in team_info.items():
+                point = (round(hiker_info["x"]/100, 0), round(hiker_info["y"]/100, 0))
+                self.points.append(point)
+
+        self.ax.clear()
+        outer_circle = plt.Circle((0, 0), radius=23000, color='purple')
+        self.ax.add_artist(outer_circle)
+
+        self.ax.set_xlim(-25000, 25000)
+        self.ax.set_ylim(-25000, 25000)
         # Crear el rango de valores para los ejes x e y
-        x = np.linspace(-23000, 23000, res)
-        y = np.linspace(-23000, 23000, res)
-        points = []
-        for team, climbers in self.info.items():
-            for climber, data in climbers.items():
-                x2 = data['x']
-                y2 = data['y']
-                points.append((x2, y2))
-        heatmap, _, _ = np.histogram2d(np.array(points)[:, 0], np.array(points)[:, 1], bins=(x, y))
+        # Calcular la frecuencia de cada punto
+        unique_points, counts = np.unique(self.points, axis=0, return_counts=True)
+
+        # Crear cuadrados con colores según la cantidad de jugadores
+        for point, count in zip(unique_points, counts):
+            x = point[0] * 100
+            y = point[1] * 100
+            color = 'yellow' if count <= 2 else 'green' if count <= 5 else 'white'  # Cambia los colores según tus necesidades
+            square = Rectangle((x - 500, y - 500), 1000, 1000, color=color)
+            self.ax.add_artist(square)
 
         self.ax.set_xlabel('X')
         self.ax.set_ylabel('Y')
         self.ax.set_title('Player Heatmap')
-
-        if self.heatmap is None:
-            self.heatmap = self.ax.imshow(heatmap, cmap='viridis', origin='lower', extent=[-23000, 23000, -23000, 23000])
-            self.canvas = FigureCanvasTkAgg(self.fig, master=self.container_frame)
-            self.canvas.get_tk_widget().grid(row=0, column=0, sticky="nsew")
-        else:
-            self.heatmap.set_array(heatmap)
-            self.heatmap.autoscale()
-
-        self.canvas.draw_idle()
-        self.canvas.flush_events()
+        self.ax.set_aspect('equal', adjustable='box')
 
     def show_animation(self):
         self.animation = FuncAnimation(self.fig, self.update_heatmap, interval=1000)
@@ -394,18 +428,18 @@ class FifthFrame(customtkinter.CTkFrame):
         
 
     def show_scatter(self):
-        fig, ax = plt.subplots()
+        self.fig, self.ax = plt.subplots()
 
-        ax.set_xlabel('X')
-        ax.set_ylabel('Y')
-        ax.set_xlim(-23000, 20000)
-        ax.set_ylim(-23000, 20000)
+        self.ax.set_xlabel('X')
+        self.ax.set_ylabel('Y')
+        self.ax.set_xlim(-23000, 20000)
+        self.ax.set_ylim(-23000, 20000)
 
-        self.points = ax.scatter([], [], c='green', marker='o')
+        self.points = self.ax.scatter([], [], c='green', marker='o')
 
-        self.animation = FuncAnimation(fig, self.update_scatter, interval=1000, blit=False, repeat=False)
+        self.animation = FuncAnimation(self.fig, self.update_scatter, interval=1000, blit=False, repeat=False)
 
-        canvas = FigureCanvasTkAgg(fig, master=self.container_frame)
+        canvas = FigureCanvasTkAgg(self.fig, master=self.container_frame)
         canvas.draw()
         canvas.get_tk_widget().grid(row=0, column=0, sticky="nsew")
 
@@ -443,18 +477,10 @@ class FifthFrame(customtkinter.CTkFrame):
         return self.points,
 
 
+    #Esta no se usa?
     def show_animation(self):
         self.animation = FuncAnimation(self.fig, self.update_scatter, interval=1000)
 
         self.canvas = FigureCanvasTkAgg(self.fig, master=self.container_frame)
         self.canvas.draw()
         self.canvas.get_tk_widget().grid(row=0, column=0, sticky="nsew")
-
-
-        
-        
-        
-
-
-
-

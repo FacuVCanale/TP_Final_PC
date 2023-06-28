@@ -60,7 +60,7 @@ c.finish_registration()
 # Instructions
 while not c.is_over():
     # Sleep server for testing
-    time.sleep(0)
+    time.sleep(0.5)
 
     # Ask for data of all hikers in map
     data = c.get_data()
@@ -96,7 +96,7 @@ while not c.is_over():
                     fran.name: {'direction': fran_new_d_and_s[0], 'speed': fran_new_d_and_s[1]},
                     ivan.name: {'direction': ivan_new_d_and_s[0], 'speed': ivan_new_d_and_s[1]},
                 }
-    
+        
     # Check if a hyker is going out of bounds   
     for hiker in hikers:
         if hiker.check_out_of_bounds():
@@ -116,8 +116,8 @@ while not c.is_over():
                 facu.name: {'direction': facu.direction_p(x_y_win), 'speed': facu.speed_p(x_y_win)},
                 fran.name: {'direction': fran.direction_p(x_y_win), 'speed': fran.speed_p(x_y_win)},
                 ivan.name: {'direction': ivan.direction_p(x_y_win), 'speed': ivan.speed_p(x_y_win)},
-            } """
-
+            }
+ """
 
 
     #Checks if hikers are going to the same place in GA.

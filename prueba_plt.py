@@ -1,40 +1,67 @@
 import matplotlib.pyplot as plt
-from matplotlib.animation import FuncAnimation
+from matplotlib.patches import Rectangle
+import numpy as np
 
-# Crear una lista vacía para almacenar los puntos
-x_values = []
-y_values = []
+def generate_heatmap(data:dict):
+    points = []
 
-# Crear la figura y los ejes del gráfico
-fig, ax = plt.subplots()
+    for team, team_info in data.items():
+        for hiker, hiker_info in team_info.items():
+            point = (hiker_info["x"], hiker_info["y"])
+            points.append(point)
 
-# Configurar el gráfico inicialmente
-ax.set_xlim(0, 10)
-ax.set_ylim(0, 10)
-ax.set_xlabel('Eje X')
-ax.set_ylabel('Eje Y')
-ax.set_title('Gráfico 2D')
+    fig, ax = plt.subplots()
 
-# Función para actualizar el gráfico con los nuevos puntos
-def update_plot(frame):
-    ax.clear()  # Limpiar el gráfico anterior
-    ax.scatter(x_values[:frame], y_values[:frame])  # Graficar los puntos actualizados
+    # Crear círculo exterior de radio 23000
+    outer_circle = plt.Circle((0, 0), radius=23000, color='purple')
+    ax.add_artist(outer_circle)
 
-# Función para agregar puntos al gráfico
-def add_point(event):
-    if event.inaxes is None:
-        return
-    x = event.xdata
-    y = event.ydata
-    x_values.append(x)
-    y_values.append(y)
-    animation.frame_seq = range(len(x_values))  # Actualizar la secuencia de cuadros de la animación
+    # Calcular la frecuencia de cada punto
+    unique_points, counts = np.unique(points, axis=0, return_counts=True)
 
-# Asociar la función add_point al evento 'button_press_event'
-fig.canvas.mpl_connect('button_press_event', add_point)
+    # Crear cuadrados con colores según la cantidad de jugadores
+    for point, count in zip(unique_points, counts):
+        x = point[0]
+        y = point[1]
+        color = 'yellow' if count <= 2 else 'green' if count <= 5 else 'white'  # Cambia los colores según tus necesidades
+        square = Rectangle((x - 500, y - 500), 1000, 1000, color=color)
+        ax.add_artist(square)
 
-# Crear la animación que llama a update_plot en intervalos regulares
-animation = FuncAnimation(fig, update_plot, frames=range(len(x_values)), interval=200)
+    ax.set_aspect('equal', adjustable='box')
+    plt.xlim(-25000, 25000)
+    plt.ylim(-25000, 25000)
+    plt.axis('off')
+    plt.show()
 
-# Mostrar la animación
-plt.show()
+
+data = {'CLIFF': 
+            {'lucas': 
+                {'x': 13096.168354203732, 
+                 'y': 13572.11174816639, 
+                 'z': 1730.7399040718012, 
+                 'inclinacion_x': -94.47786207834619, 
+                 'inclinacion_y': 26.005672776980468, 
+                 'cima': False}, 
+            'facu': 
+                {'x': 13029.857499854661, 
+                 'y': 14242.535625036326, 
+                 'z': 1740.8850974550742, 
+                 'inclinacion_x': -92.93106865087678, 
+                 'inclinacion_y': 25.06745339748818, 
+                 'cima': False}, 
+            'fran': 
+                {'x': 13572.11174816639, 
+                 'y': 13096.168354203739, 
+                 'z': 1705.2251654982615, 
+                 'inclinacion_x': -98.7716711300381,
+                 'inclinacion_y': 27.345122808129602, 
+                 'cima': False}, 
+            'ivan': 
+            {'x': 14242.535625036326, 
+             'y': 13029.857499854661, 
+             'z': 1674.8863335572773, 
+             'inclinacion_x': -103.87146277493585, 
+             'inclinacion_y': 28.48029991065124, 
+             'cima': False}}}
+
+generate_heatmap(data)

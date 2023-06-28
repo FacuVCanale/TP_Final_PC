@@ -212,7 +212,7 @@ class App(customtkinter.CTk):
 
     def frame_4_button_event(self):
         self.select_frame_by_name("frame_4")
-        self.fourth_frame.show_animation()
+#        self.fourth_frame.show_animation()
     
     def frame_5_button_event(self):
         self.select_frame_by_name("frame_5")
