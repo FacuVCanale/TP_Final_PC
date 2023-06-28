@@ -2,8 +2,22 @@ from communication.client.client import MountainClient
 import time
 import random
 import numpy as np
+import argparse
 
-cliente = MountainClient("localhost", 8080)
+# Crea un objeto ArgumentParser
+parser = argparse.ArgumentParser(description='Command line args')
+
+# Agrega los argumentos que deseas aceptar
+parser.add_argument('--ip', type=str, help='IP and port', default="localhost:8080")
+
+# Analiza los argumentos de la línea de comando
+args = parser.parse_args()
+
+# Separa la dirección IP y el puerto
+ip, port = args.ip.split(':')
+
+
+cliente = MountainClient(ip, int(port))
 
 directions = {}
 directions2 = {}
