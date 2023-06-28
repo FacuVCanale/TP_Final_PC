@@ -94,9 +94,7 @@ ax1.set_ylim3d(-RADIUS / 2, RADIUS / 2) """
         
 
 
-
-
-class SecondFrame(customtkinter.CTkFrame):
+class SecondFrame(customtkinter.CTkFrame): #GRAPH Hikers
     def __init__(self, master,client):
         super().__init__(master, corner_radius=0, fg_color="transparent")
         self.grid(row=0, column=1, sticky="nsew")
@@ -109,7 +107,7 @@ class SecondFrame(customtkinter.CTkFrame):
         self.selected_team = 'Everyone'
         self.client = client
 
-        self.team_colors = {'Everyone': 'blue'}
+        self.team_colors = {'Everyone': None}
 
         self.show_graf3D()
         self.create_scrollable_frame()
@@ -192,13 +190,12 @@ class SecondFrame(customtkinter.CTkFrame):
             max_z = max(z)
             self.ax.set_zlim3d(0, max_z)
 
+
     def get_team_list_from_server(self):
         teams = []
         for team, climbers in self.info.items():
     
-            if team not in self.team_colors:
-                color = '#{:06x}'.format(random.randint(0, 0xFFFFFF))
-                self.team_colors[team] = color
+        
             teams.append(team)
         return teams
 
@@ -318,9 +315,6 @@ class ThirdFrame(customtkinter.CTkFrame):
         self.after(500,self.call_function)
 
 
-        
-        
-        
 
 class FourthFrame(customtkinter.CTkFrame):
     def __init__(self, master,client):
@@ -392,24 +386,31 @@ class FifthFrame(customtkinter.CTkFrame):
         self.container_frame.grid_columnconfigure(0, weight=1)
 
         self.selected_team = 'Everyone'
+        self.team_colors = {'Everyone': None}
 
         # create container frame with grid layout
         self.client = MountainClient("localhost", 8080)
         self.info = self.client.get_data()
 
         self.show_scatter()
+        self.create_scrollable_frame()
 
         
 
     def show_scatter(self):
-        fig, ax = plt.subplots()
+        fig, self.ax = plt.subplots()
 
-        ax.set_xlabel('X')
-        ax.set_ylabel('Y')
-        ax.set_xlim(-23000, 20000)
-        ax.set_ylim(-23000, 20000)
+        self.ax.set_xlabel('X')
+        self.ax.set_ylabel('Y')
+        self.ax.set_xlim(-23000, 20000)
+        self.ax.set_ylim(-23000, 20000)
 
-        self.points = ax.scatter([], [], c='green', marker='o')
+        if self.selected_team == 'Everyone':
+            color = self.team_colors['Everyone']
+        else:
+            color = self.team_colors[self.selected_team]
+
+        self.points = self.ax.scatter([], [], c=color, marker='o')
 
         self.animation = FuncAnimation(fig, self.update_scatter, interval=1000, blit=False, repeat=False)
 
@@ -433,22 +434,40 @@ class FifthFrame(customtkinter.CTkFrame):
         self.info = self.client.get_data()  # Update server data
 
         points = []
+        colors = []
         for team, climbers in self.info.items():
+
             if self.selected_team == 'Everyone':
                 for climber, data in climbers.items():
                     x = data['x']
                     y = data['y']
+                    
+                    if team in self.team_colors:
+                        colors.append(self.team_colors[team])
+                    else:
+                        color = '#{:06x}'.format(random.randint(0, 0xFFFFFF))
+                        self.team_colors[team] = color
+                        colors.append(color)
+
                     points.append((x, y))
             elif team == self.selected_team:
                 for climber, data in climbers.items():
                     x = data['x']
                     y = data['y']
+                    if team in self.team_colors:
+                        colors.append(self.team_colors[team])
+                    else:
+                        color = '#{:06x}'.format(random.randint(0, 0xFFFFFF))
+                        self.team_colors[team] = color
+                        colors.append(color)
+                        
                     points.append((x, y))
 
         x, y = zip(*points) if points else ([], [])
         self.points.set_offsets(np.column_stack((x, y)))
+        self.points.set_color(colors)
 
-        return self.points,
+
 
 
     def show_animation(self):
@@ -457,6 +476,42 @@ class FifthFrame(customtkinter.CTkFrame):
         self.canvas = FigureCanvasTkAgg(self.fig, master=self.container_frame)
         self.canvas.draw()
         self.canvas.get_tk_widget().grid(row=0, column=0, sticky="nsew")
+
+    def get_team_list_from_server(self):
+        teams = []
+        for team, climbers in self.info.items():
+            teams.append(team)
+        return teams
+
+
+
+    def create_scrollable_frame(self):
+        """
+        Create and configure a scrollable frame to display the team list.
+
+        """
+        scrollable_frame = ScrollableLabelButtonFrame(self.container_frame)
+        scrollable_frame.grid(row=0, column=1, sticky="nsew", padx=3, pady=3)
+
+        teams = self.get_team_list_from_server()
+        scrollable_frame.add_item("Everyone", command=self.select_team)
+
+        for team in teams:
+            scrollable_frame.add_item(team, command=self.select_team)
+
+        scrollable_frame.configure(width=150, height=100)
+
+
+    def select_team(self, team):
+        """
+        Update the selected team and update the graph accordingly.
+
+        Args:
+            team: The selected team.
+
+        """
+        self.selected_team = team
+        self.update_graph(None)
 
 
         
