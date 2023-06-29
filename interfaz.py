@@ -9,11 +9,15 @@ from communication.client.client import MountainClient
 class App(customtkinter.CTk):
     def __init__(self):
         super().__init__()
-
+        
         self.title("Dashboard")
-        self.geometry("1280x720")
-        self.resizable(False, False)
+        #self.state('zoomed')
+        #self.resizable(False, False)
 
+        width= self.winfo_screenwidth()
+        height= self.winfo_screenheight()
+        #setting tkinter window size
+        self.geometry("%dx%d" % (width, height))
         # set grid layout 1x2
         self.grid_rowconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=1)
@@ -26,21 +30,17 @@ class App(customtkinter.CTk):
         image_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "test_images")
         self.logo_image = customtkinter.CTkImage(Image.open(os.path.join(image_path, "logo.png")), size=(155, 64))
 
-        self.large_test_image = customtkinter.CTkImage(Image.open(os.path.join(image_path, "large_test_image.png")), size=(500, 150))
-
-        self.image_icon_image = customtkinter.CTkImage(Image.open(os.path.join(image_path, "image_icon_light.png")), size=(20, 20))
-
         self.home_image = customtkinter.CTkImage(light_image=Image.open(os.path.join(image_path, "home_dark.png")),
-                                                 dark_image=Image.open(os.path.join(image_path, "home_light.png")), size=(20, 20))
+                                                 dark_image=Image.open(os.path.join(image_path, "home_light.png")), size=(40, 40))
         
         self.chat_image = customtkinter.CTkImage(light_image=Image.open(os.path.join(image_path, "chat_dark.png")),
-                                                 dark_image=Image.open(os.path.join(image_path, "chat_light.png")), size=(20, 20))
+                                                 dark_image=Image.open(os.path.join(image_path, "chat_light.png")), size=(40, 40))
         
         self.add_user_image = customtkinter.CTkImage(light_image=Image.open(os.path.join(image_path, "add_user_dark.png")),
-                                                     dark_image=Image.open(os.path.join(image_path, "add_user_light.png")), size=(20, 20))
+                                                     dark_image=Image.open(os.path.join(image_path, "add_user_light.png")), size=(40, 40))
         
         self.music_image = customtkinter.CTkImage(light_image=Image.open(os.path.join(image_path, "add_user_dark.png")),
-                                                     dark_image=Image.open(os.path.join(image_path, "add_user_light.png")), size=(20, 20))
+                                                     dark_image=Image.open(os.path.join(image_path, "add_user_light.png")), size=(40, 40))
         
 
         # create navigation frame

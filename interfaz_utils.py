@@ -299,7 +299,7 @@ class ThirdFrame(customtkinter.CTkFrame):
                 self.letter_asig[equipo] = num_jugador
                 num_jugador += 1
             counter += 1
-        label_resultado = customtkinter.CTkLabel(self, text=ascii(self.letter_asig), font=('Helvetica', 10))
+        label_resultado = customtkinter.CTkLabel(self, text=ascii(self.letter_asig), font=('Courier New', 10))
         label_resultado.pack()
         self.call_function()
         
@@ -310,9 +310,9 @@ class ThirdFrame(customtkinter.CTkFrame):
     def call_function(self):
         for widgets in self.winfo_children():
             widgets.destroy()
-        label_resultado = customtkinter.CTkLabel(self, text=ascii(self.letter_asig), font=('Helvetica', 10))
+        label_resultado = customtkinter.CTkLabel(self, text=ascii(self.letter_asig), font=('Courier New', 10))
         label_resultado.pack()
-        self.after(500,self.call_function)
+        self.after(2000,self.call_function)
 
 
 

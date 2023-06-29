@@ -6,7 +6,7 @@ class Mapa_circular:
         for i in self.circulo:
             for j in i:
                 if j == num_jugador:
-                    self.circulo[i][j] = "X"
+                    self.circulo[i][j] = "."
 
         x = int(pos[0] / self.ESCALA)
         y = int(pos[1] / self.ESCALA)
