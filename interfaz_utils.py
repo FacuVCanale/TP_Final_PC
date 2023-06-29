@@ -6,12 +6,10 @@ import numpy as np
 import customtkinter
 matplotlib.use('TkAgg')
 import customtkinter
-from communication.client.client import MountainClient
 from ascii import ascii
-import random
 
  
-class HomeFrame(customtkinter.CTkFrame):
+class MountainGraphFrame(customtkinter.CTkFrame):
     """
     A custom frame class for displaying a 3D graph.
 
@@ -19,7 +17,7 @@ class HomeFrame(customtkinter.CTkFrame):
     functionality to display a 3D graph with updating data.
 
     Attributes:
-        container_frame (customtkinter.CTkFrame): The container frame within the HomeFrame.
+        container_frame (customtkinter.CTkFrame): The container frame within the MountainGraphFrame.
         client: The client object used for data retrieval.
         x (numpy.ndarray): The range of values for the x-axis.
         y (numpy.ndarray): The range of values for the y-axis.
@@ -34,7 +32,14 @@ class HomeFrame(customtkinter.CTkFrame):
         update_graph(i): Updates the graph with new data.
     """
 
-    def __init__(self, master,client):
+    def __init__(self, master, client):
+        """
+        Initialize the graph plotter.
+
+        Args:
+            master: The parent widget.
+            client: The client object for data retrieval.
+        """
         super().__init__(master, corner_radius=0, fg_color="transparent")
         self.grid(row=0, column=2, sticky="nsew")
         self.grid_columnconfigure(0, weight=1)
@@ -46,26 +51,24 @@ class HomeFrame(customtkinter.CTkFrame):
         self.container_frame.grid_rowconfigure(0, weight=1)
         self.container_frame.grid_columnconfigure(0, weight=1)
         self.client = client
-        
 
         res = 20
         self.Z = np.zeros((res,res))
         
-    
-
-        # Crear el rango de valores para los ejes x e y
+        # Create the range of values for the x and y axes
         self.x = np.linspace(-23000, 23000, res)
         self.y = np.linspace(-23000, 23000, res)
 
-        # Crear el meshgrid inicial a partir de los valores de x e y
+        # Create the initial meshgrid based on the values of x and y
         self.X, self.Y = np.meshgrid(self.x, self.y)
 
-        
-        
+
     def show_graph(self):
+        """
+        Shows the graph plot.
+        """
         fig = plt.figure()
         self.ax = fig.add_subplot(111, projection='3d')
-
 
         self.ax.set_xlabel('X')
         self.ax.set_ylabel('Y')
@@ -78,37 +81,43 @@ class HomeFrame(customtkinter.CTkFrame):
         canvas.draw()
         canvas.get_tk_widget().grid(row=0, column=0, sticky="nsew")
 
-      
 
-    # Funcion de actualizacion 
+    # Update function
     def update_graph(self, i):
-        # Obtener los datos actualizados del cliente
+        """
+        Updates the graph plot.
+
+        Args:
+            i: The update iteration index.
+        """
+        # Get updated data from the client
         info = self.client.get_data()
 
-        # Actualizar los valores de Z en la superficie
+        # Update the values of Z on the surface
         for team, climbers in info.items():
             for climber, data in climbers.items():
                 x2 = data['x']
                 y2 = data['y']
                 z2 = data['z']
 
-                # Verificar si el punto ya existe en la lista de picos
+                # Check if the point already exists in the peak list
 
-                # Calcular las distancias entre los puntos (x, y) y (x2, y2) -> EUCLIDEAN
-                # Encontrar la posición del punto más cercano
+                # Calculate the distances between the points (x, y) and (x2, y2) -> EUCLIDEAN
+                # Find the position of the nearest point
                 idx_x = np.argmin(np.abs(self.x - x2))
                 idx_y = np.argmin(np.abs(self.y - y2))
 
-                # Asignar el valor de altura al punto correspondiente en Z
+                # Assign the height value to the corresponding point in Z
                 self.Z[idx_x, idx_y] = z2
 
         self.ax.clear()
         self.ax.plot_surface(self.X, self.Y, self.Z, cmap="terrain")
 
+
         
 
 
-class SecondFrame(customtkinter.CTkFrame): #GRAPH Hikers
+class HikersPositionFrame(customtkinter.CTkFrame): #GRAPH Hikers
     """
     A class representing the second frame of a customtkinter application.
 
@@ -126,7 +135,7 @@ class SecondFrame(customtkinter.CTkFrame): #GRAPH Hikers
         ani (matplotlib.animation.FuncAnimation): The animation object for updating the graph.
 
     Methods:
-        __init__(self, master, client): Initializes the SecondFrame instance.
+        __init__(self, master, client): Initializes the HikersPositionFrame instance.
         show_graf3D(self): Displays the 3D graph.
         update_graph(self, _): Updates the graph based on data received from the server.
         get_team_list_from_server(self): Retrieves the list of teams from the server.
@@ -135,7 +144,7 @@ class SecondFrame(customtkinter.CTkFrame): #GRAPH Hikers
     """
     def __init__(self, master,client,team_colors:dict):
         """
-        Initializes the SecondFrame instance.
+        Initializes the HikersPositionFrame instance.
 
         Args:
             master (tkinter.Tk): The master tkinter window.
@@ -393,7 +402,7 @@ class ThirdFrame(customtkinter.CTkFrame):
         self.after(2000,self.call_function)
 
 
-class FourthFrame(customtkinter.CTkFrame):
+class HeatmapFrame(customtkinter.CTkFrame):
     """
     A custom frame class for displaying an animation.
 
@@ -458,9 +467,7 @@ class FourthFrame(customtkinter.CTkFrame):
         self.ax.set_xlim(-23000, 23000)
         self.ax.set_ylim(-23000, 23000)
 
-        
-
-        self.hist = np.zeros((len(self.x) +1, len(self.y)+1))
+        self.hist = np.zeros((len(self.x), len(self.y)))
         self.heatmap = self.ax.imshow(self.hist, cmap='viridis', origin='lower', extent=[-23000, 23000, -23000, 23000])
 
         self.animation = FuncAnimation(self.fig, self.update_heatmap, interval=1000)
@@ -489,7 +496,7 @@ class FourthFrame(customtkinter.CTkFrame):
             for climber, data in climbers.items():
                 x2 = data['x']
                 y2 = data['y']
-                z2 = data['z']
+                
 
                 idx_x = np.argmin(np.abs(self.x - x2))
                 idx_y = np.argmin(np.abs(self.y - y2))
@@ -528,7 +535,7 @@ class ScatterFrame(customtkinter.CTkFrame):
         ani (matplotlib.animation.FuncAnimation): The animation object for updating the graph.
 
     Methods:
-        __init__(self, master, client): Initializes the ScatterFrame     instance.
+        __init__(self, master, client): Initializes the ScatterFrame instance.
         show_scatter(self): Displays the 2D graph.
         update_scatter(self, _): Updates the graph based on data received from the server.
         get_team_list_from_server(self): Retrieves the list of teams from the server.
@@ -572,7 +579,7 @@ class ScatterFrame(customtkinter.CTkFrame):
         Shows the scatter plot.
         """
         # Create a scatter plot
-        fig, self.ax = plt.subplots()
+        self.fig, self.ax = plt.subplots()
 
         # Set x and y labels
         self.ax.set_xlabel('X')
@@ -590,11 +597,11 @@ class ScatterFrame(customtkinter.CTkFrame):
 
 
         # Create the animation
-        self.animation = FuncAnimation(fig, self.update_scatter, interval=1000, blit=False, repeat=False)
+        self.animation = FuncAnimation(self.fig, self.update_scatter, interval=1000, blit=False, repeat=False)
 
 
         # Create the Tkinter canvas for the plot    
-        canvas = FigureCanvasTkAgg(fig, master=self.container_frame)
+        canvas = FigureCanvasTkAgg(self.fig, master=self.container_frame)
         canvas.draw()
         canvas.get_tk_widget().grid(row=0, column=0, sticky="nsew")
 
@@ -622,7 +629,6 @@ class ScatterFrame(customtkinter.CTkFrame):
                 for climber, data in climbers.items():
                     x = data['x']
                     y = data['y']
-                    
                     
                     color = self.team_colors.get(team)
                     self.team_colors[team] = color

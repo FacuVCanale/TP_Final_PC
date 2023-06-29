@@ -1,8 +1,7 @@
 import customtkinter
-from customtkinter import CTkFrame
 import os
 from PIL import Image
-from interfaz_utils import SecondFrame,HomeFrame,FourthFrame, ThirdFrame, ScatterFrame
+from interfaz_utils import HikersPositionFrame,MountainGraphFrame,HeatmapFrame, ThirdFrame, ScatterFrame
 from leaderboard import show_leaderboard
 from communication.client.client import MountainClient
 import random
@@ -11,14 +10,14 @@ class App(customtkinter.CTk):
     def __init__(self):
         super().__init__()
         
-        self.title("Dashboard")
-        #self.state('zoomed')
-        #self.resizable(False, False)
+        self.title("Server Dashboard")
+        
+        self.resizable(False, False)
 
         width= self.winfo_screenwidth()
         height= self.winfo_screenheight()
         #setting tkinter window size
-        self.geometry("%dx%d" % (width, height))
+        self.geometry("1280x720")
         # Set grid layout 1x2
         self.grid_rowconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=1)
@@ -69,7 +68,7 @@ class App(customtkinter.CTk):
         self.navigation_frame_label2.grid(row=0, column=0, padx=20, pady=20)
 
 
-        self.call_function()
+        self.call_function() #no se que es 
 
         #FRAME 3D
         self.home_button = customtkinter.CTkButton(self.navigation_frame, 
@@ -135,7 +134,7 @@ class App(customtkinter.CTk):
 
 
     
-        # Change mode
+        # Change appearance mode
         self.appearance_mode_menu = customtkinter.CTkOptionMenu(self.navigation_frame, values=["Dark", "Light", "System"],
                                                                 command=self.change_appearance_mode_event)
         
@@ -143,18 +142,18 @@ class App(customtkinter.CTk):
 
         
         # Create the 3D Frame
-        self.home_frame = HomeFrame(self,self.client)
+        self.home_frame = MountainGraphFrame(self,self.client)
         
 
         # Create Hikers Frame
-        self.second_frame = SecondFrame(self,self.client,self.team_colors)
+        self.second_frame = HikersPositionFrame(self,self.client,self.team_colors)
 
         
         # create ASCII Frame
         self.third_frame = ThirdFrame(self,self.client)
 
         # Create Heatmap Frame
-        self.fourth_frame =FourthFrame(self,self.client)
+        self.fourth_frame =HeatmapFrame(self,self.client)
         
         # Create Scatter Frame
         self.fifth_frame = ScatterFrame(self,self.client,self.team_colors)
