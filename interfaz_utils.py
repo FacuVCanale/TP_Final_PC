@@ -312,7 +312,7 @@ class ThirdFrame(customtkinter.CTkFrame):
             widgets.destroy()
         label_resultado = customtkinter.CTkLabel(self, text=ascii(self.letter_asig), font=('Courier New', 10))
         label_resultado.pack()
-        self.after(2000,self.call_function)
+        self.after(3500,self.call_function)
 
 
 

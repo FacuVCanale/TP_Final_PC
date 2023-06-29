@@ -11,8 +11,6 @@ class App(customtkinter.CTk):
         super().__init__()
         
         self.title("Dashboard")
-        #self.state('zoomed')
-        #self.resizable(False, False)
 
         width= self.winfo_screenwidth()
         height= self.winfo_screenheight()
@@ -31,18 +29,20 @@ class App(customtkinter.CTk):
         self.logo_image = customtkinter.CTkImage(Image.open(os.path.join(image_path, "logo.png")), size=(155, 64))
 
         self.home_image = customtkinter.CTkImage(light_image=Image.open(os.path.join(image_path, "home_dark.png")),
-                                                 dark_image=Image.open(os.path.join(image_path, "home_light.png")), size=(40, 40))
+                                                 dark_image=Image.open(os.path.join(image_path, "home_light.png")), size=(80, 80))
         
         self.chat_image = customtkinter.CTkImage(light_image=Image.open(os.path.join(image_path, "chat_dark.png")),
-                                                 dark_image=Image.open(os.path.join(image_path, "chat_light.png")), size=(40, 40))
+                                                 dark_image=Image.open(os.path.join(image_path, "chat_light.png")), size=(80, 80))
         
         self.add_user_image = customtkinter.CTkImage(light_image=Image.open(os.path.join(image_path, "add_user_dark.png")),
-                                                     dark_image=Image.open(os.path.join(image_path, "add_user_light.png")), size=(40, 40))
+                                                     dark_image=Image.open(os.path.join(image_path, "add_user_light.png")), size=(80, 80))
         
-        self.music_image = customtkinter.CTkImage(light_image=Image.open(os.path.join(image_path, "add_user_dark.png")),
-                                                     dark_image=Image.open(os.path.join(image_path, "add_user_light.png")), size=(40, 40))
+        self.music_image = customtkinter.CTkImage(light_image=Image.open(os.path.join(image_path, "heatmap.png")),
+                                                     dark_image=Image.open(os.path.join(image_path, "heatmap.png")), size=(80, 80))
         
-
+        self.music_image2 = customtkinter.CTkImage(light_image=Image.open(os.path.join(image_path, "scatter.png")),
+                                                     dark_image=Image.open(os.path.join(image_path, "scatter.png")), size=(80, 80))
+        
         # create navigation frame
         self.navigation_frame = customtkinter.CTkFrame(self, corner_radius=0)
         self.navigation_frame.grid(row=0, column=0, sticky="nsew")
@@ -69,11 +69,11 @@ class App(customtkinter.CTk):
                                                    corner_radius=0, 
                                                    height=40, 
                                                    border_spacing=10,
-                                                   text="3D", 
+                                                   text="MOUNTAIN", 
                                                    fg_color="transparent", 
                                                    text_color=("gray10", "gray90"),
                                                    hover_color=("gray70", "gray30"),
-                                                   image=self.home_image, 
+                                                   image=self.chat_image, 
                                                    anchor="w", 
                                                    command=self.home_button_event)
         self.home_button.grid(row=1, column=0, sticky="ew")
@@ -81,11 +81,11 @@ class App(customtkinter.CTk):
         #FRAME 2D
         self.frame_2_button = customtkinter.CTkButton(self.navigation_frame, corner_radius=0, height=40,
                                                       border_spacing=10, 
-                                                      text="Posicion Hikers",
+                                                      text="HIKERS",
                                                       fg_color="transparent", 
                                                       text_color=("gray10", "gray90"),
                                                       hover_color=("gray70", "gray30"),
-                                                      image=self.chat_image, 
+                                                      image=self.home_image, 
                                                       anchor="w", 
                                                       command=self.frame_2_button_event)
         self.frame_2_button.grid(row=2, column=0, sticky="ew")
@@ -108,7 +108,7 @@ class App(customtkinter.CTk):
                                                       fg_color="transparent", 
                                                       text_color=("gray10", "gray90"),
                                                       hover_color=("gray70", "gray30"),
-                                                      image=self.add_user_image, 
+                                                      image=self.music_image, 
                                                       anchor="w", 
                                                       command=self.frame_4_button_event)
         self.frame_4_button.grid(row=4, column=0, sticky="ew")
@@ -119,7 +119,7 @@ class App(customtkinter.CTk):
                                               fg_color="transparent", 
                                               text_color=("gray10", "gray90"),
                                               hover_color=("gray70", "gray30"),
-                                              image=self.add_user_image, 
+                                              image=self.music_image2, 
                                               anchor="w", 
                                               command=self.frame_5_button_event)
         self.frame_5_button.grid(row=5, column=0, sticky="ew")
@@ -159,14 +159,13 @@ class App(customtkinter.CTk):
 
     def call_function(self):
         for widgets in self.navigation_frame2.winfo_children():
-            print(widgets)
             widgets.destroy()
         self.navigation_frame_label2 = customtkinter.CTkLabel(self.navigation_frame2,
                                                               # ELEGIR NOMBRE DE LA BARRA DE TAREAS
                                                              compound="right",
                                                              font=customtkinter.CTkFont(size=15, weight="bold"), text=show_leaderboard())
         self.navigation_frame_label2.grid(row=0, column=0, padx=20, pady=20)
-        self.after(2500,self.call_function)
+        self.after(5000,self.call_function)
         return
     #CAMBIAR DE PESTAÑAS - MODIFICO LA VISUALIZACION DE CADA PESTAÑA
     def select_frame_by_name(self, name):
