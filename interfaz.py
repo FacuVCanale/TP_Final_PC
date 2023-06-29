@@ -21,7 +21,7 @@ class App(customtkinter.CTk):
         self.grid_columnconfigure(2, weight=1)
 
 
-        self.client = MountainClient("10.42.0.1", 8888)
+        self.client = MountainClient()
 
         # load images with light and dark mode image
         image_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "test_images")

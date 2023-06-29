@@ -10,8 +10,10 @@ from class_hiker import Hiker
 # Importar estrategia
 # from estrategia1 import strategy
 
+import random
 
-c = MountainClient("10.42.0.1", 8888)
+
+c = MountainClient()
 
 local_maxs = []
 
@@ -20,10 +22,10 @@ dataAnalyst = DataAnalyst(c)
 dataAnalysts = [dataAnalyst]
 
 # Initialize hikers
-lucas = Hiker('CLIFF','lucas', lucas_points, alpha=.9, beta=.8)
-facu = Hiker('CLIFF','facu', facu_points, alpha=.1)         #ESTE TIENE GA
-fran = Hiker('CLIFF','fran', fran_points, alpha=.6, beta=.85)
-ivan = Hiker('CLIFF','ivan', ivan_points, alpha=.5, beta=.7)
+lucas = Hiker('CLIFF','lucas', lucas_points, alpha=.5, beta=.7)
+facu = Hiker('CLIFF','facu', facu_points, alpha=.5, beta= .8)         #ESTE TIENE GA
+fran = Hiker('CLIFF','fran', fran_points, alpha=.5, beta=.5)
+ivan = Hiker('CLIFF','ivan', ivan_points, alpha=.5, beta=.99)
 hikers = [lucas, facu, fran, ivan]
 
 
@@ -35,7 +37,7 @@ def update_all_data(hikers:list[Hiker],dataAnalysts:list[DataAnalyst], data):
         dataAnalyst.update_data(data)
 
 
-def check_hikers_intersect(hikers, directives):
+def check_hikers_intersect(hikers, local_maxs, directives):
     for i in range(len(hikers)-1):
         for j in range(1, len(hikers)):
             if hikers[i].strat == "hike" and hikers[j] == "hike":
@@ -49,20 +51,20 @@ def check_hikers_intersect(hikers, directives):
                         distance_j = np.sqrt((hikers[j].get_data("x") - coords[0]) ** 2 + (hikers[j].get_data("y") - coords[1]) ** 2)
                         if distance_j > distance_i:
                             hikers[j].change_strat("follow_points")
-                            direction_j, speed_j = hikers[j].strategy()
+                            direction_j, speed_j = hikers[j].strategy(local_maxs)
                             directives[hikers[j].name]["direction"] = direction_j
                             directives[hikers[j].name]["speed"] = speed_j
                         else:
                             hikers[i].change_strat("follow_points")
-                            direction_i, speed_i = hikers[i].strategy()
+                            direction_i, speed_i = hikers[i].strategy(local_maxs)
                             directives[hikers[i].name]["direction"] = direction_i
                             directives[hikers[i].name]["speed"] = speed_i
                     else:
                         hikers[i].change_strat("follow_points")
-                        direction_i, speed_i = hikers[i].strategy()
+                        direction_i, speed_i = hikers[i].strategy(local_maxs)
                         directives[hikers[i].name]["direction"] = direction_i
                         directives[hikers[i].name]["speed"] = speed_i
-                    
+                print("ENTRE\nENTRE\nENTRE\nintersección\nENTRE\nENTRE\nENTRE\n")
 
 def check_hikers_local_max(local_maxs, hikers, directives):
     for hiker in hikers:
@@ -74,18 +76,33 @@ def check_hikers_local_max(local_maxs, hikers, directives):
                     direction, speed = hiker.strategy(local_maxs)
                     directives[hiker.name]["direction"] = direction
                     directives[hiker.name]["speed"] = speed
+                    print("ENTRE\nENTRE\nENTRE\nlocalmax\nENTRE\nENTRE\nENTRE\n")
 
-def check_hikers_out_of_bounds(hikers, directives):
+def check_hikers_out_of_bounds(hikers, local_maxs, directives):
     # Check if a hyker is going out of bounds   
     for hiker in hikers:
         if hiker.check_out_of_bounds():
             print(hiker.name)
             print("ME ESTROY POR IR\nME ESTROY POR IR\nME ESTROY POR IR\nME ESTROY POR IR\nME ESTROY POR IR\n")
-            hiker.change_strat('follow_points')
+            if len(hiker.puntos) != 0:
+                hiker.change_strat('follow_points')
+            elif hiker.strat == "descent":
+                hiker.strat == "hike"
+            elif hiker.strat == "hike":
+                hiker.strat == "descent"
             # hiker.puntos = hiker.puntos[1:] PARA TESTEAR AGREGANDO UN PUNTO A LA LSITA
-            hiker_dir_speed = hiker.strategy(local_maxs, "MGA")
+            hiker_dir_speed = hiker.strategy(local_maxs)
             directives[hiker.name] = {'direction': hiker_dir_speed[0], 'speed': hiker_dir_speed[1]}
 
+def check_hikers_stopped(hikers, local_maxs, directives):
+    for hiker in hikers:
+        if hiker.last_data == hiker.data:
+            if len(hiker.puntos) == 0:
+                hiker.puntos.append([random.randint(-14000, 14000), random.randint(-14000, 14000)])
+            hiker.strat == "follow_points"
+            hiker_dir_speed = hiker.strategy(local_maxs)
+            directives[hiker.name] = {'direction': hiker_dir_speed[0], 'speed': hiker_dir_speed[1]}
+            
 # Add and register team
 hikers_names = [hiker.name for hiker in hikers]
 c.add_team('CLIFF', hikers_names)
@@ -117,23 +134,25 @@ while not c.is_over():
         print(data["CLIFF"][hiker])
 
     
-    #if not dataAnalyst.check_win()[0]:# If no team won
+    if not dataAnalyst.check_win()[0]:# If no team won
 
-    lucas_new_d_and_s = lucas.strategy(local_maxs, "MGA")
-    facu_new_d_and_s = facu.strategy(local_maxs, "GA")
-    fran_new_d_and_s = fran.strategy(local_maxs, "MGA")
-    ivan_new_d_and_s = ivan.strategy(local_maxs, "MGA")
+        fran.change_strat("hike")
 
-    directives = {
-                    lucas.name: {'direction': lucas_new_d_and_s[0], 'speed': lucas_new_d_and_s[1]},
-                    facu.name: {'direction': facu_new_d_and_s[0], 'speed': facu_new_d_and_s[1]},
-                    fran.name: {'direction': fran_new_d_and_s[0], 'speed': fran_new_d_and_s[1]},
-                    ivan.name: {'direction': ivan_new_d_and_s[0], 'speed': ivan_new_d_and_s[1]},
-                }
+        lucas_new_d_and_s = lucas.strategy(local_maxs, "GA")
+        facu_new_d_and_s = facu.strategy(local_maxs, "GA")
+        fran_new_d_and_s = fran.strategy(local_maxs, "GA")
+        ivan_new_d_and_s = ivan.strategy(local_maxs, "GA")
 
-    check_hikers_out_of_bounds(hikers, directives)
+        directives = {
+                        lucas.name: {'direction': lucas_new_d_and_s[0], 'speed': lucas_new_d_and_s[1]},
+                        facu.name: {'direction': facu_new_d_and_s[0], 'speed': facu_new_d_and_s[1]},
+                        fran.name: {'direction': fran_new_d_and_s[0], 'speed': fran_new_d_and_s[1]},
+                        ivan.name: {'direction': ivan_new_d_and_s[0], 'speed': ivan_new_d_and_s[1]},
+                    }
 
-    """ else: # If a team wins, all our hikers go to win pos
+        
+
+    else: # If a team wins, all our hikers go to win pos
         print(f'Alguien gano escaladores yendo a pos {dataAnalyst.check_win()[1]}')
         x_y_win = (dataAnalyst.check_win()[1][0],dataAnalyst.check_win()[1][1])
         directives = {
@@ -142,13 +161,20 @@ while not c.is_over():
                 fran.name: {'direction': fran.direction_p(x_y_win), 'speed': fran.speed_p(x_y_win)},
                 ivan.name: {'direction': ivan.direction_p(x_y_win), 'speed': ivan.speed_p(x_y_win)},
             }
- """
 
 
     #Checks if hikers are going to the same place in GA.
-    check_hikers_intersect(hikers, directives)
+    check_hikers_intersect(hikers, local_maxs, directives)
 
     check_hikers_local_max(local_maxs, hikers, directives)
+
+    check_hikers_stopped(hikers, local_maxs, directives)
+
+    check_hikers_out_of_bounds(hikers, local_maxs, directives)
+
+    print(fran.last_data["z"])
+    print(fran.data["z"])
+    print(fran.data["z"] - fran.last_data["z"])
 
     # Give directives to server
     c.next_iteration('CLIFF', directives)

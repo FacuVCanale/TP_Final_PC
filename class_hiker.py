@@ -10,11 +10,18 @@ class Hiker:
     def __init__(self, team:str, name:str, puntos:list, strat:str="follow_points", alpha:float = 0.1, beta:float = 0.8, alpha2:float = 0.1):
         self.team = team
         self.name = name
-        self.data = {}
+        self.last_data = {"x": 14000, "y":14000, "z": 0, "inclinacion_x": 0, "inclinacion_y": 0}
+        self.data = {"x": 14000, "y":14000, "z": 0, "inclinacion_x": 0, "inclinacion_y": 0}
+
+
+        self.oscilando = False
         self.puntos = puntos
         self.strat = strat
         self.vel = 0
         self.direc = 0
+        self.last_direc = 0
+
+        self.counter = 0
         
         # Gradient ascent 
         self.alpha2 = alpha2 #learning rate
@@ -22,6 +29,8 @@ class Hiker:
         # Momentum Gradient ascent
         self.vel_x = 0 #previous vel in x to calculate momentum
         self.vel_y = 0#previous vel in y to calculate momentum
+        self.vel_x_down = 0
+        self.vel_y_down = 0
         self.alpha = alpha #learning rate
         self.beta = beta #momentum
     
@@ -38,7 +47,9 @@ class Hiker:
         -------
         None
         """
-        self.data = data[self.team][self.name]
+        if data != self.data:
+            self.last_data = self.data
+            self.data = data[self.team][self.name]
 
     def get_data(self, choice:str)->float: # PODEMOS UTILIZAR MÉTODOS MÁGICOS (GETITEM)
         """
@@ -81,10 +92,12 @@ class Hiker:
             v_direc += 2 * math.pi
         
         vel = 50
+
+        self.last_direc = self.direc
     
         self.vel = vel
         self.direc = v_direc
-        return v_direc,vel
+        return v_direc, vel
     
     def get_direction_and_vel_to_point_JUSTO(self, xf:float, yf:float) -> tuple[float,float]:
         """
@@ -116,6 +129,8 @@ class Hiker:
         if np.linalg.norm(v) < 50:           
            vel = np.linalg.norm(v)
         else: vel = 50
+
+        self.last_direc = self.direc
 
         self.vel = vel
         self.direc = v_direc
@@ -150,7 +165,7 @@ class Hiker:
         x_new = self.get_data('x') - self.get_data('inclinacion_x') * self.alpha2
         y_new = self.get_data('y') - self.get_data('inclinacion_y') * self.alpha2
 
-        return x_new,y_new
+        return x_new, y_new
     
     def direction_GD(self)-> float:
         """
@@ -187,8 +202,13 @@ class Hiker:
         tuple
             tuple with x coord and y coord of next point to climb mountain
         """
-        vel_x_2 = self.beta * self.vel_x + (-1) * self.get_data('inclinacion_x')
-        vel_y_2 = self.beta * self.vel_y + (-1) * self.get_data('inclinacion_y')
+
+        dxdy_v = np.array([self.get_data('inclinacion_x'), self.get_data('inclinacion_y')])
+
+        dxdy_v = (dxdy_v * 25 * np.sqrt(2))/ np.linalg.norm(dxdy_v) 
+
+        vel_x_2 = self.beta * self.vel_x + (-1) * dxdy_v[0]
+        vel_y_2 = self.beta * self.vel_y + (-1) * dxdy_v[1] 
         
         self.vel_x = vel_x_2
         self.vel_y = vel_y_2
@@ -208,14 +228,14 @@ class Hiker:
         tuple
             tuple with x coord and y coord of next point to climb mountain
         """
-        vel_x_2 = self.beta * self.vel_x + self.get_data('inclinacion_x')
-        vel_y_2 = self.beta * self.vel_y + self.get_data('inclinacion_y')
+        vel_x_2_down = self.beta * self.vel_x_down + self.get_data('inclinacion_x')
+        vel_y_2_down = self.beta * self.vel_y_down + self.get_data('inclinacion_y')
         
-        self.vel_x = vel_x_2
-        self.vel_y = vel_y_2
+        self.vel_x_down = vel_x_2_down
+        self.vel_y_down = vel_y_2_down
 
-        x_new = self.get_data('x') + vel_x_2 * self.alpha
-        y_new = self.get_data('y') + vel_y_2 * self.alpha
+        x_new = self.get_data('x') + vel_x_2_down * self.alpha
+        y_new = self.get_data('y') + vel_y_2_down * self.alpha
 
         return x_new, y_new
 
@@ -358,11 +378,11 @@ class Hiker:
         dx = self.get_data('inclinacion_x')
         dy = self.get_data('inclinacion_y')
 
-
         if self.strat == 'follow_points':
             if len(self.puntos) == 0:
                 print("No hay más puntos!")
                 self.strat = "descent"
+                self.counter = 0
                 return self.strategy(local_maxs)
             
             next_point = self.puntos[0]
@@ -370,6 +390,8 @@ class Hiker:
             if np.sqrt((x-next_point[0])**2 + (y-next_point[1])**2) < n:
                 print(self.name, end=" ")
                 print("Estoy en el punto", self.puntos.pop(0))
+
+                self.counter = 0
 
                 self.strat = "hike"
 
@@ -381,48 +403,71 @@ class Hiker:
                 speed = self.speed_p(next_point)
                 print(self.name, end=" ")
                 print("Buscando punto", self.puntos[0])
-
+            
+            self.counter += 1
 
         elif self.strat == 'hike':
-            if abs(dx) < n2 and abs(dy) < n2:
-                print(self.name, end=" ")
-                print('Estoy en un max local')
+            
+            if self.counter > 2:
+                if self.has_stept_local_max() is True:
+                    if self.oscilando is False:
+                        self.oscilando = True
+                    else:
+                        print(self.name, end=" ")
+                        print('Estuve oscilando en un max local')
 
-                point = (self.get_data("x"), self.get_data("y"))
-                local_maxs.append(point)
+                        point = self.aproximate_local()
+                        local_maxs.append(point)
 
-                #if len(self.puntos) == 0:
-                self.strat = "descent"
-                #else:
-                #    self.strat = 'follow_points'
+                        #if len(self.puntos) == 0:
+                        self.strat = "descent"
+                        self.vel_x, self.vel_y = 0, 0 
+                        #else:
+                        #    self.strat = 'follow_points'
 
+                        self.counter = 0
+                        direction = self.last_direc
+                        speed = 50
+                        return direction, speed
+                
+            self.counter += 1
+            print(self.name, end=" ")
+            print("Escalando")
+            if GA_o_MGA == "GA":
                 direction = self.direction_GA()
-                speed = 50
-
-            else:
-                print(self.name, end=" ")
-                print("Escalando")
-                if GA_o_MGA == "GA":
-                    direction = self.direction_GA()
-                    speed = self.speed_GA()
-                elif GA_o_MGA == "MGA":
-                    direction = self.direction_MGA()
-                    speed = self.speed_MGA()
+                speed = self.speed_GA()
+            elif GA_o_MGA == "MGA":
+                direction = self.direction_MGA()
+                speed = self.speed_MGA()
         
         elif self.strat == "descent":
-            if abs(dx) < n2 and abs(dy) < n2:
-                print(self.name, end=" ")
-                print('Estoy en un min local')
-                self.strat = 'hike'
+            if self.counter > 2:
+                if self.has_stept_local_min():
+                    if self.oscilando is False:
+                        self.oscilando = True
+                    else:
+                        print(self.name, end=" ")
+                        print('Estoy en un min local')
+                        self.strat = 'hike'
 
-                direction = self.direction_MGD()
-                speed = 50
+                        self.counter = 0
 
-                #direction, speed = self.strategy(local_maxs) #LO MANDA A GA
+                        self.vel_x_down, self.vel_y_down = 0, 0
 
-            else:
-                print(self.name, end=" ")
-                print("Bajando")
+                        direction = self.last_direc
+
+                        speed = 50
+                        return direction, speed
+
+                    #direction, speed = self.strategy(local_maxs) #LO MANDA A GA
+
+            self.counter += 1
+            print(self.name, end=" ")
+            print("Bajando")
+            if GA_o_MGA == "GA":
+                direction = self.direction_GD()
+                speed = self.speed_GD()
+            elif GA_o_MGA == "MGA":
                 direction = self.direction_MGD()
                 speed = self.speed_MGD()
 
@@ -479,8 +524,22 @@ class Hiker:
         
     def is_near_point(self, point):
         self_pos = (self.get_data("x"), self.get_data("y"))
-        is_near = facu_inter.check_distance(self_pos, point, 200)
+        is_near = facu_inter.check_distance(self_pos, point, 100)
         return is_near
     
     def random_opposite_direction(self, direction):
         return direction + math.pi/2 + math.pi * random.random()
+    
+    def has_stept_local_min(self):
+        if self.strat == "descent":
+            if self.last_data["z"] < self.data["z"]:
+                return True
+
+    def has_stept_local_max(self):
+        if self.strat == "hike":
+            if self.last_data["z"] > self.data["z"]:
+                return True
+            
+    def aproximate_local(self):
+        if self.has_stept_local_max() is True:
+            return ((self.last_data["x"] + self.data["x"])/2, (self.last_data["y"] + self.data["y"])/2)
