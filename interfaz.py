@@ -191,30 +191,37 @@ class App(customtkinter.CTk):
         self.frame_5_button.configure(fg_color=("gray75", "gray25") if name == "frame_5" else "transparent")
         
         # Show or hide selected frames based on the given name
-        if name == "home":
+        if name == "home": #3D
             self.home_frame.grid(row=0, column=1, sticky="nsew")
+            self.home_frame.show_graph()
         else:
             self.home_frame.grid_forget()
 
-        if name == "frame_2":
-            self.second_frame.grid(row=0, column=1, sticky="nsew")   
+        if name == "frame_2": #SCATTER
+            self.second_frame.grid(row=0, column=1, sticky="nsew")
+            self.second_frame.show_graf3D()   
         else:
             self.second_frame.grid_forget()
 
-        if name == "frame_3":
+        if name == "frame_3": #ASCII
             self.third_frame.grid(row=0, column=1, sticky="nsew")
+            
+            
         else:
             self.third_frame.grid_forget()
 
-        if name == "frame_4":
+        if name == "frame_4": #HEATMAP
             self.fourth_frame.grid(row=0, column=1,sticky="nsew")
+            self.fourth_frame.show_animation()
         else:
             self.fourth_frame.grid_forget()
 
-        if name == "frame_5":
+        if name == "frame_5": #2D
             self.fifth_frame.grid(row=0, column=1, sticky="nsew")
+            self.fifth_frame.show_scatter()
         else:
             self.fifth_frame.grid_forget()
+            
         
 
     def home_button_event(self):
