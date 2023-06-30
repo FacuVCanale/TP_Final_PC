@@ -52,6 +52,7 @@ class App(customtkinter.CTk):
         self.navigation_frame2 = customtkinter.CTkFrame(self, corner_radius=0)
         self.navigation_frame2.grid(row=0, column=2, sticky="nsew")
         self.navigation_frame2.grid_rowconfigure(1, weight=1)
+
         #FRAME DE NAVEGACION
         self.navigation_frame_label = customtkinter.CTkLabel(self.navigation_frame,
                                                              image=self.logo_image,  # ELEGIR NOMBRE DE LA BARRA DE TAREAS
@@ -127,8 +128,8 @@ class App(customtkinter.CTk):
 
 
 
-        w = 720
-        h = 500
+        w = 940
+        h = 720
 
         #CAMBIAR APARIENCIA
         self.appearance_mode_menu = customtkinter.CTkOptionMenu(self.navigation_frame, values=["Dark", "Light", "System"],

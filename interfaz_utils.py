@@ -306,11 +306,7 @@ class ThirdFrame(customtkinter.CTkFrame):
     def __init__(self, master,client,w,h):
         super().__init__(master, corner_radius=0, fg_color="transparent")
         self.grid(row=0, column=1, sticky="nsew")
-        # disable frame size propagation
-        self.grid_propagate(False)
         
-        # set desired frame size
-        self.configure(width=w, height=h)
         self.state = False
 
         self.client = client
@@ -325,18 +321,20 @@ class ThirdFrame(customtkinter.CTkFrame):
             counter += 1
         label_resultado = customtkinter.CTkLabel(self, text=ascii(self.letter_asig), font=('Courier New', 10))
         label_resultado.pack()
-        self.call_function()
-        
-    def change(self):
-        self.state = True
-        self.call_function()
+       
+        self.call_function(w,h)
 
-    def call_function(self):
+    def call_function(self,w,h):
         for widgets in self.winfo_children():
             widgets.destroy()
         label_resultado = customtkinter.CTkLabel(self, text=ascii(self.letter_asig), font=('Courier New', 10))
         label_resultado.pack()
-        self.after(3500,self.call_function)
+        # disable frame size propagation
+        label_resultado.grid_propagate(False)
+        
+        # set desired frame size
+        label_resultado.configure(width=w, height=h)
+        self.after(3500,self.call_function,w,h)
 
 
 
