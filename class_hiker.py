@@ -140,7 +140,7 @@ class Hiker:
     def get_next_point_GA(self)-> tuple[float,float]:
         """
         Using data on hiker attributes gets the next position to climb mountain 
-        with gradient ascent method
+        with gradient ASCENT method
 
         Returns
         -------
@@ -155,7 +155,7 @@ class Hiker:
     def get_next_point_GD(self)-> tuple[float,float]:
         """
         Using data on hiker attributes gets the next position to climb mountain 
-        with gradient ascent method
+        with gradient DECENT method
 
         Returns
         -------
@@ -170,7 +170,7 @@ class Hiker:
     def direction_GD(self)-> float:
         """
         Faster way to call a function that returns direction to climb mountain 
-        using Gradient ascent
+        using Gradient DECENT
 
         Returns
         -------
@@ -183,7 +183,7 @@ class Hiker:
     def speed_GD(self)-> float:
         """
         Faster way to call a function that returns speed to climb mountain 
-        using Gradient ascent
+        using Gradient DECENT
         Returns
         -------
         float
@@ -195,7 +195,7 @@ class Hiker:
     def get_next_point_MGA(self) -> tuple[float,float]:
         """
         Using data on hiker attributes gets the next position to climb mountain 
-        with momentum gradient ascent method
+        with momentum gradient ASCENT method
 
         Returns
         -------
@@ -221,7 +221,7 @@ class Hiker:
     def get_next_point_MGD(self) -> tuple[float,float]:
         """
         Using data on hiker attributes gets the next position to climb mountain 
-        with momentum gradient ascent method
+        with momentum gradient DECENT method
 
         Returns
         -------
@@ -242,7 +242,7 @@ class Hiker:
     def direction_MGD(self)-> float:
         """
         Faster way to call a function that returns direction to climb mountain 
-        using Momentum Gradient ascent
+        using Momentum Gradient DECENT
         Returns
         -------
         float
@@ -254,7 +254,7 @@ class Hiker:
     def speed_MGD(self)-> float:
         """
         Faster way to call a function that returns direction to climb mountain 
-        using Momentum Gradient ascent
+        using Momentum Gradient DECENT
         Returns
         -------
         float
@@ -267,7 +267,7 @@ class Hiker:
     def direction_GA(self)-> float:
         """
         Faster way to call a function that returns direction to climb mountain 
-        using Gradient ascent
+        using Gradient ASENT
 
         Returns
         -------
@@ -280,7 +280,7 @@ class Hiker:
     def speed_GA(self)-> float:
         """
         Faster way to call a function that returns speed to climb mountain 
-        using Gradient ascent
+        using Gradient ASENT
         Returns
         -------
         float
@@ -292,7 +292,7 @@ class Hiker:
     def direction_MGA(self)-> float:
         """
         Faster way to call a function that returns direction to climb mountain 
-        using Momentum Gradient ascent
+        using Momentum Gradient ASENT
         Returns
         -------
         float
@@ -304,7 +304,7 @@ class Hiker:
     def speed_MGA(self)-> float:
         """
         Faster way to call a function that returns direction to climb mountain 
-        using Momentum Gradient ascent
+        using Momentum Gradient ASENT
         Returns
         -------
         float
@@ -346,7 +346,7 @@ class Hiker:
         return self.get_direction_and_vel_to_point_JUSTO(point[0],point[1])[1]
     # -------------------------------------------------------
 
-    def going_same_max(self, other, self_d, other_d):
+    def going_same_max(self, other:object, self_d:float, other_d:float)->tuple[list,bool]:
         self_pos = (self.get_data("x"), self.get_data("y"))
         other_pos = (other.get_data("x"), other.get_data("y"))
         coords, is_same = facu_inter.heading_same_max(self_pos, self_d, other_pos, other_d)
@@ -362,8 +362,13 @@ class Hiker:
 
         Parameters
         ----------
-        x : float
+        local_maxs : list
             x
+        GA_o_MGA : str
+            choice strat for climbion mountain, momengum GA or GA
+        n : float
+            radius of tolerance for being on a certain point
+            (usually similar to visual radius)
 
         Returns
         -------
@@ -373,10 +378,6 @@ class Hiker:
         
         x = self.get_data('x')
         y = self.get_data('y')
-        z = self.get_data('z')
-
-        dx = self.get_data('inclinacion_x')
-        dy = self.get_data('inclinacion_y')
 
         if self.strat == 'follow_points':
             if len(self.puntos) == 0:
@@ -527,19 +528,19 @@ class Hiker:
         is_near = facu_inter.check_distance(self_pos, point, 100)
         return is_near
     
-    def random_opposite_direction(self, direction):
+    def random_opposite_direction(self, direction:float)->float:
         return direction + math.pi/2 + math.pi * random.random()
     
-    def has_stept_local_min(self):
+    def has_stept_local_min(self)->bool:
         if self.strat == "descent":
             if self.last_data["z"] < self.data["z"]:
                 return True
 
-    def has_stept_local_max(self):
+    def has_stept_local_max(self)->bool:
         if self.strat == "hike":
             if self.last_data["z"] > self.data["z"]:
                 return True
             
-    def aproximate_local(self):
+    def aproximate_local(self)->tuple:
         if self.has_stept_local_max() is True:
             return ((self.last_data["x"] + self.data["x"])/2, (self.last_data["y"] + self.data["y"])/2)
