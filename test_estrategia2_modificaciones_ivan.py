@@ -31,13 +31,16 @@ hikers = [lucas, facu, fran, ivan]
 
 # Function to update data on all Hykers and DataAnalyst
 def update_all_data(hikers:list[Hiker],dataAnalysts:list[DataAnalyst], data):
+    """
+    Updates data of all hikers and DataAnlysts
+    """
     for hiker in hikers:
         hiker.update_data(data)
     for dataAnalyst in dataAnalysts:
         dataAnalyst.update_data(data)
 
 
-def check_hikers_intersect(hikers, local_maxs, directives):
+def check_hikers_intersect(hikers, local_maxs:list, directives:dict)->None:
     for i in range(len(hikers)-1):
         for j in range(1, len(hikers)):
             if hikers[i].strat == "hike" and hikers[j] == "hike":
@@ -66,7 +69,7 @@ def check_hikers_intersect(hikers, local_maxs, directives):
                         directives[hikers[i].name]["speed"] = speed_i
                 print("ENTRE\nENTRE\nENTRE\nintersección\nENTRE\nENTRE\nENTRE\n")
 
-def check_hikers_local_max(local_maxs, hikers, directives):
+def check_hikers_local_max(local_maxs, hikers:list, directives:dict)->None:
     for hiker in hikers:
         if hiker.strat == "hike":
             for local_max in local_maxs:
@@ -78,12 +81,23 @@ def check_hikers_local_max(local_maxs, hikers, directives):
                     directives[hiker.name]["speed"] = speed
                     print("ENTRE\nENTRE\nENTRE\nlocalmax\nENTRE\nENTRE\nENTRE\n")
 
-def check_hikers_out_of_bounds(hikers, local_maxs, directives):
-    # Check if a hyker is going out of bounds   
+def check_hikers_out_of_bounds(hikers, local_maxs:list, directives:dict)->None:
+    """
+    Detects if a hiker is going to go out of bounds and redirects it to other position
+    using a strategy. Changes the directives of the hiker before they are sent to the server
+    (direction and speed)
+
+    Parameters
+    ----------
+    local_maxs : list
+
+    directives : dict
+
+    """ 
     for hiker in hikers:
         if hiker.check_out_of_bounds():
-            print(hiker.name)
-            print("ME ESTROY POR IR\nME ESTROY POR IR\nME ESTROY POR IR\nME ESTROY POR IR\nME ESTROY POR IR\n")
+            # print(hiker.name)
+            # print("ME ESTROY POR IR DEL MAPA")
             if len(hiker.puntos) != 0:
                 hiker.change_strat('follow_points')
             elif hiker.strat == "descent":
@@ -94,7 +108,11 @@ def check_hikers_out_of_bounds(hikers, local_maxs, directives):
             hiker_dir_speed = hiker.strategy(local_maxs)
             directives[hiker.name] = {'direction': hiker_dir_speed[0], 'speed': hiker_dir_speed[1]}
 
-def check_hikers_stopped(hikers, local_maxs, directives):
+def check_hikers_stopped(hikers, local_maxs:list, directives:dict):
+    """
+    This function is used after many iterations when the first strat doesnt work
+    makes hikers search for golbal max in a random way
+    """
     for hiker in hikers:
         if hiker.last_data == hiker.data:
             if len(hiker.puntos) == 0:
