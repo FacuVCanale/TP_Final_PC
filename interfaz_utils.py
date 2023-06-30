@@ -464,11 +464,11 @@ class HeatmapFrame(customtkinter.CTkFrame):
         self.ax.set_ylabel('Y')
 
         # Set the x and y limits
-        self.ax.set_xlim(-23000, 23000)
-        self.ax.set_ylim(-23000, 23000)
+        self.ax.set_xlim(-25000, 25000)
+        self.ax.set_ylim(-25000, 25000)
 
         self.hist = np.zeros((len(self.x), len(self.y)))
-        self.heatmap = self.ax.imshow(self.hist, cmap='viridis', origin='lower', extent=[-23000, 23000, -23000, 23000])
+        self.heatmap = self.ax.imshow(self.hist, cmap='viridis', origin='lower', extent=[-25000, 25000, -25000, 25000])
 
         self.animation = FuncAnimation(self.fig, self.update_heatmap, interval=1000)
         self.canvas = FigureCanvasTkAgg(self.fig, master=self.container_frame)
@@ -492,11 +492,11 @@ class HeatmapFrame(customtkinter.CTkFrame):
         self.hist.fill(0)  # Reset the histogram matrix on each update
 
         self.info = self.client.get_data()
+
         for team, climbers in self.info.items():
             for climber, data in climbers.items():
                 x2 = data['x']
                 y2 = data['y']
-                
 
                 idx_x = np.argmin(np.abs(self.x - x2))
                 idx_y = np.argmin(np.abs(self.y - y2))
@@ -505,12 +505,13 @@ class HeatmapFrame(customtkinter.CTkFrame):
                 self.hist[idx_x, idx_y] += 1  # Increment the value by 1 instead of directly assigning
 
         # Normalize the values in the hist matrix to adjust the color range
-        max_value = np.max(self.hist)
+        """  max_value = np.max(self.hist)
         if max_value > 0:
-            self.hist /= max_value
+            self.hist /= max_value """
 
         # Create a colormap with higher intensity for more players and lower intensity for fewer players
         cmap = plt.cm.get_cmap('viridis')
+
         self.heatmap = self.ax.imshow(self.hist, cmap=cmap, origin='lower', extent=[-23000, 23000, -23000, 23000])
 
         return self.heatmap,
