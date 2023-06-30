@@ -371,35 +371,67 @@ class ScrollableLabelButtonFrame(customtkinter.CTkScrollableFrame):
    
 
 class ASCIIFrame(customtkinter.CTkFrame):
-    def __init__(self, master,client):
-        super().__init__(master, corner_radius=0, fg_color="transparent")
-        self.grid(row=0, column=1, sticky="nsew")
-        self.state = False
+    """
+    A custom frame for displaying ASCII art representing letter assignments to teams.
 
-        self.client = client
-        info = self.client.get_data()
-        num_jugador = 65
-        self.letter_asig = {}
+    Attributes:
+        master: The master widget for the frame.
+        client: The client object used to retrieve data.
+        state: A boolean indicating the state of the ASCIIFrame.
+
+    Methods:
+        __init__(master, client): Initialize the ASCIIFrame.
+        change(): Change the state and update the displayed ASCII art.
+        call_function(): Periodically update the displayed ASCII art.
+    """
+
+    def __init__(self, master, client):
+        """
+        Initialize the ASCIIFrame.
+
+        Args:
+            master: The master widget.
+            client: The client object used to get data.
+
+        """
+        super().__init__(master, corner_radius=0, fg_color="transparent")  # Initialize the custom frame
+        self.grid(row=0, column=1, sticky="nsew")  # Place the frame in the grid layout
+        self.state = False  # Set the initial state of the frame to False
+
+        self.client = client  # Set the client object
+        info = self.client.get_data()  # Get the data from the client
+
+        # Assign letters to teams
+        num_jugador = 65  # ASCII code for 'A'
+        self.letter_asig = {}  # Dictionary to store letter assignments
         counter = 0
-        while self.client.is_registering_teams() or (counter == 0):
+        while self.client.is_registering_teams() or (counter == 0):  # Loop until teams are registered
             for equipo, escaladores in info.items():
-                self.letter_asig[equipo] = num_jugador
+                self.letter_asig[equipo] = num_jugador  # Assign a letter to each team
                 num_jugador += 1
             counter += 1
+
+        # Display the letter assignments as ASCII art
         label_resultado = customtkinter.CTkLabel(self, text=ascii(self.letter_asig), font=('Courier New', 10))
         label_resultado.pack()
-        self.call_function()
-        
+        self.call_function()  # Start the function to periodically update the displayed ASCII art
+
     def change(self):
-        self.state = True
-        self.call_function()
+        """Change the state and call the function."""
+        self.state = True  # Set the state to True
+        self.call_function()  # Call the function to update the displayed ASCII art
 
     def call_function(self):
-        for widgets in self.winfo_children():
-            widgets.destroy()
+        """Call the function periodically to update the displayed ASCII art."""
+        for widget in self.winfo_children():  # Destroy all child widgets
+            widget.destroy()
+
+        # Display the letter assignments as ASCII art
         label_resultado = customtkinter.CTkLabel(self, text=ascii(self.letter_asig), font=('Courier New', 10))
         label_resultado.pack()
-        self.after(2000,self.call_function)
+
+        self.after(2000, self.call_function)  # Call the function again after 2000 milliseconds (2 seconds)
+
 
 
 class HeatmapFrame(customtkinter.CTkFrame):

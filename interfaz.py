@@ -68,7 +68,7 @@ class App(customtkinter.CTk):
         self.navigation_frame_label2.grid(row=0, column=0, padx=20, pady=20)
 
 
-        self.call_function() #no se que es 
+       
 
         #FRAME 3D
         self.home_button = customtkinter.CTkButton(self.navigation_frame, 
@@ -162,6 +162,7 @@ class App(customtkinter.CTk):
 
         self.select_frame_by_name("home")
 
+        self.call_function() #Leaderboard
  
     
     def generate_color_for_each_team(self):
@@ -173,7 +174,7 @@ class App(customtkinter.CTk):
             color = '#{:06x}'.format(random.randint(0, 0xFFFFFF))
             self.team_colors[team] = color
 
-
+    
     def call_function(self):
         for widgets in self.navigation_frame2.winfo_children():
             print(widgets)
