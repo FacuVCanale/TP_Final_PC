@@ -26,22 +26,22 @@ class App(customtkinter.CTk):
 
         # load images with light and dark mode image
         image_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "test_images")
-        self.logo_image = customtkinter.CTkImage(Image.open(os.path.join(image_path, "logo.png")), size=(155, 64))
+        self.logo_image = customtkinter.CTkImage(Image.open(os.path.join(image_path, "logo.png")), size=(200, 70))
 
-        self.home_image = customtkinter.CTkImage(light_image=Image.open(os.path.join(image_path, "home_dark.png")),
-                                                 dark_image=Image.open(os.path.join(image_path, "home_light.png")), size=(80, 80))
+        self.mountain_image = customtkinter.CTkImage(light_image=Image.open(os.path.join(image_path, "mountain_dark.png")),
+                                                 dark_image=Image.open(os.path.join(image_path, "mountain_light.png")), size=(80, 80))
         
-        self.chat_image = customtkinter.CTkImage(light_image=Image.open(os.path.join(image_path, "chat_dark.png")),
-                                                 dark_image=Image.open(os.path.join(image_path, "chat_light.png")), size=(80, 80))
+        self.hikers_image = customtkinter.CTkImage(light_image=Image.open(os.path.join(image_path, "hikers_dark.png")),
+                                                 dark_image=Image.open(os.path.join(image_path, "hikers_light.png")), size=(80, 80))
         
-        self.add_user_image = customtkinter.CTkImage(light_image=Image.open(os.path.join(image_path, "add_user_dark.png")),
-                                                     dark_image=Image.open(os.path.join(image_path, "add_user_light.png")), size=(80, 80))
+        self.ascii_image = customtkinter.CTkImage(light_image=Image.open(os.path.join(image_path, "ascii_dark.png")),
+                                                     dark_image=Image.open(os.path.join(image_path, "ascii_light.png")), size=(80, 80))
         
-        self.music_image = customtkinter.CTkImage(light_image=Image.open(os.path.join(image_path, "heatmap.png")),
-                                                     dark_image=Image.open(os.path.join(image_path, "heatmap.png")), size=(80, 80))
+        self.heatmap_image = customtkinter.CTkImage(light_image=Image.open(os.path.join(image_path, "heatmap_dark.png")),
+                                                     dark_image=Image.open(os.path.join(image_path, "heatmap_light.png")), size=(80, 80))
         
-        self.music_image2 = customtkinter.CTkImage(light_image=Image.open(os.path.join(image_path, "scatter.png")),
-                                                     dark_image=Image.open(os.path.join(image_path, "scatter.png")), size=(80, 80))
+        self.scatter_image = customtkinter.CTkImage(light_image=Image.open(os.path.join(image_path, "scatter_dark.png")),
+                                                     dark_image=Image.open(os.path.join(image_path, "scatter_light.png")), size=(80, 80))
         
         # create navigation frame
         self.navigation_frame = customtkinter.CTkFrame(self, corner_radius=0)
@@ -73,7 +73,7 @@ class App(customtkinter.CTk):
                                                    fg_color="transparent", 
                                                    text_color=("gray10", "gray90"),
                                                    hover_color=("gray70", "gray30"),
-                                                   image=self.chat_image, 
+                                                   image=self.mountain_image, 
                                                    anchor="w", 
                                                    command=self.home_button_event)
         self.home_button.grid(row=1, column=0, sticky="ew")
@@ -85,7 +85,7 @@ class App(customtkinter.CTk):
                                                       fg_color="transparent", 
                                                       text_color=("gray10", "gray90"),
                                                       hover_color=("gray70", "gray30"),
-                                                      image=self.home_image, 
+                                                      image=self.hikers_image, 
                                                       anchor="w", 
                                                       command=self.frame_2_button_event)
         self.frame_2_button.grid(row=2, column=0, sticky="ew")
@@ -97,7 +97,7 @@ class App(customtkinter.CTk):
                                                       fg_color="transparent", 
                                                       text_color=("gray10", "gray90"),
                                                       hover_color=("gray70", "gray30"),
-                                                      image=self.add_user_image, 
+                                                      image=self.ascii_image, 
                                                       anchor="w", 
                                                       command=self.frame_3_button_event)
         self.frame_3_button.grid(row=3, column=0, sticky="ew")
@@ -108,7 +108,7 @@ class App(customtkinter.CTk):
                                                       fg_color="transparent", 
                                                       text_color=("gray10", "gray90"),
                                                       hover_color=("gray70", "gray30"),
-                                                      image=self.music_image, 
+                                                      image=self.heatmap_image, 
                                                       anchor="w", 
                                                       command=self.frame_4_button_event)
         self.frame_4_button.grid(row=4, column=0, sticky="ew")
@@ -119,7 +119,7 @@ class App(customtkinter.CTk):
                                               fg_color="transparent", 
                                               text_color=("gray10", "gray90"),
                                               hover_color=("gray70", "gray30"),
-                                              image=self.music_image2, 
+                                              image=self.scatter_image, 
                                               anchor="w", 
                                               command=self.frame_5_button_event)
         self.frame_5_button.grid(row=5, column=0, sticky="ew")
@@ -130,7 +130,7 @@ class App(customtkinter.CTk):
         self.appearance_mode_menu = customtkinter.CTkOptionMenu(self.navigation_frame, values=["Dark", "Light", "System"],
                                                                 command=self.change_appearance_mode_event)
         
-        self.appearance_mode_menu.grid(row=7, column=0, padx=20, pady=20, sticky="s")
+        self.appearance_mode_menu.grid(row=7, column=0, padx=20, pady=40, sticky="s")
 
 
         # create home frame
