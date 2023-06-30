@@ -15,7 +15,8 @@ class App(customtkinter.CTk):
         width= self.winfo_screenwidth()
         height= self.winfo_screenheight()
         #setting tkinter window size
-        self.geometry("%dx%d" % (width, height))
+        self.geometry("%dx%d" % (width/1.4, height/1.4))
+        self.resizable(False, False)
         # set grid layout 1x2
         self.grid_rowconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=1)
@@ -125,7 +126,10 @@ class App(customtkinter.CTk):
         self.frame_5_button.grid(row=5, column=0, sticky="ew")
 
 
-    
+
+        w = 720
+        h = 500
+
         #CAMBIAR APARIENCIA
         self.appearance_mode_menu = customtkinter.CTkOptionMenu(self.navigation_frame, values=["Dark", "Light", "System"],
                                                                 command=self.change_appearance_mode_event)
@@ -134,24 +138,22 @@ class App(customtkinter.CTk):
 
 
         # create home frame
-        self.home_frame = HomeFrame(self,self.client)
+        self.home_frame = HomeFrame(self, self.client,w,h)
+
         
 
         # create second frame
-        self.second_frame = SecondFrame(self,self.client)
+        self.second_frame = SecondFrame(self,self.client,w,h)
 
         
         # create third frame
-        self.third_frame = ThirdFrame(self,self.client)
+        self.third_frame = ThirdFrame(self,self.client,w,h)
 
-        self.fourth_frame =FourthFrame(self,self.client)
-                  
-
-
-        
+        self.fourth_frame =FourthFrame(self,self.client,w,h)
+                
 
 
-        self.fifth_frame = FifthFrame(self)
+        self.fifth_frame = FifthFrame(self,w,h)
                   
 
 
@@ -229,4 +231,4 @@ class App(customtkinter.CTk):
 
 if __name__ == "__main__":
     app = App()
-    app.mainloop()
+    app.mainloop()#arreglar cuando cierra server

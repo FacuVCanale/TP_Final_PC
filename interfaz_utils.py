@@ -13,7 +13,7 @@ import random
  
 class HomeFrame(customtkinter.CTkFrame):
 
-    def __init__(self, master,client):
+    def __init__(self, master,client,w,h):
         super().__init__(master, corner_radius=0, fg_color="transparent")
         self.grid(row=0, column=2, sticky="nsew")
         self.grid_columnconfigure(0, weight=1)
@@ -24,6 +24,15 @@ class HomeFrame(customtkinter.CTkFrame):
         self.container_frame.grid(row=0, column=0, sticky="nsew")
         self.container_frame.grid_rowconfigure(0, weight=1)
         self.container_frame.grid_columnconfigure(0, weight=1)
+
+
+        # disable frame size propagation
+        self.container_frame.grid_propagate(False)
+        
+        # set desired frame size
+        self.container_frame.configure(width=w, height=h)
+
+       
         self.client = client
         
 
@@ -95,7 +104,7 @@ ax1.set_ylim3d(-RADIUS / 2, RADIUS / 2) """
 
 
 class SecondFrame(customtkinter.CTkFrame): #GRAPH Hikers
-    def __init__(self, master,client):
+    def __init__(self, master,client,w,h):
         super().__init__(master, corner_radius=0, fg_color="transparent")
         self.grid(row=0, column=1, sticky="nsew")
         self.grid_columnconfigure(0, weight=1)
@@ -104,6 +113,16 @@ class SecondFrame(customtkinter.CTkFrame): #GRAPH Hikers
         self.container_frame.grid(row=0, column=0, sticky="nsew")
         self.container_frame.grid_rowconfigure(0, weight=1)
         self.container_frame.grid_columnconfigure(0, weight=1)
+
+        # disable frame size propagation
+        self.container_frame.grid_propagate(False)
+        
+        # set desired frame size
+        self.container_frame.configure(width=w, height=h)
+
+
+
+
         self.selected_team = 'Everyone'
         self.client = client
 
@@ -284,9 +303,14 @@ class ScrollableLabelButtonFrame(customtkinter.CTkScrollableFrame):
    
 
 class ThirdFrame(customtkinter.CTkFrame):
-    def __init__(self, master,client):
+    def __init__(self, master,client,w,h):
         super().__init__(master, corner_radius=0, fg_color="transparent")
         self.grid(row=0, column=1, sticky="nsew")
+        # disable frame size propagation
+        self.grid_propagate(False)
+        
+        # set desired frame size
+        self.configure(width=w, height=h)
         self.state = False
 
         self.client = client
@@ -317,7 +341,7 @@ class ThirdFrame(customtkinter.CTkFrame):
 
 
 class FourthFrame(customtkinter.CTkFrame):
-    def __init__(self, master,client):
+    def __init__(self, master,client,w,h):
         super().__init__(master, corner_radius=0, fg_color="transparent")
         self.grid(row=0, column=1, sticky="nsew")
         self.grid_columnconfigure(0, weight=1)
@@ -328,6 +352,13 @@ class FourthFrame(customtkinter.CTkFrame):
         self.container_frame.grid(row=0, column=0, sticky="nsew")
         self.container_frame.grid_rowconfigure(0, weight=1)
         self.container_frame.grid_columnconfigure(0, weight=1)
+
+        # disable frame size propagation
+        self.container_frame.grid_propagate(False)
+        
+        # set desired frame size
+        self.container_frame.configure(width=w, height=h)
+
         self.client = client
         self.info = self.client.get_data()
 
@@ -373,17 +404,25 @@ class FourthFrame(customtkinter.CTkFrame):
 
 
 class FifthFrame(customtkinter.CTkFrame):
-    def __init__(self, master):
+    def __init__(self, master,w,h):
         super().__init__(master, corner_radius=0, fg_color="transparent")
         self.grid(row=0, column=1, sticky="nsew")
         self.grid_columnconfigure(0, weight=1)
         self.grid_rowconfigure(0, weight=2)
+
+        
 
         # create container frame with grid layout
         self.container_frame = customtkinter.CTkFrame(self, corner_radius=0, fg_color="transparent")
         self.container_frame.grid(row=0, column=0, sticky="nsew")
         self.container_frame.grid_rowconfigure(0, weight=1)
         self.container_frame.grid_columnconfigure(0, weight=1)
+
+        # disable frame size propagation
+        self.container_frame.grid_propagate(False)
+        
+        # set desired frame size
+        self.container_frame.configure(width=w, height=h)
 
         self.selected_team = 'Everyone'
         self.team_colors = {'Everyone': None}
