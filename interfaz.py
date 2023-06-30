@@ -1,7 +1,7 @@
 import customtkinter
 import os
 from PIL import Image
-from interfaz_utils import HikersPositionFrame,MountainGraphFrame,HeatmapFrame, ThirdFrame, ScatterFrame
+from interfaz_utils import HikersPositionFrame,MountainGraphFrame,HeatmapFrame, ASCIIFrame, ScatterFrame
 from leaderboard import show_leaderboard
 from communication.client.client import MountainClient
 import random
@@ -150,7 +150,7 @@ class App(customtkinter.CTk):
 
         
         # create ASCII Frame
-        self.third_frame = ThirdFrame(self,self.client)
+        self.third_frame = ASCIIFrame(self,self.client)
 
         # Create Heatmap Frame
         self.fourth_frame =HeatmapFrame(self,self.client)
@@ -179,7 +179,6 @@ class App(customtkinter.CTk):
             print(widgets)
             widgets.destroy()
         self.navigation_frame_label2 = customtkinter.CTkLabel(self.navigation_frame2,
-                                                              # ELEGIR NOMBRE DE LA BARRA DE TAREAS
                                                              compound="right",
                                                              font=customtkinter.CTkFont(size=15, weight="bold"), text=show_leaderboard())
         self.navigation_frame_label2.grid(row=0, column=0, padx=20, pady=20)

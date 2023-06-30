@@ -370,7 +370,7 @@ class ScrollableLabelButtonFrame(customtkinter.CTkScrollableFrame):
 
    
 
-class ThirdFrame(customtkinter.CTkFrame):
+class ASCIIFrame(customtkinter.CTkFrame):
     def __init__(self, master,client):
         super().__init__(master, corner_radius=0, fg_color="transparent")
         self.grid(row=0, column=1, sticky="nsew")
@@ -468,7 +468,7 @@ class HeatmapFrame(customtkinter.CTkFrame):
         self.ax.set_ylim(-25000, 25000)
 
         self.hist = np.zeros((len(self.x), len(self.y)))
-        self.heatmap = self.ax.imshow(self.hist, cmap='viridis', origin='lower', extent=[-25000, 25000, -25000, 25000])
+        self.heatmap = self.ax.imshow(self.hist, cmap='viridis', origin='lower', extent=[-23000, 23000, -23000, 23000])
 
         self.animation = FuncAnimation(self.fig, self.update_heatmap, interval=1000)
         self.canvas = FigureCanvasTkAgg(self.fig, master=self.container_frame)
@@ -504,17 +504,14 @@ class HeatmapFrame(customtkinter.CTkFrame):
                 # Assign the height value to the corresponding point in Z
                 self.hist[idx_x, idx_y] += 1  # Increment the value by 1 instead of directly assigning
 
-        # Normalize the values in the hist matrix to adjust the color range
-        """  max_value = np.max(self.hist)
-        if max_value > 0:
-            self.hist /= max_value """
+        
 
         # Create a colormap with higher intensity for more players and lower intensity for fewer players
         cmap = plt.cm.get_cmap('viridis')
 
         self.heatmap = self.ax.imshow(self.hist, cmap=cmap, origin='lower', extent=[-23000, 23000, -23000, 23000])
 
-        return self.heatmap,
+        
 
 
 
@@ -651,7 +648,6 @@ class ScatterFrame(customtkinter.CTkFrame):
 
 
 
-
     def show_animation(self):
         """
         Shows the animation.
@@ -702,13 +698,6 @@ class ScatterFrame(customtkinter.CTkFrame):
 
         """
         self.selected_team = team
-        self.update_graph(None)
-
-
         
-        
-        
-
-
 
 
