@@ -25,6 +25,13 @@ def check_distance(point1, point2, max_distance=18000*np.sqrt(2)):
     # Check if the distance makes sense
     return True if distance_calc <= max_distance else False
 
+def calculate_coords(coords, player1_position, player2_position, parallel_info, interseccion_y, radius):
+    is_possible = check_distance(player1_position, coords, radius) and check_distance(player2_position, coords, radius)
+    if not is_possible:
+        coords = []
+        return coords, False
+    return coords, True
+
 
 def heading_same_max(player1_position, player1_direction, player2_position, player2_direction, radius=400):
 
@@ -38,12 +45,14 @@ def heading_same_max(player1_position, player1_direction, player2_position, play
     if is_direction_vertical(player1_direction):
         if is_direction_vertical(player2_direction):
             if round(player1_position[0], 0) == round(player2_position[0], 0):
-                if round(player1_direction, 3) == round(math.pi/2, 3):
-                    if round(player2_direction, 3) == round(3*math.pi/2, 3):
+                player1_direction = round(player1_direction, 3)
+                if player1_direction == round(math.pi/2, 3):
+                    if round(player2_direction, 3) == round(player1_direction + math.pi, 3):
                         if player1_position[1] < player2_position[1]:
                             return coords, True
                         return coords, False
                     return coords, True
+                
                 if round(player2_direction, 3) == round(math.pi/2, 3):
                     if round(player1_direction, 3) == round(3*math.pi/2, 3):
                         if player2_position[1] < player1_position[1]:
@@ -61,60 +70,33 @@ def heading_same_max(player1_position, player1_direction, player2_position, play
 
     if is_direction_vertical(player2_direction):
         if round(player1_direction, 3) == round(math.pi/2, 3):
-            paralela_info = [round(player2_position[0], 0), math.pi/2, 2]
+            parallel_info = [round(player2_position[0], 0), math.pi/2, 2]
         else:
-            paralela_info = [round(player2_position[0], 0), 3*math.pi/2, 2]
+            parallel_info = [round(player2_position[0], 0), 3*math.pi/2, 2]
 
     
     if paralela_info != None:
-        if paralela_info[2] == 1:
+        if parallel_info[2] == 1:
             m2 = round(math.tan(player2_direction), 3)
             recta2 = recta_creator(m2, player2_position)
+            interseccion_y = recta2(parallel_info[0])
 
-            interseccion_y = recta2(paralela_info[0])
-
-            if paralela_info[1] == math.pi/2:
-                if interseccion_y > player1_position[1]:
-                    if math.cos(player2_direction) > 0:
-                        if player2_position[0] < player1_position[0]:
-                            coords = [paralela_info[0], interseccion_y]
-                            is_possible = check_distance(player1_position, coords, radius) and check_distance(player2_position, coords, radius)
-                            if not is_possible:
-                                coords = []
-                                return coords, False
-                            return coords, True
-                        return coords, False
-                    #sino,
-                    if player2_position[0] > player1_position[0]:
-                        coords = [paralela_info[0], interseccion_y]
-                        is_possible = check_distance(player1_position, coords, radius) and check_distance(player2_position, coords, radius)
-                        if not is_possible:
-                            coords = []
-                            return coords, False
-                        return coords, True
-                    return coords, False
-                return coords, False
-            #sino,
-            if interseccion_y < player1_position[1]:
-                if math.cos(player2_direction) > 0:
-                    if player2_position[0] < player1_position[0]:
-                        coords = [paralela_info[0], interseccion_y]
-                        is_possible = check_distance(player1_position, coords, radius) and check_distance(player2_position, coords, radius)
-                        if not is_possible:
-                            coords = []
-                            return coords, False
-                        return coords, True
-                    return coords, False
-                #sino,
-                if player2_position[0] > player1_position[0]:
-                    coords = [paralela_info[0], interseccion_y]
-                    is_possible = check_distance(player1_position, coords, radius) and check_distance(player2_position, coords, radius)
-                    if not is_possible:
-                        coords = []
-                        return coords, False
-                    return coords, True
-                return coords, False
+            if parallel_info[1] == math.pi/2 and interseccion_y > player1_position[1]:
+                if math.cos(player2_direction) > 0 and player2_position[0] < player1_position[0]:
+                    coords = [parallel_info[0], interseccion_y]
+                    return calculate_coords(coords, player1_position, player2_position, parallel_info, interseccion_y, radius)
+                elif player2_position[0] > player1_position[0]:
+                    coords = [parallel_info[0], interseccion_y]
+                    return calculate_coords(coords, player1_position, player2_position, parallel_info, interseccion_y, radius)
+            elif interseccion_y < player1_position[1]:
+                if math.cos(player2_direction) > 0 and player2_position[0] < player1_position[0]:
+                    coords = [parallel_info[0], interseccion_y]
+                    return calculate_coords(coords, player1_position, player2_position, parallel_info, interseccion_y, radius)
+                elif player2_position[0] > player1_position[0]:
+                    coords = [parallel_info[0], interseccion_y]
+                    return calculate_coords(coords, player1_position, player2_position, parallel_info, interseccion_y, radius)
             return coords, False
+
         #sino,
         m1 = round(math.tan(player1_direction), 3)
         recta1 = recta_creator(m1, player1_position)

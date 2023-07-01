@@ -519,7 +519,7 @@ class Hiker:
         
         return x_next,y_next
 
-    def check_out_of_bounds(self,radius = 23000) -> bool:
+    def check_out_of_bounds(self, radius = 23000) -> bool:
         """
         Checks if hiker next position is going to bo out of bounds of a circle with
         radius = radius and center in (0,0)
