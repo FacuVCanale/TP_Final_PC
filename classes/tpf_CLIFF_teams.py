@@ -1,4 +1,4 @@
-from classes.players import Player
+from classes.tpf_CLIFF_players import Player
 from typing import Dict, List
 
 class Team:

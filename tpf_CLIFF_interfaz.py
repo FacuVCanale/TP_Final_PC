@@ -1,7 +1,7 @@
 import customtkinter
 import os
 from PIL import Image
-from interfaz_utils import HikersPositionFrame,MountainGraphFrame,HeatmapFrame, ASCIIFrame, ScatterFrame,Leaderboard
+from tpf_CLIFF_interfaz_utils import HikersPositionFrame,MountainGraphFrame,HeatmapFrame, ASCIIFrame, ScatterFrame,Leaderboard
 from communication.client.client import MountainClient
 import random
 from typing import Dict

@@ -2,8 +2,8 @@ from communication.client.client import MountainClient
 import time
 import numpy as np
 import math
-from strategy.class_dataAnalyst import DataAnalyst
-from strategy.class_hiker import Hiker
+from strategy.tpf_CLIFF_class_dataAnalyst import DataAnalyst
+from strategy.tpf_CLIFF_class_hiker import Hiker
 
 c = MountainClient()
 

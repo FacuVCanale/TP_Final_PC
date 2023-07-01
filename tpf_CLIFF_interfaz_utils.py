@@ -6,9 +6,9 @@ import numpy as np
 import customtkinter
 matplotlib.use('TkAgg')
 import customtkinter
-from ascii import ascii
+from tpf_CLIFF_ascii import ascii
 from tabulate import tabulate
-from classes.partida import Partida
+from classes.tpf_CLIFF_partida import Partida
 import customtkinter
 from prettytable import PrettyTable
 

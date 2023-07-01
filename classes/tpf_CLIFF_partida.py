@@ -1,4 +1,4 @@
-from classes.teams import Team
+from classes.tpf_CLIFF_teams import Team
 from typing import List, Any, Dict
 
 class Partida:

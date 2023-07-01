@@ -1,5 +1,5 @@
-from classes.circulo_creator import Circle
-from classes.mapa import Circular_map
+from classes.tpf_CLIFF_circulo_creator import Circle
+from classes.tpf_CLIFF_mapa import Circular_map
 
 def ascii(letter_asig: dict,client) -> Circular_map:
     """
