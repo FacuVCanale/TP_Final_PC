@@ -11,6 +11,7 @@ from class_hiker import Hiker
 # from estrategia1 import strategy
 
 import random
+from facu_inter import distance
 
 
 c = MountainClient()
@@ -23,7 +24,7 @@ dataAnalysts = [dataAnalyst]
 
 # Initialize hikers
 lucas = Hiker('CLIFF','lucas', lucas_points, alpha=.5, beta=.7)
-facu = Hiker('CLIFF','facu', facu_points, alpha=.5, beta= .8)         #ESTE TIENE GA
+facu = Hiker('CLIFF','facu', facu_points, alpha=.5, beta= .8)
 fran = Hiker('CLIFF','fran', fran_points, alpha=.5, beta=.5)
 ivan = Hiker('CLIFF','ivan', ivan_points, alpha=.5, beta=.99)
 hikers = [lucas, facu, fran, ivan]
@@ -39,47 +40,56 @@ def update_all_data(hikers:list[Hiker],dataAnalysts:list[DataAnalyst], data):
     for dataAnalyst in dataAnalysts:
         dataAnalyst.update_data(data)
 
+def update_directive(hiker, local_maxs, directives):
+    hiker.change_strat("follow_points")
+    direction, speed = hiker.strategy(local_maxs)
+    directives[hiker.name]["direction"] = direction
+    directives[hiker.name]["speed"] = speed
 
-def check_hikers_intersect(hikers, local_maxs:list, directives:dict)->None:
-    for i in range(len(hikers)-1):
-        for j in range(1, len(hikers)):
-            if hikers[i].strat == "hike" and hikers[j] == "hike":
-                direction_i = directives[hikers[i].name]["direction"]
-                direction_j = directives[hikers[j].name]["direction"]
-                coords, is_same_dir = hikers[i].going_same_max(hikers[j], direction_i, direction_j)
-                if is_same_dir is True:
-                    if len(coords) > 0:
-                        local_maxs.append(coords)
-                        distance_i = np.sqrt((hikers[i].get_data("x") - coords[0]) ** 2 + (hikers[i].get_data("y") - coords[1]) ** 2)
-                        distance_j = np.sqrt((hikers[j].get_data("x") - coords[0]) ** 2 + (hikers[j].get_data("y") - coords[1]) ** 2)
-                        if distance_j > distance_i:
-                            hikers[j].change_strat("follow_points")
-                            direction_j, speed_j = hikers[j].strategy(local_maxs)
-                            directives[hikers[j].name]["direction"] = direction_j
-                            directives[hikers[j].name]["speed"] = speed_j
-                        else:
-                            hikers[i].change_strat("follow_points")
-                            direction_i, speed_i = hikers[i].strategy(local_maxs)
-                            directives[hikers[i].name]["direction"] = direction_i
-                            directives[hikers[i].name]["speed"] = speed_i
+def check_hikers_intersect(hikers, local_maxs: list, directives: dict) -> None:
+    for i in range(3):
+        for j in range(i + 1, 4):
+            hiker_i, hiker_j = hikers[i], hikers[j]
+            direction_i = directives[hiker_i.name]["direction"]
+            direction_j = directives[hiker_j.name]["direction"]
+            coords, is_same_dir = hiker_i.going_same_max(hiker_j, direction_i, direction_j)
+            if hiker_i.strat == "hike" and hiker_j.strat == "hike" and is_same_dir:
+                if coords:
+                    local_maxs.append(coords)
+                    hiker_i_coords = (hiker_i.get_data("x"), hiker_i.get_data("y"))
+                    hiker_j_coords = (hiker_j.get_data("x"), hiker_j.get_data("y"))
+                    distance_i = distance(hiker_i_coords, coords)
+                    distance_j = distance(hiker_j_coords, coords)
+                    if distance_j > distance_i:
+                        update_directive(hiker_j, local_maxs, directives)
                     else:
-                        hikers[i].change_strat("follow_points")
-                        direction_i, speed_i = hikers[i].strategy(local_maxs)
-                        directives[hikers[i].name]["direction"] = direction_i
-                        directives[hikers[i].name]["speed"] = speed_i
-                print("ENTRE\nENTRE\nENTRE\nintersección\nENTRE\nENTRE\nENTRE\n")
+                        update_directive(hiker_i, local_maxs, directives)
+                else:
+                    update_directive(hiker_i, local_maxs, directives)
+
 
 def check_hikers_local_max(local_maxs, hikers:list, directives:dict)->None:
     for hiker in hikers:
         if hiker.strat == "hike":
             for local_max in local_maxs:
                 if hiker.is_near_point(local_max) is True:
-                    #CAMBIAR A GRADIENT DESCENT, QUE VAYA A CUALQUIER DIRECCIÓN OPUESTA (DIR + PI/2 + PI*RANDOMENTRE0Y1)
                     hiker.change_strat("follow_points")
                     direction, speed = hiker.strategy(local_maxs)
                     directives[hiker.name]["direction"] = direction
                     directives[hiker.name]["speed"] = speed
-                    print("ENTRE\nENTRE\nENTRE\nlocalmax\nENTRE\nENTRE\nENTRE\n")
+
+def check_hikers_stopped(hikers, local_maxs:list, directives:dict):
+    """
+    This function is used after many iterations when the first strat doesnt work
+    makes hikers search for golbal max in a random way
+    """
+    for hiker in hikers:
+        if hiker.last_data == hiker.data:
+            if len(hiker.puntos) == 0:
+                hiker.puntos.append([random.randint(-14000, 14000), random.randint(-14000, 14000)])
+            hiker.strat == "follow_points"
+            hiker_dir_speed = hiker.strategy(local_maxs)
+            directives[hiker.name] = {'direction': hiker_dir_speed[0], 'speed': hiker_dir_speed[1]}
 
 def check_hikers_out_of_bounds(hikers, local_maxs:list, directives:dict)->None:
     """
@@ -108,18 +118,10 @@ def check_hikers_out_of_bounds(hikers, local_maxs:list, directives:dict)->None:
             hiker_dir_speed = hiker.strategy(local_maxs)
             directives[hiker.name] = {'direction': hiker_dir_speed[0], 'speed': hiker_dir_speed[1]}
 
-def check_hikers_stopped(hikers, local_maxs:list, directives:dict):
-    """
-    This function is used after many iterations when the first strat doesnt work
-    makes hikers search for golbal max in a random way
-    """
+def check_hikers(hikers:list, local_maxs:list, directives:dict):
     for hiker in hikers:
-        if hiker.last_data == hiker.data:
-            if len(hiker.puntos) == 0:
-                hiker.puntos.append([random.randint(-14000, 14000), random.randint(-14000, 14000)])
-            hiker.strat == "follow_points"
-            hiker_dir_speed = hiker.strategy(local_maxs)
-            directives[hiker.name] = {'direction': hiker_dir_speed[0], 'speed': hiker_dir_speed[1]}
+        pass
+
             
 # Add and register team
 hikers_names = [hiker.name for hiker in hikers]

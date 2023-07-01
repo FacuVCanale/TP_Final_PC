@@ -2,6 +2,9 @@ import math
 import matplotlib.pyplot as plt
 import numpy as np
 
+def distance(point1, point2) -> float:
+    return np.sqrt((point2[0]-point1[0]) ** 2 + (point2[1]-point1[1]) ** 2)
+
 def is_direction_vertical(direction):
     # Verifica si la dirección es un múltiplo de pi/2 (recta vertical)
     if round(math.cos(direction), 3) == 0:
@@ -17,13 +20,10 @@ def recta_creator(m:float, punto:list):
 
 def check_distance(point1, point2, max_distance=18000*np.sqrt(2)):
     # Calculate the distance between the points
-    distance = np.sqrt((point2[0]-point1[0]) ** 2 + (point2[1]-point1[1]) ** 2)
+    distance_calc = distance(point1, point2)
     
     # Check if the distance makes sense
-    if distance < max_distance:
-        return True
-    else:
-        return False
+    return True if distance_calc <= max_distance else False
 
 
 def heading_same_max(player1_position, player1_direction, player2_position, player2_direction, radius=400):
