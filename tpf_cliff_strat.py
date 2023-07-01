@@ -1,14 +1,14 @@
 import time
 import random
 
-from strategy.facu_inter import distance
+from strategy.interseccion import distance
 from strategy.constants import *
 
 from communication.client.client import MountainClient
 from strategy.class_dataAnalyst import DataAnalyst
 from strategy.class_hiker import Hiker
 
-def update_all_data(hikers: list[Hiker], dataAnalyst: DataAnalyst, data:dict[str, dict][str, dict][str, float]) -> None:
+def update_all_data(hikers: list[Hiker], dataAnalyst: DataAnalyst, data:dict) -> None:
     """
     Updates data of all hikers and the DataAnalyst.
 
@@ -24,7 +24,7 @@ def update_all_data(hikers: list[Hiker], dataAnalyst: DataAnalyst, data:dict[str
         hiker.update_data(data)
     dataAnalyst.update_data(data)
 
-def check_hiker_local_max(hiker: Hiker, local_maxs: list[list][float, float], directives: dict[str, dict][str, float]) -> None:
+def check_hiker_local_max(hiker: Hiker, local_maxs: list, directives: dict) -> None:
     """
     Checks if a hiker is near any local maximum and updates its strategy and directives accordingly.
 
@@ -44,7 +44,7 @@ def check_hiker_local_max(hiker: Hiker, local_maxs: list[list][float, float], di
                 directives[hiker.name]["direction"] = direction
                 directives[hiker.name]["speed"] = speed
 
-def check_hiker_stopped(hiker: Hiker, local_maxs: list[list][float, float], directives: dict[str, dict][str, float]) -> None:
+def check_hiker_stopped(hiker: Hiker, local_maxs: list, directives: dict) -> None:
     """
     Checks if a hiker has stopped and updates its strategy and directives accordingly.
 
@@ -63,7 +63,7 @@ def check_hiker_stopped(hiker: Hiker, local_maxs: list[list][float, float], dire
         hiker_dir_speed = hiker.strategy(local_maxs)
         directives[hiker.name] = {'direction': hiker_dir_speed[0], 'speed': hiker_dir_speed[1]}
 
-def update_directive(hiker: Hiker, local_maxs: list[list][float, float], directives: dict[str, dict][str, float], strat: str) -> None:
+def update_directive(hiker: Hiker, local_maxs: list, directives: dict, strat: str) -> None:
     """
     Updates the strategy and directives for a hiker.
 
@@ -81,7 +81,7 @@ def update_directive(hiker: Hiker, local_maxs: list[list][float, float], directi
     directives[hiker.name]["direction"] = direction
     directives[hiker.name]["speed"] = speed
 
-def check_hiker_intersect(hiker1: Hiker, hikers: list[Hiker], local_maxs: list[list][float, float], directives: dict[str, dict][str, float]) -> None:
+def check_hiker_intersect(hiker1: Hiker, hikers: list, local_maxs: list, directives: dict) -> None:
     """
     Checks if a hiker intersects with any other hiker and updates their directives accordingly.
 
@@ -114,7 +114,7 @@ def check_hiker_intersect(hiker1: Hiker, hikers: list[Hiker], local_maxs: list[l
             else:
                 update_directive(hiker1, local_maxs, directives, "follow_points")
 
-def check_hiker_out_of_bounds(hiker: Hiker, local_maxs: list[list][float, float], directives: dict[str, dict][str, float]) -> None:
+def check_hiker_out_of_bounds(hiker: Hiker, local_maxs: list, directives: dict) -> None:
     """
     Checks if a hiker is going out of bounds and updates its strategy and directives accordingly.
 
@@ -136,7 +136,7 @@ def check_hiker_out_of_bounds(hiker: Hiker, local_maxs: list[list][float, float]
         hiker_dir_speed = hiker.strategy(local_maxs)
         directives[hiker.name] = {'direction': hiker_dir_speed[0], 'speed': hiker_dir_speed[1]}
 
-def check_hikers(hikers: list[Hiker], local_maxs: list[list][float, float], directives: dict[str, dict][str, float]) -> None:
+def check_hikers(hikers: list, local_maxs: list, directives: dict) -> None:
     """
     Checks the behavior of all hikers and updates their directives if needed.
 
@@ -181,7 +181,6 @@ def main() -> None:
 
     # Initialize DataAnalyst
     dataAnalyst = DataAnalyst(c)
-    dataAnalysts = [dataAnalyst]
 
     # Initialize hikers
     lucas = Hiker('CLIFF', 'lucas', lucas_points, alpha=0.5, beta=0.7)
@@ -207,7 +206,7 @@ def main() -> None:
         data = c.get_data()
 
         # Update data of our hikers
-        update_all_data(hikers, dataAnalysts, data)
+        update_all_data(hikers, dataAnalyst, data)
 
         # Print useful data of DataAnalyst
         dataAnalyst_info = dataAnalyst.get_all_info()

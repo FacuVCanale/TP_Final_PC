@@ -1,5 +1,5 @@
 import numpy as np
-import strategy.facu_inter as facu_inter
+import strategy.interseccion as intersection
 
 class Hiker:
     """
@@ -370,7 +370,7 @@ class Hiker:
         self_pos = (self["x"], self["y"])
         other_pos = (other["x"], other["y"])
         print(self_pos, self_d, other_pos, other_d)
-        coords, is_same = facu_inter.heading_same_max(self_pos, self_d, other_pos, other_d)
+        coords, is_same = intersection.heading_same_max(self_pos, self_d, other_pos, other_d)
         return coords, is_same
 
     def strategy(self, local_maxs:list, G_o_MG:str ="G", n=50, n2=0.001)-> tuple[float,float]:
@@ -557,7 +557,7 @@ def is_near_point(self, point) -> bool:
         True if the current position is within a distance of 100 units from the given point, False otherwise.
     """
     self_pos = (self["x"], self["y"])
-    is_near = facu_inter.check_distance(self_pos, point, 100)
+    is_near = intersection.check_distance(self_pos, point, 100)
     return is_near
 
 def has_stept_extremum(self) -> bool:

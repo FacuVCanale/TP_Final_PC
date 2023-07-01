@@ -30,7 +30,7 @@ def is_direction_vertical(direction:float) -> bool:
     else:
         return False
 
-def linear_creator(m:float, punto:list) -> function:
+def linear_creator(m:float, punto:list):
     """
     Create a linear function (recta) based on the slope and a point on the line.
 

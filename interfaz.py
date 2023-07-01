@@ -11,13 +11,13 @@ class App(customtkinter.CTk):
         super().__init__()
         
         self.title("Server Dashboard")
-        self.resizable(False, False)
+        #self.resizable(False, False)
 
         width: int = self.winfo_screenwidth()
         height: int = self.winfo_screenheight()
         # setting tkinter window size
-        self.geometry(f"{int(width/1.4)}x{int(height/1.4)}")
-        self.resizable(False, False)
+        self.geometry(f"{int(width)}x{int(height)}")
+        #self.resizable(False, False)
         # set grid layout 1x2
         self.grid_rowconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=1)
