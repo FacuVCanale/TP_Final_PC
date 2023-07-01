@@ -7,10 +7,10 @@ import customtkinter
 matplotlib.use('TkAgg')
 import customtkinter
 from ascii import ascii
-import random
 from tabulate import tabulate
 from classes.partida import Partida
 import customtkinter
+from prettytable import PrettyTable
 
  
 class MountainGraphFrame(customtkinter.CTkFrame):
@@ -20,28 +20,44 @@ class MountainGraphFrame(customtkinter.CTkFrame):
     This frame inherits from the customtkinter.CTkFrame class and provides
     functionality to display a 3D graph with updating data.
 
-    Attributes:
-        container_frame (customtkinter.CTkFrame): The container frame within the MountainGraphFrame.
-        client: The client object used for data retrieval.
-        x (numpy.ndarray): The range of values for the x-axis.
-        y (numpy.ndarray): The range of values for the y-axis.
-        Z (numpy.ndarray): The initial matrix for the 3D graph.
-        X (numpy.ndarray): The meshgrid for the x-axis.
-        Y (numpy.ndarray): The meshgrid for the y-axis.
-        ax: The matplotlib Axes3D object for the graph.
-        ani: The FuncAnimation object for the animation.
+    Attributes
+    ----------
+    container_frame (customtkinter.CTkFrame): 
+        The container frame within the MountainGraphFrame.
+    client: 
+        The client object used for data retrieval.
+    x (numpy.ndarray): 
+        The range of values for the x-axis.
+    y (numpy.ndarray): 
+        The range of values for the y-axis.
+    Z (numpy.ndarray): 
+        The initial matrix for the 3D graph.
+    X (numpy.ndarray): 
+        The meshgrid for the x-axis.
+    Y (numpy.ndarray): 
+        The meshgrid for the y-axis.
+    ax: 
+        The matplotlib Axes3D object for the graph.
+    ani: 
+        The FuncAnimation object for the animation.
 
-    Methods:
-        show_graph(): Displays the 3D graph.
-        update_graph(i): Updates the graph with new data.
+    Methods
+    --------
+    show_graph(): 
+        Displays the 3D graph.
+    update_graph(): 
+        Updates the graph with new data.
     """
 
     def __init__(self, master,client,w,h):
         """
         Initialize the graph plotter.
         Args:
-            master: The parent widget.
-            client: The client object for data retrieval.
+        -----
+        master: 
+            The parent widget.
+        client: 
+            The client object for data retrieval.
             
         """
         super().__init__(master, corner_radius=0, fg_color="transparent")
@@ -49,17 +65,17 @@ class MountainGraphFrame(customtkinter.CTkFrame):
         self.grid_columnconfigure(0, weight=1)
         self.grid_rowconfigure(0, weight=2)
 
-        # create container frame with grid layout
+        # Create container frame with grid layout
         self.container_frame = customtkinter.CTkFrame(self, corner_radius=0, fg_color="transparent")
         self.container_frame.grid(row=0, column=0, sticky="nsew")
         self.container_frame.grid_rowconfigure(0, weight=1)
         self.container_frame.grid_columnconfigure(0, weight=1)
 
 
-        # disable frame size propagation
+        # Disable frame size propagation
         self.container_frame.grid_propagate(False)
         
-        # set desired frame size
+        # Set desired frame size
         self.container_frame.configure(width=w, height=h)
 
        
@@ -78,8 +94,6 @@ class MountainGraphFrame(customtkinter.CTkFrame):
 
         
         
-
-
     def show_graph(self):
         """
         Shows the graph plot.
@@ -101,12 +115,14 @@ class MountainGraphFrame(customtkinter.CTkFrame):
 
 
     # Update function
-    def update_graph(self, i):
+    def update_graph(self, _):
         """
         Updates the graph plot.
 
-        Args:
-            i: The update iteration index.
+        Args
+        -----
+        _: 
+            Unused argument required by FuncAnimation.
         """
         # Get updated data from the client
         info = self.client.get_data()
@@ -138,27 +154,57 @@ class HikersPositionFrame(customtkinter.CTkFrame): #GRAPH Hikers
 
     This frame displays a 3D graph and a scrollable team list. The graph is updated based on data received from a server.
 
-    Attributes:
-        master (tkinter.Tk): The master tkinter window.
-        client (Client): The client object for communication with the server.
-        container_frame (customtkinter.CTkFrame): The frame that contains the graph and team list.
-        selected_team (str): The currently selected team.
-        client (Client): The client object for communication with the server.
-        team_colors (dict): A dictionary mapping team names to colors for graph visualization.
-        ax (matplotlib.axes._subplots.Axes3DSubplot): The subplot for the 3D graph.
-        points (matplotlib.collections.PathCollection): The scatter plot points on the graph.
-        ani (matplotlib.animation.FuncAnimation): The animation object for updating the graph.
-        
+    Attributes
+    ----------
+    master : tkinter.Tk
+        The master tkinter window.
+    client : Client
+        The client object for communication with the server.
+    container_frame : customtkinter.CTkFrame
+        The frame that contains the graph and team list.
+    selected_team : str
+        The currently selected team.
+    team_colors : dict
+        A dictionary mapping team names to colors for graph visualization.
+    ax : matplotlib.axes._subplots.Axes3DSubplot
+        The subplot for the 3D graph.
+    points : matplotlib.collections.PathCollection
+        The scatter plot points on the graph.
+    ani : matplotlib.animation.FuncAnimation
+        The animation object for updating the graph.
 
-    Methods:
-        __init__(self, master, client): Initializes the HikersPositionFrame instance.
-        show_graf3D(self): Displays the 3D graph.
-        update_graph(self, _): Updates the graph based on data received from the server.
-        get_team_list_from_server(self): Retrieves the list of teams from the server.
-        create_scrollable_frame(self): Creates and configures a scrollable frame for the team list.
-        select_team(self, team): Updates the selected team and updates the graph accordingly.
+    Methods
+    -------
+    __init__(self, master, client):
+        Initializes the HikersPositionFrame instance.
+    show_graf3D(self):
+        Displays the 3D graph.
+    update_graph(self, _):
+        Updates the graph based on data received from the server.
+    get_team_list_from_server(self):
+        Retrieves the list of teams from the server.
+    create_scrollable_frame(self):
+        Creates and configures a scrollable frame for the team list.
+    select_team(self, team):
+        Updates the selected team and updates the graph accordingly.
     """
     def __init__(self, master,client,team_colors,w,h):
+        """
+        Initializes the HikersPositionFrame instance.
+
+        Parameters
+        ----------
+        master : tkinter.Tk
+            The master tkinter window.
+        client : Client
+            The client object for communication with the server.
+        team_colors : dict
+            A dictionary mapping team names to colors for graph visualization.
+        w : int
+            The width of the frame.
+        h : int
+            The height of the frame.
+        """
         super().__init__(master, corner_radius=0, fg_color="transparent")
         self.grid(row=0, column=1, sticky="nsew")
         self.grid_columnconfigure(0, weight=1)
@@ -223,11 +269,12 @@ class HikersPositionFrame(customtkinter.CTkFrame): #GRAPH Hikers
         """
         Update the graph based on the data received from the server.
 
-        Args:
-            frame: The frame to update the graph on.
+        Parameters
+        ----------
+        _ : Any
+            Unused argument required by FuncAnimation.
 
-        Returns:
-            The updated points object.
+
         """
         # Get the data from the server
         self.info = self.client.get_data()  
@@ -275,14 +322,19 @@ class HikersPositionFrame(customtkinter.CTkFrame): #GRAPH Hikers
         """
         Retrieves the list of teams from the server.
 
-        Returns:
+        Returns
+        -------
+        list
             A list of team names.
         """
         teams = []
         self.info = self.client.get_data()
-        #Get the teams from the server
-        for team, climbers in self.info.items(): 
+        
+        # Get the teams from the server and remove any teams that are not in the current data
+        for team, climbers in self.info.items():
             teams.append(team)
+        
+        
         return teams
 
 
@@ -290,32 +342,37 @@ class HikersPositionFrame(customtkinter.CTkFrame): #GRAPH Hikers
     def create_scrollable_frame(self):
         """
         Create and configure a scrollable frame to display the team list.
-
         """
         scrollable_frame = ScrollableLabelButtonFrame(self.container_frame)
         scrollable_frame.grid(row=0, column=1, sticky="nsew", padx=3, pady=3)
 
         teams = self.get_team_list_from_server()
-        # Select the team to display its hikers
-        scrollable_frame.add_item("Everyone", command=self.select_team) 
 
-        #Add the option to see each team that is registered on the server
+        # Select the team to display its hikers
+        scrollable_frame.add_item("Everyone", command=self.select_team)
+
+        # Add the option to see each team that is registered on the server
         for team in teams:
-            scrollable_frame.add_item(team, command=self.select_team)
+            # Check if the team is still part of the client
+            if team in self.info:
+                scrollable_frame.add_item(team, command=self.select_team)
 
         scrollable_frame.configure(width=150, height=100)
+
+
 
 
     def select_team(self, team):
         """
         Update the selected team and update the graph accordingly.
 
-        Args:
-            team: The selected team.
-
+        Parameters
+        ----------
+        team : str
+            The selected team.
         """
         self.selected_team = team
-        self.update_graph(None)
+        
 
 
 
@@ -326,23 +383,32 @@ class ScrollableLabelButtonFrame(customtkinter.CTkScrollableFrame):
     This frame inherits from the customtkinter.CTkScrollableFrame class and provides
     functionality to add labels and buttons dynamically.
 
-    Attributes:
-        command: Optional command function to be executed by the buttons.
-        label_list: A list containing the label instances added to the frame.
-        button_list: A list containing the button instances added to the frame.
+    Attributes
+    ----------
+    command : function, optional
+        Optional command function to be executed by the buttons.
+    label_list : list
+        A list containing the label instances added to the frame.
+    button_list : list
+        A list containing the button instances added to the frame.
 
-    Methods:
-        add_item(item, image=None, command=None): Adds a label and button to the frame.
+    Methods
+    -------
+    add_item(item, image=None, command=None)
+        Adds a label and button to the frame.
     """
     def __init__(self, master, command=None, **kwargs):
         """
         Initialize the ScrollableLabelButtonFrame.
 
-        Args:
-            master: The master widget.
-            command: Optional command function to be executed by the buttons.
-            **kwargs: Additional keyword arguments to be passed to the parent class.
-
+        Parameters
+        ----------
+        master : tkinter.Tk or tkinter.Frame
+            The master widget.
+        command : function, optional
+            Optional command function to be executed by the buttons.
+        **kwargs
+            Additional keyword arguments to be passed to the parent class.
         """
         # Call the __init__ method of the parent class (customtkinter.CTkScrollableFrame)
         super().__init__(master, **kwargs)
@@ -361,11 +427,14 @@ class ScrollableLabelButtonFrame(customtkinter.CTkScrollableFrame):
         """
         Add a label and button to the frame.
 
-        Args:
-            item: The text to display in the label.
-            image: Optional image to display alongside the text.
-            command: Optional command function to be executed by the button.
-
+        Parameters
+        ----------
+        item : str
+            The text to display in the label.
+        image : tkinter.PhotoImage or None, optional
+            Optional image to display alongside the text.
+        command : function or None, optional
+            Optional command function to be executed by the button.
         """
         # Create a label instance with the provided 'item' as the text and optional 'image'
         label = customtkinter.CTkLabel(self, text=item, image=image, compound="left", padx=5, anchor="w")
@@ -383,30 +452,45 @@ class ScrollableLabelButtonFrame(customtkinter.CTkScrollableFrame):
         # Append the button to the 'button_list'
         self.button_list.append(button)
 
-   
+    
+
+
 
 class ASCIIFrame(customtkinter.CTkFrame):
     """
-    A custom frame for displaying ASCII art representing letter assignments to teams.
+    Attributes
+    ----------
+    master : tkinter.Tk
+        The master widget for the frame.
+    client : Client
+        The client object used to retrieve data.
+    state : bool
+        A boolean indicating the state of the ASCIIFrame.
 
-    Attributes:
-        master: The master widget for the frame.
-        client: The client object used to retrieve data.
-        state: A boolean indicating the state of the ASCIIFrame.
-
-    Methods:
-        __init__(master, client): Initialize the ASCIIFrame.
-        change(): Change the state and update the displayed ASCII art.
-        call_function(): Periodically update the displayed ASCII art.
+    Methods
+    -------
+    __init__(master, client, w, h)
+        Initialize the ASCIIFrame.
+    change()
+        Change the state and update the displayed ASCII art.
+    call_function()
+        Periodically update the displayed ASCII art.
     """
+
     def __init__(self, master,client,w,h):
         """
         Initialize the ASCIIFrame.
 
-        Args:
-            master: The master widget.
-            client: The client object used to get data.
-
+        Parameters
+        ----------
+        master : tkinter.Tk
+            The master widget.
+        client : Client
+            The client object used to get data.
+        w : int
+            The desired width of the frame.
+        h : int
+            The desired height of the frame.
         """
         super().__init__(master, corner_radius=0, fg_color="transparent")  # Initialize the custom frame
         self.grid(row=0, column=1, sticky="nsew")  # Place the frame in the grid layout
@@ -428,18 +512,27 @@ class ASCIIFrame(customtkinter.CTkFrame):
 
 
         # Display the letter assignments as ASCII art
-        label_resultado = customtkinter.CTkLabel(self, text=ascii(self.letter_asig), font=('Courier New', 10.5))
+        label_resultado = customtkinter.CTkLabel(self, text=ascii(self.letter_asig,self.client), font=('Courier New', 10.5))
         label_resultado.pack()
        
         self.call_function(w,h)  # Start the function to periodically update the displayed ASCII art
         
     def call_function(self,w,h):
-        """Call the function periodically to update the displayed ASCII art."""
+        """
+        Call the function periodically to update the displayed ASCII art.
+
+        Parameters
+        ----------
+        w : int
+            The desired width of the frame.
+        h : int
+            The desired height of the frame.
+        """
         for widget in self.winfo_children():  # Destroy all child widgets
             widget.destroy()
 
         # Display the letter assignments as ASCII art
-        label_resultado = customtkinter.CTkLabel(self, text=ascii(self.letter_asig), font=('Courier New', 10))
+        label_resultado = customtkinter.CTkLabel(self, text=ascii(self.letter_asig,self.client), font=('Courier New', 10))
         label_resultado.pack()
 
         # disable frame size propagation
@@ -457,30 +550,52 @@ class HeatmapFrame(customtkinter.CTkFrame):
     This frame displays an animation that visualizes data using a heatmap.
     It inherits from the customtkinter.CTkFrame class.
 
-    Attributes:
-        container_frame (customtkinter.CTkFrame): The container frame within the FourthFrame.
-        client: The client object used for data retrieval.
-        x (numpy.ndarray): The range of values for the x-axis.
-        y (numpy.ndarray): The range of values for the y-axis.
-        fig: The matplotlib Figure object for the animation.
-        ax: The matplotlib Axes object for the animation.
-        hist (numpy.ndarray): The histogram matrix used for the heatmap.
-        heatmap: The matplotlib Image object representing the heatmap.
-        animation: The FuncAnimation object for the animation.
-        canvas: The FigureCanvasTkAgg object for displaying the animation on a tkinter window.
-        colorbar: The colorbar object for the heatmap.
+    Attributes
+    ----------
+    container_frame : customtkinter.CTkFrame
+        The container frame within the FourthFrame.
+    client : object
+        The client object used for data retrieval.
+    x : numpy.ndarray
+        The range of values for the x-axis.
+    y : numpy.ndarray
+        The range of values for the y-axis.
+    fig : matplotlib.figure.Figure
+        The matplotlib Figure object for the animation.
+    ax : matplotlib.axes.Axes
+        The matplotlib Axes object for the animation.
+    hist : numpy.ndarray
+        The histogram matrix used for the heatmap.
+    heatmap : matplotlib.image.AxesImage
+        The matplotlib Image object representing the heatmap.
+    animation : matplotlib.animation.FuncAnimation
+        The FuncAnimation object for the animation.
+    canvas : matplotlib.backends.backend_tkagg.FigureCanvasTkAgg
+        The FigureCanvasTkAgg object for displaying the animation on a tkinter window.
+    colorbar : matplotlib.colorbar.Colorbar
+        The colorbar object for the heatmap.
 
-    Methods:
-        show_animation(): Displays the animation.
-        update_heatmap(_: Any): Updates the heatmap based on new data.
+    Methods
+    -------
+    show_animation()
+        Displays the animation.
+    update_heatmap(_)
+        Updates the heatmap based on new data.
     """
     def __init__(self, master, client,w,h):
         """
         Initialize the FourthFrame.
 
-        Args:
-            master (Tk): The master tkinter window.
-            client: The client object for data retrieval.
+        Parameters
+        ----------
+        master : Tk
+            The master tkinter window.
+        client : object
+            The client object for data retrieval.
+        w : int
+            The width of the frame.
+        h : int
+            The height of the frame.
         """
         super().__init__(master, corner_radius=0, fg_color="transparent")
         self.grid(row=0, column=1, sticky="nsew")
@@ -537,11 +652,12 @@ class HeatmapFrame(customtkinter.CTkFrame):
         """
         Update the heatmap based on new data.
 
-        Args:
-            _: Unused argument required by FuncAnimation.
+        Parameters
+        ----------
+        _ : Any
+            Unused argument required by FuncAnimation.
 
-        Returns:
-            The updated heatmap.
+
         """
         self.ax.clear()
         self.hist.fill(0)  # Reset the histogram matrix on each update
@@ -573,33 +689,56 @@ class ScatterFrame(customtkinter.CTkFrame):
 
     This frame displays a 2D graph and a scrollable team list. The graph is updated based on data received from a server.
 
-    Attributes:
-        master (tkinter.Tk): The master tkinter window.
-        client (Client): The client object for communication with the server.
-        container_frame (customtkinter.CTkFrame): The frame that contains the graph and team list.
-        selected_team (str): The currently selected team.
-        client (Client): The client object for communication with the server.
-        team_colors (dict): A dictionary mapping team names to colors for graph visualization.
-        ax (matplotlib.axes._subplots.Axes3DSubplot): The subplot for the 3D graph.
-        points (matplotlib.collections.PathCollection): The scatter plot points on the graph.
-        ani (matplotlib.animation.FuncAnimation): The animation object for updating the graph.
+    Attributes
+    ----------
+    master : tkinter.Tk
+        The master tkinter window.
+    client : Client
+        The client object for communication with the server.
+    container_frame : customtkinter.CTkFrame
+        The frame that contains the graph and team list.
+    selected_team : str
+        The currently selected team.
+    team_colors : dict
+        A dictionary mapping team names to colors for graph visualization.
+    ax : matplotlib.axes._subplots.Axes
+        The subplot for the graph.
+    points : matplotlib.collections.PathCollection
+        The scatter plot points on the graph.
+    animation : matplotlib.animation.FuncAnimation
+        The animation object for updating the graph.
 
-    Methods:
-        __init__(self, master, client): Initializes the ScatterFrame instance.
-        show_scatter(self): Displays the 2D graph.
-        update_scatter(self, _): Updates the graph based on data received from the server.
-        get_team_list_from_server(self): Retrieves the list of teams from the server.
-        create_scrollable_frame(self): Creates and configures a scrollable frame for the team list.
-        select_team(self, team): Updates the selected team and updates the graph accordingly.
+    Methods
+    -------
+    __init__(self, master, client, team_colors, width, height)
+        Initializes the ScatterFrame instance.
+    show_scatter(self)
+        Displays the 2D graph.
+    update_scatter(self, frame)
+        Updates the graph based on data received from the server.
+    get_team_list_from_server(self)
+        Retrieves the list of teams from the server.
+    create_scrollable_frame(self)
+        Creates and configures a scrollable frame for the team list.
+    select_team(self, team)
+        Updates the selected team and updates the graph accordingly.
     """
     def __init__(self, master,client,team_colors,w,h):
         """
-        Initialize the object.
+        Initializes the ScatterFrame instance.
 
-        Args:
-            master: The master widget.
-            client: The client object.
-            team_colors: A dictionary containing team colors.
+        Parameters
+        ----------
+        master : tkinter.Tk
+            The master tkinter window.
+        client : Client
+            The client object for communication with the server.
+        team_colors : dict
+            A dictionary containing team colors.
+        width : int
+            The desired width of the frame.
+        height : int
+            The desired height of the frame.
         """
         super().__init__(master, corner_radius=0, fg_color="transparent")
         self.grid(row=0, column=1, sticky="nsew")
@@ -621,7 +760,7 @@ class ScatterFrame(customtkinter.CTkFrame):
         self.container_frame.configure(width=w, height=h)
 
         self.selected_team = 'Everyone'
-        self.team_colors = {'Everyone': None}
+        self.team_colors = team_colors
 
         # create container frame with grid layout
         self.client = client
@@ -633,6 +772,9 @@ class ScatterFrame(customtkinter.CTkFrame):
         
 
     def show_scatter(self):
+        """
+        Displays the 2D graph.
+        """
         self.fig, self.ax = plt.subplots()
 
         self.ax.set_xlabel('X')
@@ -653,18 +795,17 @@ class ScatterFrame(customtkinter.CTkFrame):
 
         self.animation._start()
 
-    def update_scatter(self, frame):
+    def update_scatter(self, _):
         """
         Update the scatter plot based on the data received from the server.
 
-        Args:
-            frame: The frame to update the scatter plot on.
-
-        Returns:
-            The updated points object.
-
+        Parameters
+        ----------
+        _ : Any
+            Unused argument required by FuncAnimation.
         """
-        self.info = self.client.get_data()  # Update server data
+        
+        self.info = self.client.get_data()  # Get server data
 
         points = []
         colors = []
@@ -675,24 +816,21 @@ class ScatterFrame(customtkinter.CTkFrame):
                     x = data['x']
                     y = data['y']
                     
-                    if team in self.team_colors:
-                        colors.append(self.team_colors[team])
-                    else:
-                        color = '#{:06x}'.format(random.randint(0, 0xFFFFFF))
-                        self.team_colors[team] = color
-                        colors.append(color)
+                    
+                    # Assign the colors for each team
+                    color = self.team_colors.get(team)
+                    colors.append(color)
+                    points.append((x, y))
 
                     points.append((x, y))
             elif team == self.selected_team:
                 for climber, data in climbers.items():
                     x = data['x']
                     y = data['y']
-                    if team in self.team_colors:
-                        colors.append(self.team_colors[team])
-                    else:
-                        color = '#{:06x}'.format(random.randint(0, 0xFFFFFF))
-                        self.team_colors[team] = color
-                        colors.append(color)
+                    # Assign the colors for each team
+                    color = self.team_colors.get(team)
+                    colors.append(color)
+                    points.append((x, y))
                         
                     points.append((x, y))
 
@@ -704,6 +842,13 @@ class ScatterFrame(customtkinter.CTkFrame):
 
 
     def show_animation(self):
+        """
+        Show the animation of the scatter plot.
+
+        Returns
+        -------
+        None
+        """
         self.animation = FuncAnimation(self.fig, self.update_scatter, interval=1000)
 
         self.canvas = FigureCanvasTkAgg(self.fig, master=self.container_frame)
@@ -711,6 +856,14 @@ class ScatterFrame(customtkinter.CTkFrame):
         self.canvas.get_tk_widget().grid(row=0, column=0, sticky="nsew")
 
     def get_team_list_from_server(self):
+        """
+        Retrieve the list of teams from the server.
+
+        Returns
+        -------
+        teams: list 
+            The list of teams.
+        """
         teams = []
         for team, climbers in self.info.items():
             teams.append(team)
@@ -721,7 +874,6 @@ class ScatterFrame(customtkinter.CTkFrame):
     def create_scrollable_frame(self):
         """
         Create and configure a scrollable frame to display the team list.
-
         """
         scrollable_frame = ScrollableLabelButtonFrame(self.container_frame)
         scrollable_frame.grid(row=0, column=1, sticky="nsew", padx=3, pady=3)
@@ -739,17 +891,48 @@ class ScatterFrame(customtkinter.CTkFrame):
         """
         Update the selected team and update the graph accordingly.
 
-        Args:
-            team: The selected team.
-
+        Parameters
+        ----------
+        team : str
+            The selected team.
         """
         self.selected_team = team
-        self.update_graph(None)
+        
+
+
 
 
 
 class Leaderboard(customtkinter.CTkFrame):
+    """
+    A class representing a leaderboard widget.
+
+    Parameters
+    ----------
+    client : object
+        The client object used to retrieve data.
+    **kwargs
+        Additional keyword arguments to be passed to the parent class.
+
+    Attributes
+    ----------
+    client : object
+        The client object used to retrieve data.
+    textbox : object
+        The textbox widget for displaying the leaderboard.
+    """
+
     def __init__(self, client, **kwargs):
+        """
+        Initialize the Leaderboard widget.
+
+        Parameters
+        ----------
+        client : object
+            The client object used to retrieve data.
+        **kwargs
+            Additional keyword arguments to be passed to the parent class.
+        """
         super().__init__(master=None, **kwargs)
         self.client = client
 
@@ -757,22 +940,42 @@ class Leaderboard(customtkinter.CTkFrame):
                                                 font=('Helvetica', 12), activate_scrollbars=True)
         self.textbox.pack(expand=True, fill="both")
 
-        self.update_leaderboard()  # Agregamos esto para actualizar el leaderboard al iniciar
+        self.update_leaderboard()
 
     def update_leaderboard(self):
+        """
+        Update the leaderboard by fetching the latest data and displaying it in the textbox.
+        """
         leaderboard_text = self.show_leaderboard(self.client)
-        self.textbox.configure(state="normal")  # Habilitar la escritura temporalmente
-        self.textbox.delete(1.0, "end")  # Limpiar el contenido anterior del textbox
+        self.textbox.configure(state="normal")
+        self.textbox.delete(1.0, "end")
         self.textbox.insert("end", leaderboard_text)
-        self.textbox.configure(state="disabled")  # Deshabilitar la escritura nuevamente
+        self.textbox.configure(state="disabled")
 
         self.after(5000, self.update_leaderboard)
 
-    def show_leaderboard(self,client):
-        output = ""
+
+    def show_leaderboard(self, client):
+        """
+        Generate the leaderboard text based on the data retrieved from the client.
+
+        Parameters
+        ----------
+        client : object
+            The client object used to retrieve data.
+
+        Returns
+        -------
+        str
+            The generated leaderboard text.
+        """
+        table = PrettyTable()
+        table.field_names = ["#", "Nombre"]
+        table.max_width = 1000  # Set max_width to a high value to prevent text wrapping
+        table.align = "l"  # Align text to the left
         info = client.get_data()
         if len(info) > 0:
-            match = Partida(info)
+            match = Partida(info)  # Assuming Partida is a class used to process game data
             teams = match.get_teams()
             players = []
             for team in teams:
@@ -780,5 +983,7 @@ class Leaderboard(customtkinter.CTkFrame):
                     players.append(player)
             players.sort()
             player_names = [[count, player.name] for count, player in enumerate(players, start=1)]
-            output += tabulate(player_names, headers=['#', 'Nombre'], tablefmt='plain') + "\n\n"  # Usamos tablefmt='plain'
-        return output
+            table.add_rows(player_names)
+        return str(table)
+
+

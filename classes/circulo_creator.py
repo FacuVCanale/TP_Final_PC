@@ -1,17 +1,5 @@
-class Circulo:
-    def __init__(self, filas: int):
-        """
-        Initialize a circle object with a given number of rows.
-
-        Parameters
-        ----------
-        filas : int
-            The number of rows in the circle.
-
-        Returns
-        -------
-        None
-        """
+class Circle:
+    def __init__(self,filas:int):
         self.filas = filas
         # Create an empty list to store the circle
         self.circulo = []
@@ -29,7 +17,7 @@ class Circulo:
             self.circulo.append(nueva_fila)
         self.indice = 0
 
-    @property
+    
     def filas(self) -> int:
         """
         Get the number of rows in the circle.
