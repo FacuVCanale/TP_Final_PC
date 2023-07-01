@@ -5,8 +5,8 @@ import math
 # Import client:
 from communication.client.client import MountainClient
 # Import classes:
-from class_dataAnalyst import DataAnalyst
-from class_hiker import Hiker
+from strategy.class_dataAnalyst import DataAnalyst
+from strategy.class_hiker import Hiker
 
 # Import strategy:
 # FIJARSE COMO IMPORTAR LA FUNCION DE ESTRATEGIA QUE USA GLOBAL

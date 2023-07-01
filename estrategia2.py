@@ -1,4 +1,4 @@
-from class_hiker import Hiker
+from strategy.class_hiker import Hiker
 
 def strategy(hiker,list_of_points,estado):
     global puntos_ivan
