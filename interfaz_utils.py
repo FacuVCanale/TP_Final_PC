@@ -9,6 +9,9 @@ import customtkinter
 from communication.client.client import MountainClient
 from ascii import ascii
 import random
+from tabulate import tabulate
+from classes.partida import Partida
+import customtkinter
 
  
 class HomeFrame(customtkinter.CTkFrame):
@@ -319,7 +322,7 @@ class ThirdFrame(customtkinter.CTkFrame):
                 self.letter_asig[equipo] = num_jugador
                 num_jugador += 1
             counter += 1
-        label_resultado = customtkinter.CTkLabel(self, text=ascii(self.letter_asig), font=('Courier New', 10))
+        label_resultado = customtkinter.CTkLabel(self, text=ascii(self.letter_asig), font=('Courier New', 10.5))
         label_resultado.pack()
        
         self.call_function(w,h)
@@ -327,7 +330,7 @@ class ThirdFrame(customtkinter.CTkFrame):
     def call_function(self,w,h):
         for widgets in self.winfo_children():
             widgets.destroy()
-        label_resultado = customtkinter.CTkLabel(self, text=ascii(self.letter_asig), font=('Courier New', 10))
+        label_resultado = customtkinter.CTkLabel(self, text=ascii(self.letter_asig), font=('Courier New', 10.5))
         label_resultado.pack()
         # disable frame size propagation
         label_resultado.grid_propagate(False)
@@ -551,10 +554,41 @@ class FifthFrame(customtkinter.CTkFrame):
         self.update_graph(None)
 
 
-        
-        
-        
 
 
 
 
+class Leaderboard(customtkinter.CTkFrame):
+    def __init__(self, client, **kwargs):
+        super().__init__(master=None, **kwargs)
+        self.client = client
+
+        self.textbox = customtkinter.CTkTextbox(master=self, width=400, height=400, corner_radius=0,
+                                                font=('Helvetica', 12), activate_scrollbars=True)
+        self.textbox.pack(expand=True, fill="both")
+
+        self.update_leaderboard()  # Agregamos esto para actualizar el leaderboard al iniciar
+
+    def update_leaderboard(self):
+        leaderboard_text = self.show_leaderboard(self.client)
+        self.textbox.configure(state="normal")  # Habilitar la escritura temporalmente
+        self.textbox.delete(1.0, "end")  # Limpiar el contenido anterior del textbox
+        self.textbox.insert("end", leaderboard_text)
+        self.textbox.configure(state="disabled")  # Deshabilitar la escritura nuevamente
+
+        self.after(5000, self.update_leaderboard)
+
+    def show_leaderboard(self,client):
+        output = ""
+        info = client.get_data()
+        if len(info) > 0:
+            match = Partida(info)
+            teams = match.get_teams()
+            players = []
+            for team in teams:
+                for player in team.get_players():
+                    players.append(player)
+            players.sort()
+            player_names = [[count, player.name] for count, player in enumerate(players, start=1)]
+            output += tabulate(player_names, headers=['#', 'Nombre'], tablefmt='plain') + "\n\n"  # Usamos tablefmt='plain'
+        return output

@@ -1,7 +1,7 @@
 class Player:
     def __init__(self,dic={},team="",name="",direction=50,speed=50,x=14000,y=14000,z=0,inclinacion_x= 0,inclinacion_y= 0,cima= False):
         self.team = team
-        self.name = name
+        self.name = name.capitalize()
         self.direction = direction
         self.speed = speed
         self.x = x
@@ -90,4 +90,4 @@ class Player:
             return True
         else:
             return False
-        
+    

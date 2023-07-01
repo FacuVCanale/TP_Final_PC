@@ -2,8 +2,7 @@ import customtkinter
 from customtkinter import CTkFrame
 import os
 from PIL import Image
-from interfaz_utils import SecondFrame,HomeFrame,FourthFrame, ThirdFrame, FifthFrame
-from leaderboard import show_leaderboard
+from interfaz_utils import SecondFrame,HomeFrame,FourthFrame, ThirdFrame, FifthFrame,Leaderboard
 from communication.client.client import MountainClient
 
 class App(customtkinter.CTk):
@@ -48,10 +47,10 @@ class App(customtkinter.CTk):
         self.navigation_frame = customtkinter.CTkFrame(self, corner_radius=0)
         self.navigation_frame.grid(row=0, column=0, sticky="nsew")
         self.navigation_frame.grid_rowconfigure(6, weight=1)  # ELEGIR CUANTAS OPCIONES PONER EN EL LADO IZQUIERDO ES DECIR CUANTOS RECTANGULOS
-          # ELEGIR CUANTAS OPCIONES PONER EN EL LADO IZQUIERDO ES DECIR CUANTOS RECTANGULOS
-        self.navigation_frame2 = customtkinter.CTkFrame(self, corner_radius=0)
-        self.navigation_frame2.grid(row=0, column=2, sticky="nsew")
-        self.navigation_frame2.grid_rowconfigure(1, weight=1)
+
+
+        
+       
 
         #FRAME DE NAVEGACION
         self.navigation_frame_label = customtkinter.CTkLabel(self.navigation_frame,
@@ -60,12 +59,12 @@ class App(customtkinter.CTk):
                                                              font=customtkinter.CTkFont(size=15, weight="bold"), text="")
         self.navigation_frame_label.grid(row=0, column=0, padx=20, pady=20)
 
-        self.navigation_frame_label2 = customtkinter.CTkLabel(self.navigation_frame2,
-                                                              # ELEGIR NOMBRE DE LA BARRA DE TAREAS
-                                                             compound="right",
-                                                             font=customtkinter.CTkFont(size=15, weight="bold"), text=show_leaderboard())
-        self.navigation_frame_label2.grid(row=0, column=0, padx=20, pady=20)
-        self.call_function()
+
+        #Leaderboard
+        self.navigation_frame2 = Leaderboard(self.client)
+        self.navigation_frame2.grid(row=0, column=2, sticky="nsew")
+        self.navigation_frame2.grid_rowconfigure(1, weight=1)
+        
         #FRAME 3D
         self.home_button = customtkinter.CTkButton(self.navigation_frame, 
                                                    corner_radius=0, 
@@ -128,8 +127,8 @@ class App(customtkinter.CTk):
 
 
 
-        w = 940
-        h = 720
+        w = 1200
+        h = 780
 
         #CAMBIAR APARIENCIA
         self.appearance_mode_menu = customtkinter.CTkOptionMenu(self.navigation_frame, values=["Dark", "Light", "System"],
@@ -153,23 +152,13 @@ class App(customtkinter.CTk):
         self.fourth_frame =FourthFrame(self,self.client,w,h)
                 
 
-
         self.fifth_frame = FifthFrame(self,w,h)
                   
 
 
         self.select_frame_by_name("home")
 
-    def call_function(self):
-        for widgets in self.navigation_frame2.winfo_children():
-            widgets.destroy()
-        self.navigation_frame_label2 = customtkinter.CTkLabel(self.navigation_frame2,
-                                                              # ELEGIR NOMBRE DE LA BARRA DE TAREAS
-                                                             compound="right",
-                                                             font=customtkinter.CTkFont(size=15, weight="bold"), text=show_leaderboard())
-        self.navigation_frame_label2.grid(row=0, column=0, padx=20, pady=20)
-        self.after(5000,self.call_function)
-        return
+   
     #CAMBIAR DE PESTAÑAS - MODIFICO LA VISUALIZACION DE CADA PESTAÑA
     def select_frame_by_name(self, name):
         # set button color for selected button

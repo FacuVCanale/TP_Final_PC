@@ -21,7 +21,7 @@ cliente = MountainClient(ip, int(port))
 
 directions = {}
 directions2 = {}
-escaladores = ['facu', 'lucas', 'juan', 'emilio', 'diana', 'raul', 'marta', 'roberto', 'valentina', 'sergio', 'laura', 'oscar']
+escaladores = ['facu', 'lucas', 'juan', 'emilio', 'diana', 'raul', 'marta', 'roberto', 'valentina', 'sergio', 'laura', 'oscar',]
 escaladores2 = ['ramon', 'ivan', 'cami','eduardo', 'fran', 'facu']
 
 # Configurar las instrucciones para cada escalador
@@ -66,7 +66,7 @@ def mandar_data():
         
 
         cliente.next_iteration("CopNieve", directions)
-        cliente.next_iteration("Lifft", directions2)
+        
 
 mandar_data()
 
