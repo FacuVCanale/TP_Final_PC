@@ -1,5 +1,33 @@
 class Player:
-    def __init__(self,dic={},team="",name="",direction=50,speed=50,x=14000,y=14000,z=0,inclinacion_x= 0,inclinacion_y= 0,cima= False):
+    def __init__(self, dic: dict = {}, team: str = "", name: str = "", direction: int = 50, speed: int = 50, x: int = 14000, y: int = 14000, z: int = 0, inclinacion_x: int = 0, inclinacion_y: int = 0, cima: bool = False) -> None:
+        """
+        A class representing a player in a game.
+
+        Parameters
+        ----------
+        dic : dict, optional
+            A dictionary containing the player's position and orientation, by default {}.
+        team : str, optional
+            The player's team, by default "".
+        name : str, optional
+            The player's name, by default "".
+        direction : int, optional
+            The player's direction, by default 50.
+        speed : int, optional
+            The player's speed, by default 50.
+        x : int, optional
+            The player's x-coordinate, by default 14000.
+        y : int, optional
+            The player's y-coordinate, by default 14000.
+        z : int, optional
+            The player's z-coordinate, by default 0.
+        inclinacion_x : int, optional
+            The player's x-inclination, by default 0.
+        inclinacion_y : int, optional
+            The player's y-inclination, by default 0.
+        cima : bool, optional
+            Whether the player has reached the top of a mountain, by default False.
+        """
         self.team = team
         self.name = name
         self.direction = direction
@@ -17,7 +45,26 @@ class Player:
             self.inclinacion_x = dic["inclinacion_x"]
             self.inclinacion_y = dic["inclinacion_y"]
             self.cima = dic["cima"]
-    def __getitem__(self, key):
+
+    def __getitem__(self, key: str) -> any:
+        """
+        Get an attribute of the player.
+
+        Parameters
+        ----------
+        key : str
+            The name of the attribute to get.
+
+        Returns
+        -------
+        any
+            The value of the attribute.
+
+        Raises
+        ------
+        KeyError
+            If the attribute name is not valid.
+        """
         if key == "team":
             return self.team
         elif key == "name":
@@ -40,7 +87,23 @@ class Player:
             return self.cima
         else:
             raise KeyError(f"Key '{key}' is not valid")
-    def __setitem__(self, key, value):
+
+    def __setitem__(self, key: str, value: any) -> None:
+        """
+        Set an attribute of the player.
+
+        Parameters
+        ----------
+        key : str
+            The name of the attribute to set.
+        value : any
+            The value to set the attribute to.
+
+        Raises
+        ------
+        KeyError
+            If the attribute name is not valid.
+        """
         if key == "team":
             self.team = value
         elif key == "name":
@@ -62,8 +125,22 @@ class Player:
         elif key == "cima":
             self.cima = value
         else:
-            raise KeyError(f"Clave '{key}' no valida")
-    def __gt__(self,otro):
+            raise KeyError(f"Key '{key}' is not valid")
+
+    def __gt__(self, otro: 'Player') -> bool:
+        """
+        Compare the player to another player.
+
+        Parameters
+        ----------
+        otro : Player
+            The other player to compare to.
+
+        Returns
+        -------
+        bool
+            True if the player is greater than the other player, False otherwise.
+        """
         if ((self.cima is True) and (otro.cima is True)):
             return False
         elif ((self.cima is False) and (otro.cima is True)):
@@ -76,10 +153,37 @@ class Player:
             return False
         else:
             return False
-    def __eq__(self, otro):
+
+    def __eq__(self, otro: 'Player') -> bool:
+        """
+        Compare the player to another player for equality.
+
+        Parameters
+        ----------
+        otro : Player
+            The other player to compare to.
+
+        Returns
+        -------
+        bool
+            True if the player is equal to the other player, False otherwise.
+        """
         return self.z == otro.z and self.cima == otro.cima
 
-    def __lt__(self, otro):
+    def __lt__(self, otro: 'Player') -> bool:
+        """
+        Compare the player to another player.
+
+        Parameters
+        ----------
+        otro : Player
+            The other player to compare to.
+
+        Returns
+        -------
+        bool
+            True if the player is less than the other player, False otherwise.
+        """
         if self.cima and otro.cima:
             return False
         elif not self.cima and otro.cima:
@@ -90,4 +194,3 @@ class Player:
             return True
         else:
             return False
-        
