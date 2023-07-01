@@ -1,24 +1,24 @@
 class Circle:
-    def __init__(self,filas:int):
-        self.filas = filas
+    def __init__(self, rows:int):
+        self.rowss = rows
         # Create an empty list to store the circle
-        self.circulo = []
+        self.circle = []
         # Create the matrix of the circle
-        for fila in range(self.filas):
+        for row in range(self.rowss):
             # Create an empty list for each row
-            nueva_fila = []
-            for columna in range(self.filas):
+            new_row = []
+            for column in range(self.rowss):
                 # Check if the current point is inside the circle
-                if (columna - 23) ** 2 + (fila - 23) ** 2 <= 23 ** 2:
-                    nueva_fila.append(".")
+                if (column - 23) ** 2 + (row - 23) ** 2 <= 23 ** 2:
+                    new_row.append(".")
                 else:
-                    nueva_fila.append(" ")
+                    new_row.append(" ")
             # Add the row to the circle list
-            self.circulo.append(nueva_fila)
-        self.indice = 0
+            self.circle.append(new_row)
+        self.index = 0
 
     
-    def filas(self) -> int:
+    def rows(self) -> int:
         """
         Get the number of rows in the circle.
 
@@ -27,7 +27,7 @@ class Circle:
         int
             The number of rows in the circle.
         """
-        return self.filas
+        return self.rowss
 
     def __str__(self) -> str:
         """
@@ -38,7 +38,7 @@ class Circle:
         str
             A string representation of the circle object.
         """
-        return f"This circle has {self.filas} rows!"
+        return f"This circle has {self.rowss} rows!"
 
     def __repr__(self) -> str:
         """
@@ -49,7 +49,7 @@ class Circle:
         str
             A string representation of the circle object.
         """
-        return f"circle = Circulo=(46)"
+        return f"circle = Circle(46)"
 
     def __iter__(self):
         """
@@ -71,11 +71,11 @@ class Circle:
         list
             The next row of the circle.
         """
-        if self.indice >= self.filas:
+        if self.index >= self.rowss:
             raise StopIteration
-        fila_actual = self.circulo[self.indice]
-        self.indice += 1
-        return fila_actual
+        current_row = self.circle[self.index]
+        self.index += 1
+        return current_row
 
     def __getitem__(self, index):
         """
@@ -91,7 +91,7 @@ class Circle:
         list
             The row of the circle at the given index.
         """
-        return self.circulo[index]
+        return self.circle[index]
 
     def __len__(self):
         """
@@ -102,4 +102,4 @@ class Circle:
         int
             The number of rows in the circle.
         """
-        return len(self.circulo)
+        return len(self.circle)

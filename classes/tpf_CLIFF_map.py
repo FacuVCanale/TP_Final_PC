@@ -1,6 +1,7 @@
+from classes.tpf_CLIFF_circle_creator import Circle
 
 class Circular_map:
-    def __init__(self, circle: list, ESCALA: int = 1000) -> None:
+    def __init__(self, circle: Circle, SCALE: int = 1000) -> None:
         """
         Initialize a circular map object with a given circle and scale.
 
@@ -8,7 +9,7 @@ class Circular_map:
         ----------
         circulo : list
             The circle to use for the map.
-        ESCALA : int, optional
+        SCALE : int, optional
             The scale to use for the map. Default is 1000.
 
         Returns
@@ -16,9 +17,9 @@ class Circular_map:
         None
         """
         self.circle = circle
-        self.ESCALA = ESCALA
+        self.SCALE = SCALE
 
-    def agregar_pj(self, pos: tuple, num_jugador: int, flag: bool) -> None:
+    def add_player(self, pos: tuple, num_player: int) -> None:
         """
         Add a player to the map at the given position.
 
@@ -26,10 +27,8 @@ class Circular_map:
         ----------
         pos : tuple
             The position of the player on the map.
-        num_jugador : int
+        num_player : int
             The number of the player to add.
-        flag : bool
-            A flag indicating whether the player is on the blue team (True) or the red team (False).
 
         Returns
         -------
@@ -37,27 +36,16 @@ class Circular_map:
         """
         for i in self.circle:
             for j in i:
-                if j == num_jugador:
+                if j == num_player:
                     self.circle[i][j] = "."
 
-        x = int(pos[0] / self.ESCALA)
-        y = int(pos[1] / self.ESCALA)
+        x = int(pos[0] / self.SCALE)
+        y = int(pos[1] / self.SCALE)
 
-        x += self.circle.filas // 2
-        y = self.circle.filas // 2 - y
+        x += self.circle.rowss // 2
+        y = self.circle.rowss // 2 - y
         
-        self.circle[y][x] = chr(num_jugador)
-
-    def __repr__(self) -> str:
-        """
-        Return a string representation of the circular map object.
-
-        Returns
-        -------
-        str
-            A string representation of the circular map object.
-        """
-        return f"import circulo.py\n {self.circle.str()}\n mapa = Mapa_circular(circle,1000)"
+        self.circle[y][x] = chr(num_player)
 
     def __str__(self) -> str:
         """

@@ -1,13 +1,16 @@
 import customtkinter
 import os
 from PIL import Image
-from tpf_CLIFF_interfaz_utils import HikersPositionFrame,MountainGraphFrame,HeatmapFrame, ASCIIFrame, ScatterFrame,Leaderboard
+from tpf_CLIFF_interface_utils import HikersPositionFrame,MountainGraphFrame,HeatmapFrame, ASCIIFrame, ScatterFrame,Leaderboard
 from communication.client.client import MountainClient
 import random
 from typing import Dict
+import argparse
 
+
+# Initialize the Client
 class App(customtkinter.CTk):
-    def __init__(self) -> None:
+    def __init__(self, client: MountainClient) -> None:
         super().__init__()
         
         self.title("Server Dashboard")
@@ -24,12 +27,8 @@ class App(customtkinter.CTk):
         self.grid_columnconfigure(2, weight=1)
 
         self.team_colors: dict = {'Everyone': 'white'} # Meaningless
-        self.client: MountainClient = MountainClient()
+        self.client = client
         self.generate_color_for_each_team()
-
-
-
-
 
 
         # Load images with light and dark mode image
@@ -253,11 +252,23 @@ class App(customtkinter.CTk):
         mode = customtkinter.set_appearance_mode(new_appearance_mode)
         return mode
     
+def main():
+    parser = argparse.ArgumentParser(description='Command line args')
+    parser.add_argument('--ip', type=str, help='IP and port', default="localhost:8080")
+    args = parser.parse_args()
+    ip, port = args.ip.split(':')
 
-    
+    try:
+        port = int(port)
+    except:
+        print("No ha ingresado un puerto válido")
+        return None
+
+    client = MountainClient(ip, port)
+    app = App(client)
+    app.mainloop()
+
 
 if __name__ == "__main__":
-    app = App()
-    
-    app.mainloop()
+    main()
 

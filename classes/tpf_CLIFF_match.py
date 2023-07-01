@@ -1,10 +1,10 @@
 from classes.tpf_CLIFF_teams import Team
 from typing import List, Any, Dict
 
-class Partida:
+class Match:
     def __init__(self, dic: Dict[Any, Any]) -> None:
         """
-        Initializes a Partida object.
+        Initializes a Match object.
 
         Parameters:
         - dic (Dict[Any, Any]): A dictionary representing the teams and players.

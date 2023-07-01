@@ -35,30 +35,36 @@ class DataAnalyst:
                 if self.data[team][player]['cima'] == True:
                     self.someone_won = True
                     return True, self.get_max()
-                    # ----------HACER QUE NUESTROS HIKERS VAYAN AL PUNTO---------------
         return False, None
     
     def get_all_pos(self):
         """
-        Guarda las pos de todos los hikers en una lista de tuplas con x y z de cada uno
+        Stores the positions of all hikers in a list of tuples with x, y, and z coordinates.
+        
+        Returns:
+            None
         """
         for team in self.data:
             for player in self.data[team]:
-                self.all_h_pos.append((self.data[team][player]['x'],self.data[team][player]['y'],self.data[team][player]['z']))
+                self.all_h_pos.append((self.data[team][player]['x'], self.data[team][player]['y'], self.data[team][player]['z']))
 
-    def get_max(self)-> tuple[float,float,float]:
+    def get_max(self) -> tuple[float, float, float]:
         """
-        rotorna la max pos en z encontrada por cualquier hiker en una tupla de (x,y,zMAX)
+        Returns the maximum z position found by any hiker as a tuple of (x, y, zMAX).
+        
+        Returns:
+            tuple[float, float, float]: The maximum z position.
         """
         self.get_all_pos()
         self.all_h_pos = sorted(self.all_h_pos, key=lambda z: z[2])
         max_xyz = self.all_h_pos.pop()
         
-        # achicar la lista de todas las pos para solo tener las n max
+        # Reduce the list of all positions to only keep the top n maximum positions.
         n = 5
         self.all_h_pos = self.all_h_pos[-n:]
 
         return max_xyz
+
     
     def get_all_info(self)-> dict[bool,tuple,list]:
         """

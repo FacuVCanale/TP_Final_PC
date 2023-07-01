@@ -6,13 +6,11 @@ import numpy as np
 import customtkinter
 matplotlib.use('TkAgg')
 import customtkinter
-from tpf_CLIFF_ascii import ascii
-from tabulate import tabulate
-from classes.tpf_CLIFF_partida import Partida
+from classes.tpf_CLIFF_match import Match
 import customtkinter
 from prettytable import PrettyTable
-
-from matplotlib.patches import Rectangle
+from classes.tpf_CLIFF_circle_creator import Circle
+from classes.tpf_CLIFF_map import Circular_map
 
  
 class MountainGraphFrame(customtkinter.CTkFrame):
@@ -503,22 +501,22 @@ class ASCIIFrame(customtkinter.CTkFrame):
 
         
         # Assign letters to teams
-        num_jugador = 65  # ASCII code for 'A'
+        num_player = 65  # ASCII code for 'A'
         self.letter_asig = {}  # Dictionary to store letter assignments
         counter = 0
         while self.client.is_registering_teams() or (counter == 0):  # Loop until teams are registered
-            for equipo, escaladores in info.items():
-                self.letter_asig[equipo] = num_jugador  # Assign a letter to each team
-                num_jugador += 1
+            for team, hikers in info.items():
+                self.letter_asig[team] = num_player  # Assign a letter to each team
+                num_player += 1
             counter += 1
 
 
         # Display the letter assignments as ASCII art
-        label_resultado = customtkinter.CTkLabel(self, text=ascii(self.letter_asig,self.client), font=('Courier New', 10.5))
-        label_resultado.pack()
+        label_result = customtkinter.CTkLabel(self, text=self.ascii(), font=('Courier New', 10.5))
+        label_result.pack()
        
         self.call_function(w,h)  # Start the function to periodically update the displayed ASCII art
-        
+    
     def call_function(self,w,h):
         """
         Call the function periodically to update the displayed ASCII art.
@@ -534,15 +532,53 @@ class ASCIIFrame(customtkinter.CTkFrame):
             widget.destroy()
 
         # Display the letter assignments as ASCII art
-        label_resultado = customtkinter.CTkLabel(self, text=ascii(self.letter_asig,self.client), font=('Courier New', 10))
-        label_resultado.pack()
+        label_result = customtkinter.CTkLabel(self, text=self.ascii(), font=('Courier New', 10))
+        label_result.pack()
 
         # disable frame size propagation
-        label_resultado.grid_propagate(False)
+        label_result.grid_propagate(False)
         
         # set desired frame size
-        label_resultado.configure(width=w, height=h)
+        label_result.configure(width=w, height=h)
         self.after(3500,self.call_function,w,h) # Call the function again after 2000 milliseconds (2 seconds)
+
+
+    def ascii(self) -> Circular_map:
+        """
+        Generate an ASCII representation of the circular map based on the information received from the client.
+
+        Parameters
+        ----------
+        letter_asig : dict
+            Dictionary mapping team names to letters used in the representation.
+
+        client : MountainClient
+            The client object representing the connection to the servers.
+
+        Returns
+        -------
+        Circular_map: 
+            The circular map object with players added.
+
+        """
+        circle = Circle(46)
+        map = Circular_map(circle)
+        info = self.client.get_data()
+
+        for team, hikers in info.items():
+            for hiker, infos in hikers.items():
+                x = infos['x']
+                y = infos['y']
+
+                if infos['cima'] is not True:
+                    cima = ""
+                else:
+                    cima = True
+
+                map.add_player((x, y), self.letter_asig[team])
+
+        return map
+
 
 
 class HeatmapFrame(customtkinter.CTkFrame):
@@ -977,7 +1013,7 @@ class Leaderboard(customtkinter.CTkFrame):
         table.align = "l"  # Align text to the left
         info = client.get_data()
         if len(info) > 0:
-            match = Partida(info)  # Assuming Partida is a class used to process game data
+            match = Match(info)  # Assuming Match is a class used to process game data
             teams = match.get_teams()
             players = []
             for team in teams:

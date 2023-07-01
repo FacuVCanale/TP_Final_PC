@@ -1,15 +1,13 @@
 import time
 import random
 
-from strategy.tpf_CLIFF_interseccion import distance
+from strategy.tpf_CLIFF_intersection import distance
 from strategy.tpf_CLIFF_constants import *
 
 from communication.client.client import MountainClient
 from strategy.tpf_CLIFF_class_dataAnalyst import DataAnalyst
 from strategy.tpf_CLIFF_class_hiker import Hiker
 import argparse
-
-
 
 def update_all_data(hikers: list[Hiker], dataAnalyst: DataAnalyst, data:dict) -> None:
     """
@@ -179,8 +177,6 @@ def main() -> None:
         None
     """
 
-    
-
     parser = argparse.ArgumentParser(description='Command line args')
 
     parser.add_argument('--ip', type=str, help='IP and port', default="localhost:8080")
@@ -189,8 +185,14 @@ def main() -> None:
 
     ip, port = args.ip.split(':')
 
+    try:
+        port = int(port)
+    except:
+        print("No ha ingresado un puerto válido")
+        return None
+
     # Initialize the Client
-    c = MountainClient(ip, int(port))
+    c = MountainClient(ip, port)
 
     # Initialize DataAnalyst
     dataAnalyst = DataAnalyst(c)

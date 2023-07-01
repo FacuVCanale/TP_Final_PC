@@ -1,5 +1,5 @@
 import numpy as np
-import strategy.tpf_CLIFF_interseccion as intersection
+import strategy.tpf_CLIFF_intersection as intersection
 
 class Hiker:
     """
