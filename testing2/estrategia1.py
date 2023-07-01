@@ -1,4 +1,4 @@
-from class_hiker import Hiker
+from strategy.class_hiker import Hiker
 
 # def cahnge_global(global_var, new_value):
 #     global global_var

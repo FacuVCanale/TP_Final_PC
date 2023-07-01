@@ -1,12 +1,12 @@
-from constants import *
+from strategy.constants import *
 
 from communication.client.client import MountainClient
 import time
 import numpy as np
 import math
 # Importar clases
-from class_dataAnalyst import DataAnalyst
-from class_hiker import Hiker
+from strategy.class_dataAnalyst import DataAnalyst
+from strategy.class_hiker import Hiker
 # Importar estrategia
 # from estrategia1 import strategy
 

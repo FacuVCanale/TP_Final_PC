@@ -28,12 +28,12 @@ def check_distance(point1, point2, max_distance=18000*np.sqrt(2)):
 
 def heading_same_max(player1_position, player1_direction, player2_position, player2_direction, radius=400):
 
+    coords = []
+    paralela_info = None
+
     is_possible = check_distance(player1_position, player2_position, radius*0.5)
     if not is_possible:
-        return False
-
-    paralela_info = None
-    coords = []
+        return coords, False
 
     if is_direction_vertical(player1_direction):
         if is_direction_vertical(player2_direction):
