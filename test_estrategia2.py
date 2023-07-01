@@ -60,7 +60,7 @@ c.finish_registration()
 # Instructions
 while not c.is_over():
     # Sleep server for testing
-    time.sleep(0)
+    time.sleep(0.5)
 
     # Ask for data of all hikers in map
     data = c.get_data()

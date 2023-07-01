@@ -1,15 +1,16 @@
 import customtkinter
-from customtkinter import CTkFrame
 import os
 from PIL import Image
-from interfaz_utils import SecondFrame,HomeFrame,FourthFrame, ThirdFrame, FifthFrame,Leaderboard
+from interfaz_utils import HikersPositionFrame,MountainGraphFrame,HeatmapFrame, ASCIIFrame, ScatterFrame,Leaderboard
 from communication.client.client import MountainClient
+import random
 
 class App(customtkinter.CTk):
     def __init__(self):
         super().__init__()
         
-        self.title("Dashboard")
+        self.title("Server Dashboard")
+        self.resizable(False, False)
 
         width= self.winfo_screenwidth()
         height= self.winfo_screenheight()
@@ -21,10 +22,12 @@ class App(customtkinter.CTk):
         self.grid_columnconfigure(1, weight=1)
         self.grid_columnconfigure(2, weight=1)
 
-
+        self.team_colors = {'Everyone': 'white'}
         self.client = MountainClient()
+        self.generate_color_for_each_team()
 
-        # load images with light and dark mode image
+
+        # Load images with light and dark mode image
         image_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "test_images")
         self.logo_image = customtkinter.CTkImage(Image.open(os.path.join(image_path, "logo.png")), size=(200, 70))
 
@@ -40,11 +43,13 @@ class App(customtkinter.CTk):
         self.heatmap_image = customtkinter.CTkImage(light_image=Image.open(os.path.join(image_path, "heatmap_dark.png")),
                                                      dark_image=Image.open(os.path.join(image_path, "heatmap_light.png")), size=(80, 80))
         
-        self.scatter_image = customtkinter.CTkImage(light_image=Image.open(os.path.join(image_path, "scatter_dark.png")),
-                                                     dark_image=Image.open(os.path.join(image_path, "scatter_light.png")), size=(80, 80))
-        
-        # create navigation frame
+        self.scatter_image = customtkinter.CTkImage(light_image=Image.open(os.path.join(image_path, "scatter_dark.png")),dark_image=Image.open(os.path.join(image_path, "scatter_light.png")), size=(80, 80))
+
+
+
         self.navigation_frame = customtkinter.CTkFrame(self, corner_radius=0)
+
+        
         self.navigation_frame.grid(row=0, column=0, sticky="nsew")
         self.navigation_frame.grid_rowconfigure(6, weight=1)  # ELEGIR CUANTAS OPCIONES PONER EN EL LADO IZQUIERDO ES DECIR CUANTOS RECTANGULOS
 
@@ -79,7 +84,7 @@ class App(customtkinter.CTk):
                                                    command=self.home_button_event)
         self.home_button.grid(row=1, column=0, sticky="ew")
 
-        #FRAME 2D
+        # 2D FRAME
         self.frame_2_button = customtkinter.CTkButton(self.navigation_frame, corner_radius=0, height=40,
                                                       border_spacing=10, 
                                                       text="HIKERS",
@@ -91,7 +96,7 @@ class App(customtkinter.CTk):
                                                       command=self.frame_2_button_event)
         self.frame_2_button.grid(row=2, column=0, sticky="ew")
 
-        #FRAME ASCII
+        # ASCII FRAME
         self.frame_3_button = customtkinter.CTkButton(self.navigation_frame, corner_radius=0, height=40,
                                                       border_spacing=10, 
                                                       text="ASCII",
@@ -102,6 +107,7 @@ class App(customtkinter.CTk):
                                                       anchor="w", 
                                                       command=self.frame_3_button_event)
         self.frame_3_button.grid(row=3, column=0, sticky="ew")
+
         #HEATMAP
         self.frame_4_button = customtkinter.CTkButton(self.navigation_frame, corner_radius=0, height=40,
                                                       border_spacing=10, 
@@ -113,6 +119,7 @@ class App(customtkinter.CTk):
                                                       anchor="w", 
                                                       command=self.frame_4_button_event)
         self.frame_4_button.grid(row=4, column=0, sticky="ew")
+
         #SCATTER
         self.frame_5_button = customtkinter.CTkButton(self.navigation_frame, corner_radius=0, height=40,
                                               border_spacing=10, 
@@ -137,63 +144,88 @@ class App(customtkinter.CTk):
         self.appearance_mode_menu.grid(row=7, column=0, padx=20, pady=40, sticky="s")
 
 
-        # create home frame
-        self.home_frame = HomeFrame(self, self.client,w,h)
-
+        # Create the 3D Frame
+        self.home_frame = MountainGraphFrame(self,self.client,w,h)
         
 
-        # create second frame
-        self.second_frame = SecondFrame(self,self.client,w,h)
+        # Create Hikers Frame
+        self.second_frame = HikersPositionFrame(self,self.client,self.team_colors,w,h)
 
         
-        # create third frame
-        self.third_frame = ThirdFrame(self,self.client,w,h)
+        # create ASCII Frame
+        self.third_frame = ASCIIFrame(self,self.client,w,h)
 
-        self.fourth_frame =FourthFrame(self,self.client,w,h)
-                
-
-        self.fifth_frame = FifthFrame(self,w,h)
+        # Create Heatmap Frame
+        self.fourth_frame =HeatmapFrame(self,self.client,w,h)
+        
+        # Create Scatter Frame
+        self.fifth_frame = ScatterFrame(self,self.client,self.team_colors,w,h)
                   
 
 
         self.select_frame_by_name("home")
 
+     
+ 
+    
+    def generate_color_for_each_team(self):
+        """
+        Generate a random color for each team in the data and store it in the `team_colors` dictionary.
+        """
+        self.info = self.client.get_data()
+        for team, climbers in self.info.items():            
+            color = '#{:06x}'.format(random.randint(0, 0xFFFFFF))
+            self.team_colors[team] = color
+
    
     #CAMBIAR DE PESTAÑAS - MODIFICO LA VISUALIZACION DE CADA PESTAÑA
     def select_frame_by_name(self, name):
-        # set button color for selected button
+        """
+        Show the selected frame and change the appearance of the corresponding button.
+
+        Args:
+            name: The name of the frame to be selected.
+        """
+
+        # Change button color for the selected button
         self.home_button.configure(fg_color=("gray75", "gray25") if name == "home" else "transparent")
         self.frame_2_button.configure(fg_color=("gray75", "gray25") if name == "frame_2" else "transparent")
         self.frame_3_button.configure(fg_color=("gray75", "gray25") if name == "frame_3" else "transparent")
         self.frame_4_button.configure(fg_color=("gray75", "gray25") if name == "frame_4" else "transparent")
         self.frame_5_button.configure(fg_color=("gray75", "gray25") if name == "frame_5" else "transparent")
         
-        # show selected frame
-        if name == "home":
+        # Show or hide selected frames based on the given name
+        if name == "home": #3D
             self.home_frame.grid(row=0, column=1, sticky="nsew")
+            self.home_frame.show_graph()
         else:
             self.home_frame.grid_forget()
 
-        if name == "frame_2":
-            self.second_frame.grid(row=0, column=1, sticky="nsew")   
+        if name == "frame_2": #SCATTER
+            self.second_frame.grid(row=0, column=1, sticky="nsew")
+            self.second_frame.show_graf3D()   
         else:
             self.second_frame.grid_forget()
-        if name == "frame_3":
+
+        if name == "frame_3": #ASCII
             self.third_frame.grid(row=0, column=1, sticky="nsew")
+            
+            
         else:
             self.third_frame.grid_forget()
 
-        if name == "frame_4":
+        if name == "frame_4": #HEATMAP
             self.fourth_frame.grid(row=0, column=1,sticky="nsew")
-            self.fourth_frame.show_animation()  # Call the show_animation method
+            self.fourth_frame.show_animation()
         else:
             self.fourth_frame.grid_forget()
 
-        if name == "frame_5":
+        if name == "frame_5": #2D
             self.fifth_frame.grid(row=0, column=1, sticky="nsew")
-            self.fifth_frame.show_animation()
+            self.fifth_frame.show_scatter()
         else:
             self.fifth_frame.grid_forget()
+            
         
 
     def home_button_event(self):

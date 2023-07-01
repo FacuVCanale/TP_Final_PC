@@ -6,7 +6,6 @@ import numpy as np
 import customtkinter
 matplotlib.use('TkAgg')
 import customtkinter
-from communication.client.client import MountainClient
 from ascii import ascii
 import random
 from tabulate import tabulate
@@ -14,9 +13,37 @@ from classes.partida import Partida
 import customtkinter
 
  
-class HomeFrame(customtkinter.CTkFrame):
+class MountainGraphFrame(customtkinter.CTkFrame):
+    """
+    A custom frame class for displaying a 3D graph.
+
+    This frame inherits from the customtkinter.CTkFrame class and provides
+    functionality to display a 3D graph with updating data.
+
+    Attributes:
+        container_frame (customtkinter.CTkFrame): The container frame within the MountainGraphFrame.
+        client: The client object used for data retrieval.
+        x (numpy.ndarray): The range of values for the x-axis.
+        y (numpy.ndarray): The range of values for the y-axis.
+        Z (numpy.ndarray): The initial matrix for the 3D graph.
+        X (numpy.ndarray): The meshgrid for the x-axis.
+        Y (numpy.ndarray): The meshgrid for the y-axis.
+        ax: The matplotlib Axes3D object for the graph.
+        ani: The FuncAnimation object for the animation.
+
+    Methods:
+        show_graph(): Displays the 3D graph.
+        update_graph(i): Updates the graph with new data.
+    """
 
     def __init__(self, master,client,w,h):
+        """
+        Initialize the graph plotter.
+        Args:
+            master: The parent widget.
+            client: The client object for data retrieval.
+            
+        """
         super().__init__(master, corner_radius=0, fg_color="transparent")
         self.grid(row=0, column=2, sticky="nsew")
         self.grid_columnconfigure(0, weight=1)
@@ -42,25 +69,21 @@ class HomeFrame(customtkinter.CTkFrame):
         res = 20
         self.Z = np.zeros((res,res))
         
-    
-
-        # Crear el rango de valores para los ejes x e y
+        # Create the range of values for the x and y axes
         self.x = np.linspace(-23000, 23000, res)
         self.y = np.linspace(-23000, 23000, res)
 
-        # Crear el meshgrid inicial a partir de los valores de x e y
+        # Create the initial meshgrid based on the values of x and y
         self.X, self.Y = np.meshgrid(self.x, self.y)
 
-        self.show_graph()
+        
         
 
 
-    """ RADIUS = 1.0  # Control this value.
-ax1.set_xlim3d(-RADIUS / 2, RADIUS / 2)
-ax1.set_zlim3d(-RADIUS / 2, RADIUS / 2)
-ax1.set_ylim3d(-RADIUS / 2, RADIUS / 2) """
-
     def show_graph(self):
+        """
+        Shows the graph plot.
+        """
         fig = plt.figure()
         self.ax = fig.add_subplot(111, projection='3d')
 
@@ -76,38 +99,66 @@ ax1.set_ylim3d(-RADIUS / 2, RADIUS / 2) """
         canvas.draw()
         canvas.get_tk_widget().grid(row=0, column=0, sticky="nsew")
 
-      
 
-    # Funcion de actualizacion 
+    # Update function
     def update_graph(self, i):
-        # Obtener los datos actualizados del cliente
+        """
+        Updates the graph plot.
+
+        Args:
+            i: The update iteration index.
+        """
+        # Get updated data from the client
         info = self.client.get_data()
 
-        # Actualizar los valores de Z en la superficie
+        # Update the values of Z on the surface
         for team, climbers in info.items():
             for climber, data in climbers.items():
                 x2 = data['x']
                 y2 = data['y']
                 z2 = data['z']
 
-                # Verificar si el punto ya existe en la lista de picos
-
-                # Calcular las distancias entre los puntos (x, y) y (x2, y2) -> EUCLIDEAN
-                # Encontrar la posición del punto más cercano
+                # Calculate the distances between the points (x, y) and (x2, y2)
+                # Find the position of the nearest point
                 idx_x = np.argmin(np.abs(self.x - x2))
                 idx_y = np.argmin(np.abs(self.y - y2))
 
-                # Asignar el valor de altura al punto correspondiente en Z
+                # Assign the height value to the corresponding point in Z
                 self.Z[idx_x, idx_y] = z2
 
         self.ax.clear()
         self.ax.plot_surface(self.X, self.Y, self.Z, cmap="terrain")
 
+
         
 
+class HikersPositionFrame(customtkinter.CTkFrame): #GRAPH Hikers
+    """
+    A class representing the second frame of a customtkinter application.
 
-class SecondFrame(customtkinter.CTkFrame): #GRAPH Hikers
-    def __init__(self, master,client,w,h):
+    This frame displays a 3D graph and a scrollable team list. The graph is updated based on data received from a server.
+
+    Attributes:
+        master (tkinter.Tk): The master tkinter window.
+        client (Client): The client object for communication with the server.
+        container_frame (customtkinter.CTkFrame): The frame that contains the graph and team list.
+        selected_team (str): The currently selected team.
+        client (Client): The client object for communication with the server.
+        team_colors (dict): A dictionary mapping team names to colors for graph visualization.
+        ax (matplotlib.axes._subplots.Axes3DSubplot): The subplot for the 3D graph.
+        points (matplotlib.collections.PathCollection): The scatter plot points on the graph.
+        ani (matplotlib.animation.FuncAnimation): The animation object for updating the graph.
+        
+
+    Methods:
+        __init__(self, master, client): Initializes the HikersPositionFrame instance.
+        show_graf3D(self): Displays the 3D graph.
+        update_graph(self, _): Updates the graph based on data received from the server.
+        get_team_list_from_server(self): Retrieves the list of teams from the server.
+        create_scrollable_frame(self): Creates and configures a scrollable frame for the team list.
+        select_team(self, team): Updates the selected team and updates the graph accordingly.
+    """
+    def __init__(self, master,client,team_colors,w,h):
         super().__init__(master, corner_radius=0, fg_color="transparent")
         self.grid(row=0, column=1, sticky="nsew")
         self.grid_columnconfigure(0, weight=1)
@@ -123,42 +174,49 @@ class SecondFrame(customtkinter.CTkFrame): #GRAPH Hikers
         # set desired frame size
         self.container_frame.configure(width=w, height=h)
 
-
-
-
         self.selected_team = 'Everyone'
         self.client = client
 
-        self.team_colors = {'Everyone': None}
-
-        self.show_graf3D()
+        self.team_colors = team_colors
+        
         self.create_scrollable_frame()
 
     def show_graf3D(self):
+        """
+        Displays the 3D graph.
 
-        
+        This method sets up the 3D graph, initializes the scatter plot, and starts the animation for updating the graph.
+
+        """
+        # Set up the figure and subplot for the 3D graph
         fig = plt.figure()
         self.ax = fig.add_subplot(111, projection='3d')
 
+        # Set labels for the X, Y, and Z axes
         self.ax.set_xlabel('X')
         self.ax.set_ylabel('Y')
         self.ax.set_zlabel('Z')
+
+        # Set the limits for the X, Y
         self.ax.set_xlim3d(-23000, 20000)
         self.ax.set_ylim3d(-23000, 20000)
-        
-        if self.selected_team == 'Everyone':
-            color = self.team_colors['Everyone']
-        else:
-            color = self.team_colors[self.selected_team]
 
+        # Determine the color for the scatter plot based on the selected team
+        
+        color = self.team_colors[self.selected_team]
+
+        # Initialize the scatter plot points with empty data and specified color and marker
         self.points = self.ax.scatter([], [], [], c=color, marker='o')
 
+        # Create an animation object for updating the graph using the update_graph method
         self.ani = FuncAnimation(fig, self.update_graph, interval=1000, blit=False, repeat=False)
 
+        # Create a Tkinter canvas for the figure and display it in the container frame
         canvas = FigureCanvasTkAgg(fig, master=self.container_frame)
         canvas.draw()
-        canvas.get_tk_widget().grid(row=0, column=0, sticky="nsew")
+        canvas.get_tk_widget().grid(row=0, column=0, sticky="nsew") # To obtain the underlying Tkinter widget associated with the canvas and then configure it.
 
+        # Start the animation
         self.ani._start()
 
     def update_graph(self, _):
@@ -171,53 +229,59 @@ class SecondFrame(customtkinter.CTkFrame): #GRAPH Hikers
         Returns:
             The updated points object.
         """
-        self.info = self.client.get_data()  # Update server data
+        # Get the data from the server
+        self.info = self.client.get_data()  
 
         points = []
         colors = []
         for team, climbers in self.info.items():
-            if self.selected_team == 'Everyone':  # To show all the points (players) on the map
+            # To show all the points (teams/hikers) on the map
+            if self.selected_team == 'Everyone':  
                 for climber, data in climbers.items():
                     x = data['x']
                     y = data['y']
                     z = data['z']
-
-                    if team in self.team_colors:
-                        colors.append(self.team_colors[team])
-                    else:
-                        color = '#{:06x}'.format(random.randint(0, 0xFFFFFF))
-                        self.team_colors[team] = color
-                        colors.append(color)
-
+                    # Assign the colors for each team
+                    color = self.team_colors.get(team)
+                    colors.append(color)
                     points.append((x, y, z))
-            elif team == self.selected_team:
+
+            # To show the selected team
+            elif team == self.selected_team: 
                 for climber, data in climbers.items():
                     x = data['x']
                     y = data['y']
                     z = data['z']
-                    if team in self.team_colors:
-                        colors.append(self.team_colors[team])
-                    else:
-                        color = '#{:06x}'.format(random.randint(0, 0xFFFFFF))
-                        self.team_colors[team] = color
-                        colors.append(color)
+                    
+                    # Get the color representing the team
+                    color = self.team_colors.get(team)
+                    colors.append(color)
                     points.append((x, y, z))
 
-        x, y, z = zip(*points) if points else ([], [], [])
+
+        #Display the points
+        x, y, z = zip(*points) if points else ([], [], []) 
         self.points.set_3d_properties(z, zdir='z')
         self.points.set_offsets(np.column_stack((x, y)))
         self.points.set_color(colors)
 
         if points:
             max_z = max(z)
+            #Redefine the limits for the z axis
             self.ax.set_zlim3d(0, max_z)
 
 
     def get_team_list_from_server(self):
+        """
+        Retrieves the list of teams from the server.
+
+        Returns:
+            A list of team names.
+        """
         teams = []
-        for team, climbers in self.info.items():
-    
-        
+        self.info = self.client.get_data()
+        #Get the teams from the server
+        for team, climbers in self.info.items(): 
             teams.append(team)
         return teams
 
@@ -232,8 +296,10 @@ class SecondFrame(customtkinter.CTkFrame): #GRAPH Hikers
         scrollable_frame.grid(row=0, column=1, sticky="nsew", padx=3, pady=3)
 
         teams = self.get_team_list_from_server()
-        scrollable_frame.add_item("Everyone", command=self.select_team)
+        # Select the team to display its hikers
+        scrollable_frame.add_item("Everyone", command=self.select_team) 
 
+        #Add the option to see each team that is registered on the server
         for team in teams:
             scrollable_frame.add_item(team, command=self.select_team)
 
@@ -254,6 +320,20 @@ class SecondFrame(customtkinter.CTkFrame): #GRAPH Hikers
 
 
 class ScrollableLabelButtonFrame(customtkinter.CTkScrollableFrame):
+    """
+    A custom frame class that displays a scrollable list of labels and buttons.
+
+    This frame inherits from the customtkinter.CTkScrollableFrame class and provides
+    functionality to add labels and buttons dynamically.
+
+    Attributes:
+        command: Optional command function to be executed by the buttons.
+        label_list: A list containing the label instances added to the frame.
+        button_list: A list containing the button instances added to the frame.
+
+    Methods:
+        add_item(item, image=None, command=None): Adds a label and button to the frame.
+    """
     def __init__(self, master, command=None, **kwargs):
         """
         Initialize the ScrollableLabelButtonFrame.
@@ -289,8 +369,8 @@ class ScrollableLabelButtonFrame(customtkinter.CTkScrollableFrame):
         """
         # Create a label instance with the provided 'item' as the text and optional 'image'
         label = customtkinter.CTkLabel(self, text=item, image=image, compound="left", padx=5, anchor="w")
-        # Create a button instance with the text "Ver" and specified width and height
-        button = customtkinter.CTkButton(self, text="Ver", width=30, height=24)
+        # Create a button instance with the text "Show" and specified width and height
+        button = customtkinter.CTkButton(self, text="Show", width=30, height=24)
         # If a 'command' argument is provided, configure the button's command to execute it with 'item' as an argument
         if command is not None:
             button.configure(command=lambda: command(item))
@@ -305,44 +385,103 @@ class ScrollableLabelButtonFrame(customtkinter.CTkScrollableFrame):
 
    
 
-class ThirdFrame(customtkinter.CTkFrame):
-    def __init__(self, master,client,w,h):
-        super().__init__(master, corner_radius=0, fg_color="transparent")
-        self.grid(row=0, column=1, sticky="nsew")
-        
-        self.state = False
+class ASCIIFrame(customtkinter.CTkFrame):
+    """
+    A custom frame for displaying ASCII art representing letter assignments to teams.
 
-        self.client = client
-        info = self.client.get_data()
-        num_jugador = 65
-        self.letter_asig = {}
+    Attributes:
+        master: The master widget for the frame.
+        client: The client object used to retrieve data.
+        state: A boolean indicating the state of the ASCIIFrame.
+
+    Methods:
+        __init__(master, client): Initialize the ASCIIFrame.
+        change(): Change the state and update the displayed ASCII art.
+        call_function(): Periodically update the displayed ASCII art.
+    """
+    def __init__(self, master,client,w,h):
+        """
+        Initialize the ASCIIFrame.
+
+        Args:
+            master: The master widget.
+            client: The client object used to get data.
+
+        """
+        super().__init__(master, corner_radius=0, fg_color="transparent")  # Initialize the custom frame
+        self.grid(row=0, column=1, sticky="nsew")  # Place the frame in the grid layout
+        self.state = False  # Set the initial state of the frame to False
+
+        self.client = client  # Set the client object
+        info = self.client.get_data()  # Get the data from the client
+
+        
+        # Assign letters to teams
+        num_jugador = 65  # ASCII code for 'A'
+        self.letter_asig = {}  # Dictionary to store letter assignments
         counter = 0
-        while self.client.is_registering_teams() or (counter == 0):
+        while self.client.is_registering_teams() or (counter == 0):  # Loop until teams are registered
             for equipo, escaladores in info.items():
-                self.letter_asig[equipo] = num_jugador
+                self.letter_asig[equipo] = num_jugador  # Assign a letter to each team
                 num_jugador += 1
             counter += 1
+
+
+        # Display the letter assignments as ASCII art
         label_resultado = customtkinter.CTkLabel(self, text=ascii(self.letter_asig), font=('Courier New', 10.5))
         label_resultado.pack()
        
-        self.call_function(w,h)
-
+        self.call_function(w,h)  # Start the function to periodically update the displayed ASCII art
+        
     def call_function(self,w,h):
-        for widgets in self.winfo_children():
-            widgets.destroy()
-        label_resultado = customtkinter.CTkLabel(self, text=ascii(self.letter_asig), font=('Courier New', 10.5))
+        """Call the function periodically to update the displayed ASCII art."""
+        for widget in self.winfo_children():  # Destroy all child widgets
+            widget.destroy()
+
+        # Display the letter assignments as ASCII art
+        label_resultado = customtkinter.CTkLabel(self, text=ascii(self.letter_asig), font=('Courier New', 10))
         label_resultado.pack()
+
         # disable frame size propagation
         label_resultado.grid_propagate(False)
         
         # set desired frame size
         label_resultado.configure(width=w, height=h)
-        self.after(3500,self.call_function,w,h)
+        self.after(3500,self.call_function,w,h) # Call the function again after 2000 milliseconds (2 seconds)
 
 
+class HeatmapFrame(customtkinter.CTkFrame):
+    """
+    A custom frame class for displaying an animation.
 
-class FourthFrame(customtkinter.CTkFrame):
-    def __init__(self, master,client,w,h):
+    This frame displays an animation that visualizes data using a heatmap.
+    It inherits from the customtkinter.CTkFrame class.
+
+    Attributes:
+        container_frame (customtkinter.CTkFrame): The container frame within the FourthFrame.
+        client: The client object used for data retrieval.
+        x (numpy.ndarray): The range of values for the x-axis.
+        y (numpy.ndarray): The range of values for the y-axis.
+        fig: The matplotlib Figure object for the animation.
+        ax: The matplotlib Axes object for the animation.
+        hist (numpy.ndarray): The histogram matrix used for the heatmap.
+        heatmap: The matplotlib Image object representing the heatmap.
+        animation: The FuncAnimation object for the animation.
+        canvas: The FigureCanvasTkAgg object for displaying the animation on a tkinter window.
+        colorbar: The colorbar object for the heatmap.
+
+    Methods:
+        show_animation(): Displays the animation.
+        update_heatmap(_: Any): Updates the heatmap based on new data.
+    """
+    def __init__(self, master, client,w,h):
+        """
+        Initialize the FourthFrame.
+
+        Args:
+            master (Tk): The master tkinter window.
+            client: The client object for data retrieval.
+        """
         super().__init__(master, corner_radius=0, fg_color="transparent")
         self.grid(row=0, column=1, sticky="nsew")
         self.grid_columnconfigure(0, weight=1)
@@ -361,51 +500,107 @@ class FourthFrame(customtkinter.CTkFrame):
         self.container_frame.configure(width=w, height=h)
 
         self.client = client
-        self.info = self.client.get_data()
+       
 
-        self.fig, self.ax = plt.subplots()
-        self.heatmap = None  # Initialize the heatmap attribute
-        self.canvas = None
-
-    def update_heatmap(self, frame):
-        self.ax.clear()
         res = 100
 
-        # Crear el rango de valores para los ejes x e y
-        x = np.linspace(-23000, 23000, res)
-        y = np.linspace(-23000, 23000, res)
-        points = []
-        for team, climbers in self.info.items():
-            for climber, data in climbers.items():
-                x2 = data['x']
-                y2 = data['y']
-                points.append((x2, y2))
-        heatmap, _, _ = np.histogram2d(np.array(points)[:, 0], np.array(points)[:, 1], bins=(x, y))
+       
+        # Create the range of values for the x and y axes
+        self.x = np.linspace(-23000, 23000, res)
+        self.y = np.linspace(-23000, 23000, res)
 
-        self.ax.set_xlabel('X')
-        self.ax.set_ylabel('Y')
-        self.ax.set_title('Player Heatmap')
-
-        if self.heatmap is None:
-            self.heatmap = self.ax.imshow(heatmap, cmap='viridis', origin='lower', extent=[-23000, 23000, -23000, 23000])
-            self.canvas = FigureCanvasTkAgg(self.fig, master=self.container_frame)
-            self.canvas.get_tk_widget().grid(row=0, column=0, sticky="nsew")
-        else:
-            self.heatmap.set_array(heatmap)
-            self.heatmap.autoscale()
-
-        self.canvas.draw_idle()
-        self.canvas.flush_events()
 
     def show_animation(self):
+        """Shows the animation."""
+        self.fig, self.ax = plt.subplots()
+
+        # Set x and y labels    
+        self.ax.set_xlabel('X')
+        self.ax.set_ylabel('Y')
+
+        # Set the x and y limits
+        self.ax.set_xlim(-25000, 25000)
+        self.ax.set_ylim(-25000, 25000)
+
+        self.hist = np.zeros((len(self.x), len(self.y)))
+        self.heatmap = self.ax.imshow(self.hist, cmap='viridis', origin='lower', extent=[-23000, 23000, -23000, 23000])
+
         self.animation = FuncAnimation(self.fig, self.update_heatmap, interval=1000)
         self.canvas = FigureCanvasTkAgg(self.fig, master=self.container_frame)
         self.canvas.draw()
         self.canvas.get_tk_widget().grid(row=0, column=0, sticky="nsew")
+        self.colorbar = self.fig.colorbar(self.heatmap, ax=self.ax)
 
+        self.animation._start()
 
-class FifthFrame(customtkinter.CTkFrame):
-    def __init__(self, master,w,h):
+    def update_heatmap(self, _):
+        """
+        Update the heatmap based on new data.
+
+        Args:
+            _: Unused argument required by FuncAnimation.
+
+        Returns:
+            The updated heatmap.
+        """
+        self.ax.clear()
+        self.hist.fill(0)  # Reset the histogram matrix on each update
+
+        self.info = self.client.get_data()
+
+        for team, climbers in self.info.items():
+            for climber, data in climbers.items():
+                x2 = data['x']
+                y2 = data['y']
+
+                idx_x = np.argmin(np.abs(self.x - x2))
+                idx_y = np.argmin(np.abs(self.y - y2))
+
+                # Assign the height value to the corresponding point in Z
+                self.hist[idx_x, idx_y] += 1  # Increment the value by 1 instead of directly assigning
+
+        
+
+        # Create a colormap with higher intensity for more players and lower intensity for fewer players
+        cmap = plt.cm.get_cmap('viridis')
+
+        self.heatmap = self.ax.imshow(self.hist, cmap=cmap, origin='lower', extent=[-23000, 23000, -23000, 23000])
+
+        
+class ScatterFrame(customtkinter.CTkFrame):
+    """
+    A class representing the scatter frame of a customtkinter application.
+
+    This frame displays a 2D graph and a scrollable team list. The graph is updated based on data received from a server.
+
+    Attributes:
+        master (tkinter.Tk): The master tkinter window.
+        client (Client): The client object for communication with the server.
+        container_frame (customtkinter.CTkFrame): The frame that contains the graph and team list.
+        selected_team (str): The currently selected team.
+        client (Client): The client object for communication with the server.
+        team_colors (dict): A dictionary mapping team names to colors for graph visualization.
+        ax (matplotlib.axes._subplots.Axes3DSubplot): The subplot for the 3D graph.
+        points (matplotlib.collections.PathCollection): The scatter plot points on the graph.
+        ani (matplotlib.animation.FuncAnimation): The animation object for updating the graph.
+
+    Methods:
+        __init__(self, master, client): Initializes the ScatterFrame instance.
+        show_scatter(self): Displays the 2D graph.
+        update_scatter(self, _): Updates the graph based on data received from the server.
+        get_team_list_from_server(self): Retrieves the list of teams from the server.
+        create_scrollable_frame(self): Creates and configures a scrollable frame for the team list.
+        select_team(self, team): Updates the selected team and updates the graph accordingly.
+    """
+    def __init__(self, master,client,team_colors,w,h):
+        """
+        Initialize the object.
+
+        Args:
+            master: The master widget.
+            client: The client object.
+            team_colors: A dictionary containing team colors.
+        """
         super().__init__(master, corner_radius=0, fg_color="transparent")
         self.grid(row=0, column=1, sticky="nsew")
         self.grid_columnconfigure(0, weight=1)
@@ -429,7 +624,7 @@ class FifthFrame(customtkinter.CTkFrame):
         self.team_colors = {'Everyone': None}
 
         # create container frame with grid layout
-        self.client = MountainClient("localhost", 8080)
+        self.client = client
         self.info = self.client.get_data()
 
         self.show_scatter()
@@ -438,23 +633,21 @@ class FifthFrame(customtkinter.CTkFrame):
         
 
     def show_scatter(self):
-        fig, self.ax = plt.subplots()
+        self.fig, self.ax = plt.subplots()
 
         self.ax.set_xlabel('X')
         self.ax.set_ylabel('Y')
         self.ax.set_xlim(-23000, 20000)
         self.ax.set_ylim(-23000, 20000)
 
-        if self.selected_team == 'Everyone':
-            color = self.team_colors['Everyone']
-        else:
-            color = self.team_colors[self.selected_team]
+        
+        color = self.team_colors[self.selected_team]
 
         self.points = self.ax.scatter([], [], c=color, marker='o')
 
-        self.animation = FuncAnimation(fig, self.update_scatter, interval=1000, blit=False, repeat=False)
+        self.animation = FuncAnimation(self.fig, self.update_scatter, interval=1000, blit=False, repeat=False)
 
-        canvas = FigureCanvasTkAgg(fig, master=self.container_frame)
+        canvas = FigureCanvasTkAgg(self.fig, master=self.container_frame)
         canvas.draw()
         canvas.get_tk_widget().grid(row=0, column=0, sticky="nsew")
 
@@ -552,9 +745,6 @@ class FifthFrame(customtkinter.CTkFrame):
         """
         self.selected_team = team
         self.update_graph(None)
-
-
-
 
 
 
