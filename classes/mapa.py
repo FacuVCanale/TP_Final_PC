@@ -1,6 +1,6 @@
 
-class Mapa_circular:
-    def __init__(self, circulo: list, ESCALA: int = 1000) -> None:
+class Circular_map:
+    def __init__(self, circle: list, ESCALA: int = 1000) -> None:
         """
         Initialize a circular map object with a given circle and scale.
 
@@ -15,7 +15,7 @@ class Mapa_circular:
         -------
         None
         """
-        self.circulo = circulo
+        self.circle = circle
         self.ESCALA = ESCALA
 
     def agregar_pj(self, pos: tuple, num_jugador: int, flag: bool) -> None:
@@ -35,18 +35,18 @@ class Mapa_circular:
         -------
         None
         """
-        for i in self.circulo:
+        for i in self.circle:
             for j in i:
                 if j == num_jugador:
-                    self.circulo[i][j] = "."
+                    self.circle[i][j] = "."
 
         x = int(pos[0] / self.ESCALA)
         y = int(pos[1] / self.ESCALA)
 
-        x += self.circulo.filas // 2
-        y = self.circulo.filas // 2 - y
+        x += self.circle.filas // 2
+        y = self.circle.filas // 2 - y
         
-        self.circulo[y][x] = chr(num_jugador)
+        self.circle[y][x] = chr(num_jugador)
 
     def __repr__(self) -> str:
         """
@@ -57,7 +57,7 @@ class Mapa_circular:
         str
             A string representation of the circular map object.
         """
-        return f"import circulo.py\n {self.circulo.str()}\n mapa = Mapa_circular(circle,1000)"
+        return f"import circulo.py\n {self.circle.str()}\n mapa = Mapa_circular(circle,1000)"
 
     def __str__(self) -> str:
         """
@@ -68,9 +68,9 @@ class Mapa_circular:
         str
             A string representation of the circular map object.
         """
-        fil = len(self.circulo)
+        fil = len(self.circle)
         result = ""
         for _ in range(fil):
-            linea = ' '.join(self.circulo[_])
+            linea = ' '.join(self.circle[_])
             result += linea + "\n"
         return result

@@ -29,7 +29,7 @@ class Player:
             Whether the player has reached the top of a mountain, by default False.
         """
         self.team = team
-        self.name = name
+        self.name = name.capitalize()
         self.direction = direction
         self.speed = speed
         self.x = x

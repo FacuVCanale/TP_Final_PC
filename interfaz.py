@@ -1,109 +1,112 @@
 import customtkinter
-from customtkinter import CTkFrame
 import os
 from PIL import Image
-import pygame
-from interfaz_utils import SecondFrame,HomeFrame,FourthFrame, ThirdFrame, FifthFrame
-from leaderboard import show_leaderboard
+from interfaz_utils import HikersPositionFrame,MountainGraphFrame,HeatmapFrame, ASCIIFrame, ScatterFrame,Leaderboard
 from communication.client.client import MountainClient
+import random
+from typing import Dict
 
 class App(customtkinter.CTk):
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
-
-        self.title("Dashboard")
-        self.geometry("1280x720")
+        
+        self.title("Server Dashboard")
         self.resizable(False, False)
 
+        width: int = self.winfo_screenwidth()
+        height: int = self.winfo_screenheight()
+        # setting tkinter window size
+        self.geometry(f"{int(width/1.4)}x{int(height/1.4)}")
+        self.resizable(False, False)
         # set grid layout 1x2
         self.grid_rowconfigure(0, weight=1)
         self.grid_columnconfigure(1, weight=1)
         self.grid_columnconfigure(2, weight=1)
 
+        self.team_colors: dict = {'Everyone': 'white'} # Meaningless
+        self.client: MountainClient = MountainClient()
+        self.generate_color_for_each_team()
 
-        self.client = MountainClient()
 
-        # load images with light and dark mode image
-        image_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "test_images")
-        self.logo_image = customtkinter.CTkImage(Image.open(os.path.join(image_path, "logo.png")), size=(155, 64))
 
-        self.large_test_image = customtkinter.CTkImage(Image.open(os.path.join(image_path, "large_test_image.png")), size=(500, 150))
 
-        self.image_icon_image = customtkinter.CTkImage(Image.open(os.path.join(image_path, "image_icon_light.png")), size=(20, 20))
 
-        self.home_image = customtkinter.CTkImage(light_image=Image.open(os.path.join(image_path, "home_dark.png")),
-                                                 dark_image=Image.open(os.path.join(image_path, "home_light.png")), size=(20, 20))
+
+        # Load images with light and dark mode image
+        image_path: str = os.path.join(os.path.dirname(os.path.realpath(__file__)), "test_images")
+        self.logo_image: customtkinter.CTkImage = customtkinter.CTkImage(Image.open(os.path.join(image_path, "logo.png")), size=(200, 70))
+
+        self.mountain_image: customtkinter.CTkImage = customtkinter.CTkImage(light_image=Image.open(os.path.join(image_path, "mountain_dark.png")),
+                                                 dark_image=Image.open(os.path.join(image_path, "mountain_light.png")), size=(80, 80))
         
-        self.chat_image = customtkinter.CTkImage(light_image=Image.open(os.path.join(image_path, "chat_dark.png")),
-                                                 dark_image=Image.open(os.path.join(image_path, "chat_light.png")), size=(20, 20))
+        self.hikers_image: customtkinter.CTkImage = customtkinter.CTkImage(light_image=Image.open(os.path.join(image_path, "hikers_dark.png")),
+                                                 dark_image=Image.open(os.path.join(image_path, "hikers_light.png")), size=(80, 80))
         
-        self.add_user_image = customtkinter.CTkImage(light_image=Image.open(os.path.join(image_path, "add_user_dark.png")),
-                                                     dark_image=Image.open(os.path.join(image_path, "add_user_light.png")), size=(20, 20))
+        self.ascii_image: customtkinter.CTkImage = customtkinter.CTkImage(light_image=Image.open(os.path.join(image_path, "ascii_dark.png")),
+                                                     dark_image=Image.open(os.path.join(image_path, "ascii_light.png")), size=(80, 80))
         
-        self.music_image = customtkinter.CTkImage(light_image=Image.open(os.path.join(image_path, "add_user_dark.png")),
-                                                     dark_image=Image.open(os.path.join(image_path, "add_user_light.png")), size=(20, 20))
+        self.heatmap_image: customtkinter.CTkImage = customtkinter.CTkImage(light_image=Image.open(os.path.join(image_path, "heatmap_dark.png")),
+                                                     dark_image=Image.open(os.path.join(image_path, "heatmap_light.png")), size=(80, 80))
         
+        self.scatter_image: customtkinter.CTkImage = customtkinter.CTkImage(light_image=Image.open(os.path.join(image_path, "scatter_dark.png")),
+                                                    dark_image=Image.open(os.path.join(image_path, "scatter_light.png")), size=(80, 80))
+        self.navigation_frame: customtkinter.CTkFrame = customtkinter.CTkFrame(self, corner_radius=0)
 
-        # create navigation frame
-        self.navigation_frame = customtkinter.CTkFrame(self, corner_radius=0)
         self.navigation_frame.grid(row=0, column=0, sticky="nsew")
         self.navigation_frame.grid_rowconfigure(6, weight=1)
-        
-          # ELEGIR CUANTAS OPCIONES PONER EN EL LADO IZQUIERDO ES DECIR CUANTOS RECTANGULOS
-        self.navigation_frame2 = customtkinter.CTkFrame(self, corner_radius=0)
+
+        # FRAME DE NAVEGACION
+        self.navigation_frame_label: customtkinter.CTkLabel = customtkinter.CTkLabel(self.navigation_frame,
+                                                                                     image=self.logo_image,
+                                                                                     compound="left",
+                                                                                     font=customtkinter.CTkFont(size=15, weight="bold"), text="")
+        self.navigation_frame_label.grid(row=0, column=0, padx=20, pady=20)
+
+        # Leaderboard
+        self.navigation_frame2: Leaderboard = Leaderboard(self.client)
         self.navigation_frame2.grid(row=0, column=2, sticky="nsew")
         self.navigation_frame2.grid_rowconfigure(1, weight=1)
-        #FRAME DE NAVEGACION
-        self.navigation_frame_label = customtkinter.CTkLabel(self.navigation_frame,
-                                                             image=self.logo_image,  # ELEGIR NOMBRE DE LA BARRA DE TAREAS
-                                                             compound="left",
-                                                             font=customtkinter.CTkFont(size=15, weight="bold"), text="")
-        self.navigation_frame_label.grid(row=0, column=0, padx=20, pady=20)
-                
-        self.navigation_frame_label2 = customtkinter.CTkLabel(self.navigation_frame2,
-                                                              # ELEGIR NOMBRE DE LA BARRA DE TAREAS
-                                                             compound="right",
-                                                             font=customtkinter.CTkFont(size=15, weight="bold"), text=show_leaderboard(self.client))
-        self.navigation_frame_label2.grid(row=0, column=0, padx=20, pady=20)
 
-
-        #FRAME 3D
-        self.home_button = customtkinter.CTkButton(self.navigation_frame, 
-                                                   corner_radius=0, 
-                                                   height=40, 
-                                                   border_spacing=10,
-                                                   text="3D", 
-                                                   fg_color="transparent", 
-                                                   text_color=("gray10", "gray90"),
-                                                   hover_color=("gray70", "gray30"),
-                                                   image=self.home_image, 
-                                                   anchor="w", 
-                                                   command=self.home_button_event)
+        # FRAME MOUNTAIN
+        self.home_button: customtkinter.CTkButton = customtkinter.CTkButton(self.navigation_frame,
+                                                                            corner_radius=0,
+                                                                            height=40,
+                                                                            border_spacing=10,
+                                                                            text="MOUNTAIN",
+                                                                            fg_color="transparent",
+                                                                            text_color=("gray10", "gray90"),
+                                                                            hover_color=("gray70", "gray30"),
+                                                                            image=self.mountain_image,
+                                                                            anchor="w",
+                                                                            command=self.home_button_event)
         self.home_button.grid(row=1, column=0, sticky="ew")
 
-        #FRAME 2D
-        self.frame_2_button = customtkinter.CTkButton(self.navigation_frame, corner_radius=0, height=40,
-                                                      border_spacing=10, 
-                                                      text="Posicion Hikers",
-                                                      fg_color="transparent", 
-                                                      text_color=("gray10", "gray90"),
-                                                      hover_color=("gray70", "gray30"),
-                                                      image=self.chat_image, 
-                                                      anchor="w", 
-                                                      command=self.frame_2_button_event)
+        # HIKERS FRAME
+        self.frame_2_button: customtkinter.CTkButton = customtkinter.CTkButton(self.navigation_frame,
+                                                                               corner_radius=0,
+                                                                               height=40,
+                                                                               border_spacing=10,
+                                                                               text="HIKERS",
+                                                                               fg_color="transparent",
+                                                                               text_color=("gray10", "gray90"),
+                                                                               hover_color=("gray70", "gray30"),
+                                                                               image=self.hikers_image,
+                                                                               anchor="w",
+                                                                               command=self.frame_2_button_event)
         self.frame_2_button.grid(row=2, column=0, sticky="ew")
 
-        #FRAME ASCII
+        # ASCII FRAME
         self.frame_3_button = customtkinter.CTkButton(self.navigation_frame, corner_radius=0, height=40,
                                                       border_spacing=10, 
                                                       text="ASCII",
                                                       fg_color="transparent", 
                                                       text_color=("gray10", "gray90"),
                                                       hover_color=("gray70", "gray30"),
-                                                      image=self.add_user_image, 
+                                                      image=self.ascii_image, 
                                                       anchor="w", 
                                                       command=self.frame_3_button_event)
         self.frame_3_button.grid(row=3, column=0, sticky="ew")
+
         #HEATMAP
         self.frame_4_button = customtkinter.CTkButton(self.navigation_frame, corner_radius=0, height=40,
                                                       border_spacing=10, 
@@ -111,10 +114,11 @@ class App(customtkinter.CTk):
                                                       fg_color="transparent", 
                                                       text_color=("gray10", "gray90"),
                                                       hover_color=("gray70", "gray30"),
-                                                      image=self.add_user_image, 
+                                                      image=self.heatmap_image, 
                                                       anchor="w", 
                                                       command=self.frame_4_button_event)
         self.frame_4_button.grid(row=4, column=0, sticky="ew")
+
         #SCATTER
         self.frame_5_button = customtkinter.CTkButton(self.navigation_frame, corner_radius=0, height=40,
                                               border_spacing=10, 
@@ -122,66 +126,71 @@ class App(customtkinter.CTk):
                                               fg_color="transparent", 
                                               text_color=("gray10", "gray90"),
                                               hover_color=("gray70", "gray30"),
-                                              image=self.add_user_image, 
+                                              image=self.scatter_image, 
                                               anchor="w", 
                                               command=self.frame_5_button_event)
         self.frame_5_button.grid(row=5, column=0, sticky="ew")
+        w: int = 1200
+        h: int = 780
 
+        # Change appearance of the GUI
+        self.appearance_mode_menu: customtkinter.CTkOptionMenu = customtkinter.CTkOptionMenu(self.navigation_frame, values=["Dark", "Light", "System"],
+                                                                    command=self.change_appearance_mode_event)
+        self.appearance_mode_menu.grid(row=7, column=0, padx=20, pady=40, sticky="s")
 
-    
-        #CAMBIAR APARIENCIA
-        self.appearance_mode_menu = customtkinter.CTkOptionMenu(self.navigation_frame, values=["Dark", "Light", "System"],
-                                                                command=self.change_appearance_mode_event)
-        
-        self.appearance_mode_menu.grid(row=7, column=0, padx=20, pady=20, sticky="s")
+        # Create the 3D Frame
+        self.home_frame: MountainGraphFrame = MountainGraphFrame(self, self.client, w, h)
 
+        # Create Hikers Frame
+        self.second_frame: HikersPositionFrame = HikersPositionFrame(self, self.client, self.team_colors, w, h)
 
-        # create home frame
-        self.home_frame = HomeFrame(self,self.client)
-        
+        # create ASCII Frame
+        self.third_frame: ASCIIFrame = ASCIIFrame(self, self.client, w, h)
 
-        # create second frame
-        self.second_frame = SecondFrame(self,self.client)
+        # Create Heatmap Frame
+        self.fourth_frame: HeatmapFrame = HeatmapFrame(self, self.client, w, h)
 
-        
-        # create third frame
-        self.third_frame = ThirdFrame(self,self.client)
-
-        self.fourth_frame =FourthFrame(self,self.client)
-                  
-
-
-        
-
-
-        self.fifth_frame = FifthFrame(self, self.client)
-                  
-
+        # Create Scatter Frame
+        self.fifth_frame: ScatterFrame = ScatterFrame(self, self.client, self.team_colors, w, h)
 
         self.select_frame_by_name("home")
 
-    #def music_button_event(self):
-        
+    def generate_color_for_each_team(self) -> None:
+        """
+        Generate a random color for each team in the data and store it in the `team_colors` dictionary.
+        """
+        self.info: Dict[str, list] = self.client.get_data() # type hint for self.info
+        for team, climbers in self.info.items():
+            color = '#{:06x}'.format(random.randint(0, 0xFFFFFF))
+            self.team_colors[team] = color
 
-    #CAMBIAR DE PESTAÑ  AS - MODIFICO LA VISUALIZACION DE CADA PESTAÑA
-    def select_frame_by_name(self, name):
-        # set button color for selected button
+    def select_frame_by_name(self, name: str) -> None:
+        """
+        Show the selected frame and change the appearance of the corresponding button.
+
+        Args:
+            name: The name of the frame to be selected.
+        """
+        # Change button color for the selected button
         self.home_button.configure(fg_color=("gray75", "gray25") if name == "home" else "transparent")
         self.frame_2_button.configure(fg_color=("gray75", "gray25") if name == "frame_2" else "transparent")
         self.frame_3_button.configure(fg_color=("gray75", "gray25") if name == "frame_3" else "transparent")
         self.frame_4_button.configure(fg_color=("gray75", "gray25") if name == "frame_4" else "transparent")
         self.frame_5_button.configure(fg_color=("gray75", "gray25") if name == "frame_5" else "transparent")
-        
-        # show selected frame
+
+        # Show or hide selected frames based on the given name
         if name == "home":
             self.home_frame.grid(row=0, column=1, sticky="nsew")
+            self.home_frame.show_graph()
         else:
             self.home_frame.grid_forget()
-            
+
         if name == "frame_2":
-            self.second_frame.grid(row=0, column=1, sticky="nsew")   
+            self.second_frame.grid(row=0, column=1, sticky="nsew")
+            self.second_frame.show_graf3D()
         else:
             self.second_frame.grid_forget()
+
         if name == "frame_3":
             self.third_frame.grid(row=0, column=1, sticky="nsew")
         else:
@@ -189,40 +198,66 @@ class App(customtkinter.CTk):
 
         if name == "frame_4":
             self.fourth_frame.grid(row=0, column=1,sticky="nsew")
-            self.fourth_frame.show_animation()  # Call the show_animation method
+            self.fourth_frame.show_animation()
         else:
             self.fourth_frame.grid_forget()
 
         if name == "frame_5":
             self.fifth_frame.grid(row=0, column=1, sticky="nsew")
-            self.fifth_frame.show_animation()
+            self.fifth_frame.show_scatter()
         else:
             self.fifth_frame.grid_forget()
-        
-
-    def home_button_event(self):
+            
+    def home_button_event(self) -> None:
+        """
+        Event handler for the home button. Selects the home frame.
+        """
         self.select_frame_by_name("home")
-        
 
-    def frame_2_button_event(self):
+    def frame_2_button_event(self) -> None:
+        """
+        Event handler for the frame 2 button. Selects the frame 2.
+        """
         self.select_frame_by_name("frame_2")
 
-    def frame_3_button_event(self):
+    def frame_3_button_event(self) -> None:
+        """
+        Event handler for the frame 3 button. Selects the frame 3.
+        """
         self.select_frame_by_name("frame_3")
 
-    def frame_4_button_event(self):
+    def frame_4_button_event(self) -> None:
+        """
+        Event handler for the frame 4 button. Selects the frame 4 and shows its animation.
+        """
         self.select_frame_by_name("frame_4")
-#        self.fourth_frame.show_animation()
-    
-    def frame_5_button_event(self):
-        self.select_frame_by_name("frame_5")
-        self.fifth_frame.show_animation()       
-        
+        self.fourth_frame.show_animation()
 
-    def change_appearance_mode_event(self, new_appearance_mode):
+    def frame_5_button_event(self) -> None:
+        """
+        Event handler for the frame 5 button. Selects the frame 5 and shows its animation.
+        """
+        self.select_frame_by_name("frame_5")
+        self.fifth_frame.show_animation()
+
+    def change_appearance_mode_event(self, new_appearance_mode: str) -> str:
+        """
+        Event handler for changing the appearance mode.
+
+        Args:
+            new_appearance_mode: The new appearance mode.
+
+        Returns:
+            The new appearance mode.
+        """
         mode = customtkinter.set_appearance_mode(new_appearance_mode)
         return mode
+    
+
+    
 
 if __name__ == "__main__":
     app = App()
+    
     app.mainloop()
+
