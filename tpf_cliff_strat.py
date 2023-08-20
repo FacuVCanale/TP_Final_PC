@@ -264,7 +264,7 @@ def main() -> None:
             }
 
         # Check hikers behavior and update directives if needed
-        check_hikers(hikers, local_maxs, directives)
+        #check_hikers(hikers, local_maxs, directives)
 
         # Give directives to server
         c.next_iteration('CLIFF', directives)

@@ -542,50 +542,50 @@ class Hiker:
         else:
             return True
         
-def is_near_point(self, point) -> bool:
-    """
-    Check if the current position is near a given point.
+    def is_near_point(self, point) -> bool:
+        """
+        Check if the current position is near a given point.
 
-    Parameters
-    ----------
-    point : tuple
-        The coordinates of the point to check.
+        Parameters
+        ----------
+        point : tuple
+            The coordinates of the point to check.
 
-    Returns
-    -------
-    bool
-        True if the current position is within a distance of 100 units from the given point, False otherwise.
-    """
-    self_pos = (self["x"], self["y"])
-    is_near = intersection.check_distance(self_pos, point, 100)
-    return is_near
+        Returns
+        -------
+        bool
+            True if the current position is within a distance of 100 units from the given point, False otherwise.
+        """
+        self_pos = (self["x"], self["y"])
+        is_near = intersection.check_distance(self_pos, point, 100)
+        return is_near
 
-def has_stept_extremum(self) -> bool:
-    """
-    Check if the instance has made a step into an extremum.
+    def has_stept_extremum(self) -> bool:
+        """
+        Check if the instance has made a step into an extremum.
 
-    Returns
-    -------
-    bool
-        True if the strategy is "descent" and the current altitude is lower than the previous altitude,
-        or if the strategy is "hike" and the current altitude is higher than the previous altitude.
-        False otherwise.
-    """
-    if self.strat == "descent" and self.last_data["z"] < self["z"]:
-        return True
-    elif self.strat == "hike" and self.last_data["z"] > self["z"]:
-        return True
-    return False
+        Returns
+        -------
+        bool
+            True if the strategy is "descent" and the current altitude is lower than the previous altitude,
+            or if the strategy is "hike" and the current altitude is higher than the previous altitude.
+            False otherwise.
+        """
+        if self.strat == "descent" and self.last_data["z"] < self["z"]:
+            return True
+        elif self.strat == "hike" and self.last_data["z"] > self["z"]:
+            return True
+        return False
 
 
-def aproximate_local(self) -> tuple:
-    """
-    Approximate the coordinates of a local_maximum.
+    def aproximate_local(self) -> tuple:
+        """
+        Approximate the coordinates of a local_maximum.
 
-    Returns
-    -------
-    tuple
-        A tuple containing the average x and y coordinates between the current and previous positions.
-    """
-    if self.has_stept_extremum() is True:
-        return ((self.last_data["x"] + self["x"]) / 2, (self.last_data["y"] + self["y"]) / 2)
+        Returns
+        -------
+        tuple
+            A tuple containing the average x and y coordinates between the current and previous positions.
+        """
+        if self.has_stept_extremum() is True:
+            return ((self.last_data["x"] + self["x"]) / 2, (self.last_data["y"] + self["y"]) / 2)
